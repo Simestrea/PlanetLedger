@@ -6377,3 +6377,51 @@ html.light-theme-active .overview__label span {
 .quick-chip span {
   white-space: nowrap !important;
 }
+
+
+
+/* === 终极稳定版：Dock 栏向下滑动隐藏 === */
+
+/* 1. 基础动画设置 */
+.tabbar {
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  will-change: transform;
+}
+
+/* 2. 普通主题模式：居中 + 向下滑出 */
+html:not([data-custom-bg="on"]) body.keyboard-open .tabbar {
+  transform: translate(-50%, 100%) !important;
+  pointer-events: none !important;
+}
+
+/* 3. 自定义壁纸模式：原样（无 transform 偏移）+ 向下滑出 */
+html[data-custom-bg="on"] body.keyboard-open .tabbar {
+  transform: translateY(100%) !important;
+  pointer-events: none !important;
+}
+
+
+
+
+/* === 终极防误触：彻底切断 Label 的聚焦关联 === */
+
+/* 
+ * 让所有的 label 标签变成纯粹的文本，不再拦截点击事件。
+ * 这样点击“金额”、“备注”这些文字，鼠标/手指会直接穿透，
+ * 浏览器也就不会触发 input 的自动聚焦了。
+ */
+.field__label,
+.modal__label {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* 顺便把输入框外围可能的透明 padding 收敛一下，让视觉和热区完全一致 */
+.amount {
+  padding: 6px 12px 6px 14px !important;
+}
+.amount__input {
+  padding: 4px 0 !important;
+}
+

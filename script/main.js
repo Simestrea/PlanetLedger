@@ -857,7 +857,8 @@ const App = {
     splitInput.value = '';
     noteInput.value = '';
     this.updateIncomeAmountPreview();
-    amountInput.focus();
+    // 移除 amountInput.focus() 防止键盘弹起
+    if (document.activeElement) document.activeElement.blur();
 
     if (month !== this.currentMonth) {
       this.currentMonth = month;
@@ -1485,7 +1486,8 @@ const App = {
     splitInput.value = '';
     noteInput.value = '';
     this.updateAmountPreview();
-    amountInput.focus();
+    // 移除 amountInput.focus() 防止键盘弹起
+    if (document.activeElement) document.activeElement.blur();
     if (month !== this.currentMonth) { this.currentMonth = month; this.setMonthButton(month); }
     UI.renderAll(this.currentMonth);
     const tip = split > 1 ? ('已记 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2) + ' ÷ ' + split + '人）') : '记好啦 ✓';
