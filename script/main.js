@@ -1,6 +1,3 @@
-
-
-
 /* ==========================================================
    日常向运势生成器（大学生校园版）
    ========================================================== */
@@ -84,41 +81,11 @@ function getLuoguFortune() {
   };
 }
 
-
-
 const App = {
   currentMonth: '',
   quickTemplates: [],
 
-  renderQuickActions: function () {
-    const box = document.getElementById('quickActions');
-    if (!box) return;
-
-    let html = this.quickTemplates.map(function (t) {
-      return '<div class="quick-chip" data-qid="' + t.id + '">' +
-        '<span>' + UI.escapeHtml(t.name) + '</span>' +
-        '<span class="quick-chip__amount">￥' + t.amount + '</span>' +
-      '</div>';
-    }).join('');
-
-    html += '<button class="quick-chip quick-chip--add" id="quickAddBtn" type="button">+ 添加</button>';
-    box.innerHTML = html;
-  },
-
-  initQuickTemplates: function () {
-    this.quickTemplates = Storage.read('slh.quickTemplates.v1', [
-      { id: 'q1', name: '早餐', amount: 5, categoryId: 'food', note: '早餐' },
-      { id: 'q2', name: '午餐', amount: 15, categoryId: 'food', note: '午餐' },
-      { id: 'q3', name: '公交', amount: 2, categoryId: 'transport', note: '公交' }
-    ]);
-    this.renderQuickActions();
-  },
-
-
-  /* ==========================================================
-     主题系统（20 Pantone + 自定义图片）
-     ========================================================== */
-    themeList: [
+  themeList: [
     { key: 'greenery', name: '草木绿', primary: '#88B04B', light: '#A8C878', dark: '#6A8F32', bg: '#F4F8EC', card: '#FCFEF8', surface: '#E5F0D2', border: '#D4E5BA' },
     { key: 'periwinkle', name: '长春花蓝', primary: '#6667AB', light: '#8A8BC7', dark: '#4F5090', bg: '#F2F2F7', card: '#FDFDFF', surface: '#E9E9F2', border: '#DDDEF0' },
     { key: 'magenta', name: '洋红万岁', primary: '#BE3455', light: '#D66580', dark: '#9A2844', bg: '#F8EFF2', card: '#FEFCFD', surface: '#EFDDE4', border: '#E8C9D2' },
@@ -142,6 +109,301 @@ const App = {
     { key: 'red1', name: '脉冲红', primary: '#EB0029', light: '#FF3C5C', dark: '#B3001F', bg: '#FFF5F6', card: '#FFFEFC', surface: '#F7E6E9', border: '#F0D1D9' }
   ],
 
+  renderQuickActions: function () {
+    const box = document.getElementById('quickActions');
+    if (!box) return;
+    let html = this.quickTemplates.map(function (t) {
+      const defaultAmt = t.amounts && t.amounts.length > 0 ? t.amounts[0] : (t.amount || 0);
+      return '<div class="quick-chip" data-qid="' + t.id + '">' +
+        '<span>' + UI.escapeHtml(t.name) + '</span>' +
+        '<span class="quick-chip__amount">￥' + defaultAmt + '</span>' +
+      '</div>';
+    }).join('');
+    html += '<button class="quick-chip quick-chip--add" id="quickAddBtn" type="button">+ 添加</button>';
+    box.innerHTML = html;
+  },
+
+  initQuickTemplates: function () {
+    this.quickTemplates = Storage.read('slh.quickTemplates.v1', [
+      { id: 'q1', name: '早餐', amounts: [5, 8, 10], categoryId: 'food', note: '早餐' },
+      { id: 'q2', name: '午餐', amounts: [15, 20, 25], categoryId: 'food', note: '午餐' },
+      { id: 'q3', name: '公交', amounts: [2, 3], categoryId: 'transport', note: '公交' }
+    ]);
+    this.quickTemplates.forEach(function(t) {
+      if (!t.amounts) t.amounts = [t.amount || 0];
+      if (t.amount) delete t.amount;
+    });
+    Storage.write('slh.quickTemplates.v1', this.quickTemplates);
+    this.renderQuickActions();
+  },
+
+  showQuickPanel: function (tpl) {
+            const self = this;
+            const amounts = tpl.amounts || [tpl.amount || 0];
+
+            let amountsHtml = amounts.map(function(amt) {
+              return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
+                       '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + amt + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + amt + '</button>' +
+                       '<button class="cat__del quick-amt-del" data-amt="' + amt + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;">×</button>' +
+                     '</div>';
+            }).join('');
+
+            const html = 
+              '<div id="quickAmtList" style="display:flex; flex-wrap:wrap; justify-content:space-between; max-height: 40vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px; margin-bottom:4px;">' + 
+                amountsHtml + 
+              '</div>' +
+              // 【精简】移除中间的自定义金额输入框和“记账”按钮
+              '<div style="display:flex; gap:12px; margin-top:16px;">' +
+                '<button class="btn" id="quickEditBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-text-sub); background:var(--c-surface); border:none;">✏️ 编辑速记</button>' +
+                '<button class="btn" id="quickDelBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-danger); background:color-mix(in srgb, var(--c-danger) 8%, transparent); border:none;">🗑️ 删除速记</button>' +
+              '</div>';
+
+            Modal.open({
+              type: 'none',
+              title: '⚡ ' + UI.escapeHtml(tpl.name),
+              html: html,
+              actions: [{ text: '关闭', value: null }]
+            });
+
+            setTimeout(function() {
+              const bindQuickAmtEvents = function() {
+                document.querySelectorAll('.quick-amt-btn').forEach(function(btn) {
+                  btn.addEventListener('click', function() {
+                    self.saveQuickRecord(tpl, Number(this.dataset.amt));
+                  });
+                });
+
+                document.querySelectorAll('.quick-amt-del').forEach(function(btn) {
+                  btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const amtToDel = Number(this.dataset.amt);
+                    const parentDiv = this.closest('div');
+                    
+                    const doDelete = function() {
+                      tpl.amounts = tpl.amounts.filter(function(a) { return a !== amtToDel; });
+                      if (tpl.amounts.length === 0) tpl.amounts = [0];
+                      Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+                      self.renderQuickActions();
+                      
+                      const amtList = document.getElementById('quickAmtList');
+                      if (amtList) {
+                        amtList.innerHTML = tpl.amounts.map(function(a) {
+                          return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
+                                   '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + a + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + a + '</button>' +
+                                   '<button class="cat__del quick-amt-del" data-amt="' + a + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;">×</button>' +
+                                 '</div>';
+                        }).join('');
+                        bindQuickAmtEvents(); 
+                      }
+                    };
+                    
+                    if (parentDiv && typeof Shatter !== 'undefined') {
+                      Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doDelete);
+                    } else {
+                      doDelete();
+                    }
+                  });
+                });
+              };
+              
+              bindQuickAmtEvents();
+
+              const editBtn = document.getElementById('quickEditBtn');
+              if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                  Modal._close(null);
+                  setTimeout(function() { self.openAddQuickTemplate(tpl); }, 300);
+                });
+              }
+
+              const delBtn = document.getElementById('quickDelBtn');
+              if (delBtn) {
+                delBtn.addEventListener('click', function() {
+                  Modal.confirm({ type: 'warn', title: '删除速记', message: '确定要删除「' + tpl.name + '」吗？', danger: true }).then(function(ok) {
+                    if (ok) {
+                      const chip = document.querySelector('.quick-chip[data-qid="' + tpl.id + '"]');
+                      const doDeleteChip = function() {
+                        self.quickTemplates = self.quickTemplates.filter(function(t) { return t.id !== tpl.id; });
+                        Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+                        self.renderQuickActions();
+                        UI.showToast('速记已删除');
+                      };
+                      
+                      if (chip && typeof Shatter !== 'undefined') {
+                        Shatter.play(chip, { windX: 220, windY: -150 }, doDeleteChip);
+                      } else {
+                        doDeleteChip();
+                      }
+                    } else {
+                      self.showQuickPanel(tpl);
+                    }
+                  });
+                });
+              }
+            }, 100);
+          },
+
+  saveQuickRecord: function(tpl, amt) {
+    Ledger.add({ amount: amt, categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
+    UI.renderAll(this.currentMonth);
+    UI.showToast('已记账 ￥' + amt);
+    Modal._close(null);
+  },
+
+  openAddQuickTemplate: function (editTpl) {
+            const self = this;
+            const isEdit = !!editTpl;
+            
+            let tempAmounts = isEdit && editTpl.amounts ? editTpl.amounts.slice() : [];
+            let tempName = isEdit ? editTpl.name : '';
+            let tempCatId = isEdit ? editTpl.categoryId : Categories.list[0].id;
+            let tempCatName = isEdit ? Categories.get(editTpl.categoryId).name : Categories.list[0].name;
+
+            const renderModal = function() {
+              const nameInput = document.getElementById('qtName');
+              if (nameInput) tempName = nameInput.value.trim();
+              
+              let tagsHtml = tempAmounts.map(function(amt, idx) {
+                return '<div style="position:relative; display:inline-block; margin:4px;">' +
+                         '<div class="btn" style="margin:4px 4px 4px 0; padding:4px 14px; font-size:14px; font-weight:bold; background:rgba(255,255,255,0.4); border-radius:8px; line-height:1.4; box-shadow:none;">￥' + amt + '</div>' +
+                         '<button class="del-temp-amt" data-idx="' + idx + '" type="button" style="position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--c-card); color:var(--c-text-sub); border:1px solid var(--c-border); font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2;">×</button>' +
+                       '</div>';
+              }).join('');
+
+              const html = 
+                '<div style="text-align:left; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">' +
+                  '<div style="margin-bottom:16px;">' +
+                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">名称</label>' +
+                    '<input id="qtName" type="text" class="modal__input" placeholder="消费原因" maxlength="6" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important;" value="' + UI.escapeHtml(tempName) + '">' +
+                  '</div>' +
+                  '<div style="margin-bottom:16px;">' +
+                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">常用金额</label>' +
+                    '<div class="modal__input" style="display:flex; flex-wrap:wrap; align-content: flex-start; height:auto !important; min-height:44px !important; padding:8px 14px !important; max-height: 130px; overflow-y: auto;">' +
+                      tagsHtml +
+                      '<button id="addTempAmtBtn" type="button" style="margin:4px 4px 4px 0; padding:4px 10px; font-size:13px; background:transparent; border:1px dashed var(--c-text-sub); color:var(--c-text-sub); border-radius:8px; line-height:1.4;">+ 添加</button>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div style="margin-bottom:16px;">' +
+                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">选择分类</label>' +
+                    '<div id="qtCatBtn" class="modal__input" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none;">' +
+                      '<span id="qtCatLabel">' + UI.escapeHtml(tempCatName) + '</span>' +
+                      '<span style="font-size:10px; color:var(--c-text-light); opacity:0.8;">▼</span>' +
+                    '</div>' +
+                    '<input type="hidden" id="qtCat" value="' + tempCatId + '">' +
+                  '</div>' +
+                '</div>';
+
+              Modal.open({
+                type: 'info',
+                title: isEdit ? '编辑快捷记账' : '添加快捷记账',
+                html: html,
+                actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
+              }).then(function (res) {
+                if (res === 'save') {
+                  const name = document.getElementById('qtName').value.trim();
+                  const catId = document.getElementById('qtCat').value;
+                  if (!name) { UI.showToast('请填写名称'); return; }
+                  if (tempAmounts.length === 0) { UI.showToast('请至少添加一个金额'); return; }
+                  if (isEdit) {
+                    editTpl.name = name; editTpl.note = name; editTpl.amounts = tempAmounts; editTpl.categoryId = catId;
+                  } else {
+                    self.quickTemplates.push({ id: 'q' + Date.now().toString(36), name: name, amounts: tempAmounts, categoryId: catId, note: name });
+                  }
+                  Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+                  self.renderQuickActions();
+                  UI.showToast(isEdit ? '速记已更新' : '快捷按钮已添加');
+                }
+              });
+
+              setTimeout(function() {
+                document.querySelectorAll('.del-temp-amt').forEach(function(btn) {
+                  btn.addEventListener('click', function() {
+                    const parentDiv = this.closest('div');
+                    const idxToDel = Number(this.dataset.idx);
+                    
+                    const doRefresh = function() {
+                      tempAmounts.splice(idxToDel, 1);
+                      renderModal();
+                    };
+                    
+                    if (parentDiv && typeof Shatter !== 'undefined') {
+                      Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doRefresh);
+                    } else {
+                      doRefresh();
+                    }
+                  });
+                });
+
+                document.getElementById('addTempAmtBtn').addEventListener('click', function() {
+                  tempName = document.getElementById('qtName').value.trim();
+                  tempCatId = document.getElementById('qtCat').value;
+                  tempCatName = document.getElementById('qtCatLabel').textContent;
+
+                  Modal.open({
+                    type: 'info',
+                    title: '添加金额',
+                    html: '<input type="number" id="tempAddAmtInput" class="modal__input" placeholder="输入金额" min="0" step="0.01" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:16px !important; text-align:center;">',
+                    actions: [
+                      { text: '取消', value: null },
+                      { text: '确定', value: 'save', primary: true }
+                    ]
+                  }).then(function(res) {
+                    if (res === 'save') {
+                      const val = document.getElementById('tempAddAmtInput').value;
+                      const newAmt = Number(val);
+                      if (newAmt > 0 && tempAmounts.indexOf(newAmt) === -1) {
+                        tempAmounts.push(newAmt);
+                      }
+                    }
+                    renderModal();
+                  });
+                  setTimeout(function() {
+                    const i = document.getElementById('tempAddAmtInput');
+                    if (i) i.focus();
+                  }, 100);
+                });
+
+                const qtCatBtn = document.getElementById('qtCatBtn');
+                if (qtCatBtn) {
+                  qtCatBtn.addEventListener('click', function() {
+                    tempName = document.getElementById('qtName').value.trim();
+                    
+                    // 【核心统一】将这里替换为与统计页完全一致的 cat-modal 组件
+                    let overlay = document.createElement('div');
+                    overlay.className = 'cat-modal-overlay';
+                    let listHtml = Categories.list.map(function(c) {
+                      const active = tempCatId === c.id ? ' is-active' : '';
+                      return '<button class="cat-modal__item' + active + '" data-id="' + c.id + '" type="button">' +
+                             '<span class="cat-modal__dot" style="background:' + c.color + '"></span>' +
+                             '<span>' + UI.escapeHtml(c.name) + '</span></button>';
+                    }).join('');
+                    overlay.innerHTML = '<div class="cat-modal"><div class="cat-modal__header">选择分类</div><div class="cat-modal__list">' + listHtml + '</div></div>';
+                    document.body.appendChild(overlay);
+                    void overlay.offsetWidth;
+                    overlay.classList.add('is-show');
+                    
+                    const closeCatModal = function() {
+                      overlay.classList.remove('is-show');
+                      setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 250);
+                    };
+                    
+                    overlay.addEventListener('click', function(evt) {
+                      if (evt.target === overlay) { closeCatModal(); return; }
+                      const btn = evt.target.closest('.cat-modal__item');
+                      if (btn) {
+                        tempCatId = btn.dataset.id;
+                        tempCatName = btn.querySelector('span:last-child').textContent;
+                        closeCatModal();
+                        renderModal(); 
+                      }
+                    });
+                  });
+                }
+              }, 100);
+            };
+            renderModal();
+          },
+
   initTheme: function () {
     let name = 'greenery';
     try {
@@ -155,26 +417,21 @@ const App = {
     }
   },
 
-  /* ---------- 智能对比度计算：判断底色是否过浅 ---------- */
   isLightColor: function(hex) {
     if (!hex) return false;
     const h = hex.replace('#', '');
     const r = parseInt(h.slice(0, 2), 16);
     const g = parseInt(h.slice(2, 4), 16);
     const b = parseInt(h.slice(4, 6), 16);
-    // 使用 W3C 感知亮度公式
     const lum = (r * 299 + g * 587 + b * 114) / 1000;
-    return lum > 185; // 如果亮度大于 185，视为极浅色
+    return lum > 185;
   },
 
   applyTheme: function (name, showToast) {
     const html = document.documentElement;
-
-    /* 清掉自定义主题注入的内联变量，否则会覆盖主题 */
     this.clearInlineVars();
     html.classList.remove('light-theme-active');
 
-    /* 强制所有主题（包括长春花蓝）都挂载 data-theme 属性 */
     if (name) {
       html.setAttribute('data-theme', name);
     } else {
@@ -182,25 +439,15 @@ const App = {
       name = 'greenery';
     }
 
-    /* 智能对比度：根据【主色】判断顶栏是否需要深色文字 */
     if (name !== 'custom') {
       const theme = this.themeList.find(function(t) { return t.key === name; });
-      
-      // 如果主色偏亮（例如沙色、柔和桃），顶栏需要改成深色文字
       if (theme && this.isLightColor(theme.primary)) {
         html.classList.add('light-theme-active');
-        
-        // 提取主色，按比例压暗，生成同色系高级深色
         if (typeof this.hexToRgb === 'function' && typeof this.rgbToHex === 'function') {
           const rgb = this.hexToRgb(theme.primary);
-          
-          // 主文字：亮度降到 45%（深咖色，清晰且有质感）
           const darkText = this.rgbToHex(rgb[0]*0.45, rgb[1]*0.45, rgb[2]*0.45);
-          // 副文字：亮度降到 62%
           const subText  = this.rgbToHex(rgb[0]*0.62, rgb[1]*0.62, rgb[2]*0.62);
-          // 浅文字：亮度降到 78%
           const lightText= this.rgbToHex(rgb[0]*0.78, rgb[1]*0.78, rgb[2]*0.78);
-          
           html.style.setProperty('--c-text', darkText);
           html.style.setProperty('--c-text-sub', subText);
           html.style.setProperty('--c-text-light', lightText);
@@ -210,26 +457,18 @@ const App = {
           html.style.setProperty('--c-text-light', '#8A8A8A');
         }
       } else {
-        // 如果主色偏暗（如紫外光、经典蓝），保持顶栏白字，清理内联覆盖
         html.classList.remove('light-theme-active');
       }
     } else {
       html.classList.remove('light-theme-active');
     }
 
-    try {
-      localStorage.setItem('slh.theme.v1', name);
-    } catch (e) {}
-
-    /* 自定义背景去掉 */
+    try { localStorage.setItem('slh.theme.v1', name); } catch (e) {}
     html.removeAttribute('data-custom-bg');
     html.style.removeProperty('--custom-bg-url');
-
     this.updateThemeSelection(name);
 
-    if (showToast !== false && typeof UI !== 'undefined') {
-      UI.showToast('已切换主题');
-    }
+    if (showToast !== false && typeof UI !== 'undefined') UI.showToast('已切换主题');
     this.updateStatusBarColor();
   },
 
@@ -251,9 +490,6 @@ const App = {
     } catch (e) {}
   },
 
-  /* ==========================================================
-     玻璃样式切换
-     ========================================================== */
   applyGlassMode: function (mode) {
     const html = document.documentElement;
     if (mode === 'clear') {
@@ -262,26 +498,18 @@ const App = {
       html.removeAttribute('data-glass-mode');
       mode = 'frosted';
     }
-    try {
-      localStorage.setItem('slh.glassMode.v1', mode);
-    } catch (e) {}
-
+    try { localStorage.setItem('slh.glassMode.v1', mode); } catch (e) {}
     const grid = document.getElementById('glassMode');
     if (grid) {
-      Array.prototype.forEach.call(
-        grid.querySelectorAll('.glass-mode__btn'),
-        function (btn) {
-          btn.classList.toggle('is-active', btn.dataset.mode === mode);
-        }
-      );
+      Array.prototype.forEach.call(grid.querySelectorAll('.glass-mode__btn'), function (btn) {
+        btn.classList.toggle('is-active', btn.dataset.mode === mode);
+      });
     }
   },
 
   initGlassMode: function () {
     let mode = 'frosted';
-    try {
-      mode = localStorage.getItem('slh.glassMode.v1') || 'frosted';
-    } catch (e) {}
+    try { mode = localStorage.getItem('slh.glassMode.v1') || 'frosted'; } catch (e) {}
     this.applyGlassMode(mode);
   },
 
@@ -291,8 +519,7 @@ const App = {
       '--c-bg', '--c-card', '--c-surface', '--c-border',
       '--c-text', '--c-text-sub', '--c-text-light',
       '--c-shadow-sm', '--c-shadow', '--c-shadow-lg',
-      '--c-danger', '--c-success', '--c-warning',
-      '--custom-bg-url'
+      '--c-danger', '--c-success', '--c-warning', '--custom-bg-url'
     ];
     const style = document.documentElement.style;
     vars.forEach(function (v) { style.removeProperty(v); });
@@ -300,24 +527,14 @@ const App = {
 
   applyCustomTheme: function (showToast) {
     let data = null;
-    try {
-      data = JSON.parse(localStorage.getItem('slh.customTheme.v1') || 'null');
-    } catch (e) {}
-
+    try { data = JSON.parse(localStorage.getItem('slh.customTheme.v1') || 'null'); } catch (e) {}
     if (!data || !data.primary) {
-      if (typeof UI !== 'undefined' && showToast) {
-        UI.showToast('请先上传背景图片');
-      }
+      if (typeof UI !== 'undefined' && showToast) UI.showToast('请先上传背景图片');
       return;
     }
-
     const html = document.documentElement;
     const vars = data;
-    const set = function (k, v) {
-      if (v) html.style.setProperty(k, v);
-    };
-
-    // 将 Hex 转为 RGB 格式，用于半透明背景
+    const set = function (k, v) { if (v) html.style.setProperty(k, v); };
     const hexToRgbStr = function (hex) {
       const h = hex.replace('#', '');
       const r = parseInt(h.slice(0, 2), 16) || 110;
@@ -325,7 +542,6 @@ const App = {
       const b = parseInt(h.slice(4, 6), 16) || 150;
       return r + ', ' + g + ', ' + b;
     };
-
     set('--c-primary', vars.primary);
     set('--c-primary-light', vars.light);
     set('--c-primary-rgb', hexToRgbStr(vars.primary));
@@ -334,10 +550,7 @@ const App = {
     set('--c-card', vars.card);
     set('--c-surface', vars.surface);
     set('--c-border', vars.border);
-    // 清理浅色主题可能残留的类，防止顶栏被强制黑字
     html.classList.remove('light-theme-active');
-
-    // 对卡片内的文字，同样使用壁纸提取的主色压暗，生成高级深色
     if (typeof this.hexToRgb === 'function' && typeof this.rgbToHex === 'function') {
       const rgb = this.hexToRgb(vars.primary);
       set('--c-text', this.rgbToHex(rgb[0]*0.45, rgb[1]*0.45, rgb[2]*0.45));
@@ -354,10 +567,7 @@ const App = {
     set('--c-danger', '#A85E52');
     set('--c-success', '#5C7A6A');
     set('--c-warning', '#B5822E');
-
     html.setAttribute('data-theme', 'custom');
-
-    /* 背景图 */
     try {
       const bg = localStorage.getItem('slh.customBg.v1');
       if (bg) {
@@ -365,33 +575,20 @@ const App = {
         html.setAttribute('data-custom-bg', 'on');
       }
     } catch (e) {}
-
-    try {
-      localStorage.setItem('slh.theme.v1', 'custom');
-    } catch (e) {}
-
+    try { localStorage.setItem('slh.theme.v1', 'custom'); } catch (e) {}
     this.updateThemeSelection('custom');
-
-    if (showToast !== false && typeof UI !== 'undefined') {
-      UI.showToast('已应用自定义主题');
-    }
+    if (showToast !== false && typeof UI !== 'undefined') UI.showToast('已应用自定义主题');
     this.updateStatusBarColor();
   },
 
   updateThemeSelection: function (name) {
     const grid = document.getElementById('themeGrid');
     if (!grid) return;
-    Array.prototype.forEach.call(
-      grid.querySelectorAll('.theme-item'),
-      function (btn) {
-        btn.classList.toggle('is-active', btn.dataset.theme === name);
-      }
-    );
+    Array.prototype.forEach.call(grid.querySelectorAll('.theme-item'), function (btn) {
+      btn.classList.toggle('is-active', btn.dataset.theme === name);
+    });
   },
 
-  /* ---------- 图片处理 ---------- */
-
-  /* 压缩图片为 base64（最长边 1280px，JPEG 0.78） */
   compressImage: function (file, maxSide, quality) {
     return new Promise(function (resolve, reject) {
       const reader = new FileReader();
@@ -406,16 +603,9 @@ const App = {
           h = Math.round(h * scale);
           canvas.width = w;
           canvas.height = h;
-
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-
-          resolve({
-            dataUrl: canvas.toDataURL('image/jpeg', quality),
-            canvas: canvas,
-            width: w,
-            height: h,
-          });
+          resolve({ dataUrl: canvas.toDataURL('image/jpeg', quality), canvas: canvas, width: w, height: h });
         };
         img.onerror = reject;
         img.src = e.target.result;
@@ -425,89 +615,49 @@ const App = {
     });
   },
 
-  /* 从 canvas 提取主色（简单但效果好） */
   extractColors: function (canvas) {
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
-
-    /* 缩到 60x60 加速 */
-    const small = document.createElement('canvas');
-    small.width = 60;
-    small.height = 60;
-    const sctx = small.getContext('2d');
+    const sctx = document.createElement('canvas').getContext('2d');
+    sctx.canvas.width = 60;
+    sctx.canvas.height = 60;
     sctx.drawImage(canvas, 0, 0, 60, 60);
-
     const data = sctx.getImageData(0, 0, 60, 60).data;
-
-    /* 按色相桶统计 */
     const buckets = {};
     let rSum = 0, gSum = 0, bSum = 0, count = 0;
-
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
       if (a < 128) continue;
-
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
       const l = (max + min) / 2 / 255;
       const s = max === min ? 0 : (max - min) / (255 - Math.abs(max + min - 255));
-
-      /* 过滤太暗 / 太亮 / 太灰 */
-      if (l < 0.15 || l > 0.92) continue;
-      if (s < 0.12) continue;
-
+      if (l < 0.15 || l > 0.92 || s < 0.12) continue;
       let hue = 0;
       const d = max - min;
-      if (d === 0) hue = 0;
-      else if (max === r) hue = ((g - b) / d) % 6;
-      else if (max === g) hue = (b - r) / d + 2;
-      else hue = (r - g) / d + 4;
-      hue = Math.round(hue * 60);
-      if (hue < 0) hue += 360;
-
-      /* 12 个色相桶 */
-      const bucket = Math.floor(hue / 30);
-      const key = bucket;
-
+      if (d !== 0) {
+        if (max === r) hue = ((g - b) / d) % 6;
+        else if (max === g) hue = (b - r) / d + 2;
+        else hue = (r - g) / d + 4;
+        hue = Math.round(hue * 60);
+        if (hue < 0) hue += 360;
+      }
+      const key = Math.floor(hue / 30);
       if (!buckets[key]) buckets[key] = { r: 0, g: 0, b: 0, n: 0, sSum: 0 };
-      buckets[key].r += r;
-      buckets[key].g += g;
-      buckets[key].b += b;
-      buckets[key].n++;
-      buckets[key].sSum += s;
-
+      buckets[key].r += r; buckets[key].g += g; buckets[key].b += b; buckets[key].n++; buckets[key].sSum += s;
       rSum += r; gSum += g; bSum += b; count++;
     }
-
     if (count === 0) {
-      /* 全灰图：降级用平均色 */
       const r = Math.round(rSum / Math.max(1, count)) || 128;
       const g = Math.round(gSum / Math.max(1, count)) || 128;
       const b = Math.round(bSum / Math.max(1, count)) || 128;
       return { primary: this.rgbToHex(r, g, b), avg: [r, g, b] };
     }
-
-    /* 挑平均饱和度最高 + 像素最多的桶 */
-    let best = null;
-    let bestScore = -1;
+    let best = null, bestScore = -1;
     Object.keys(buckets).forEach(function (k) {
       const b = buckets[k];
       const score = (b.sSum / b.n) * Math.log(b.n + 1);
-      if (score > bestScore) {
-        bestScore = score;
-        best = b;
-      }
+      if (score > bestScore) { bestScore = score; best = b; }
     });
-
-    const r = Math.round(best.r / best.n);
-    const g = Math.round(best.g / best.n);
-    const b = Math.round(best.b / best.n);
-
-    return {
-      primary: this.rgbToHex(r, g, b),
-      avg: [r, g, b],
-    };
+    const r = Math.round(best.r / best.n), g = Math.round(best.g / best.n), b = Math.round(best.b / best.n);
+    return { primary: this.rgbToHex(r, g, b), avg: [r, g, b] };
   },
 
   rgbToHex: function (r, g, b) {
@@ -520,24 +670,15 @@ const App = {
 
   hexToRgb: function (hex) {
     const h = hex.replace('#', '');
-    return [
-      parseInt(h.slice(0, 2), 16),
-      parseInt(h.slice(2, 4), 16),
-      parseInt(h.slice(4, 6), 16),
-    ];
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
   },
 
   mix: function (c1, c2, t) {
     const a = this.hexToRgb(c1);
     const b = this.hexToRgb(c2);
-    return this.rgbToHex(
-      a[0] + (b[0] - a[0]) * t,
-      a[1] + (b[1] - a[1]) * t,
-      a[2] + (b[2] - a[2]) * t,
-    );
+    return this.rgbToHex(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t);
   },
 
-  /* 根据主色生成一整套主题变量 */
   buildThemeFromColor: function (primary) {
     return {
       primary: primary,
@@ -552,33 +693,23 @@ const App = {
 
   handleCustomBg: async function (file) {
     if (!file) return;
-
     if (typeof UI !== 'undefined') UI.showToast('正在处理图片…');
-
     try {
       const compressed = await this.compressImage(file, 1280, 0.78);
       const colors = this.extractColors(compressed.canvas);
-
       const theme = this.buildThemeFromColor(colors.primary);
-
-      /* 存图片和主题 */
       try {
         localStorage.setItem('slh.customBg.v1', compressed.dataUrl);
         localStorage.setItem('slh.customTheme.v1', JSON.stringify(theme));
       } catch (e) {
-        if (typeof UI !== 'undefined') {
-          UI.showToast('图片太大，存储失败，试试小一点的');
-        }
+        if (typeof UI !== 'undefined') UI.showToast('图片太大，存储失败，试试小一点的');
         return;
       }
-
-      /* 更新预览缩略图 */
       const preview = document.getElementById('customPreview');
       if (preview) {
         preview.style.backgroundImage = 'url(' + compressed.dataUrl + ')';
         preview.style.setProperty('--p', theme.primary);
       }
-
       this.applyCustomTheme();
     } catch (err) {
       console.error(err);
@@ -592,49 +723,35 @@ const App = {
       localStorage.removeItem('slh.customTheme.v1');
       localStorage.setItem('slh.theme.v1', 'greenery');
     } catch (e) {}
-
     const html = document.documentElement;
     html.removeAttribute('data-custom-bg');
     html.removeAttribute('data-theme');
     html.style.removeProperty('--custom-bg-url');
-
-    /* 清掉运行时注入的变量 */
     const vars = ['--c-primary', '--c-primary-light', '--c-primary-dark',
                   '--c-bg', '--c-card', '--c-surface', '--c-border',
                   '--c-text', '--c-text-sub', '--c-text-light',
                   '--c-shadow-sm', '--c-shadow', '--c-shadow-lg',
                   '--c-danger', '--c-success', '--c-warning'];
     vars.forEach(function (v) { html.style.removeProperty(v); });
-
     const preview = document.getElementById('customPreview');
     if (preview) {
       preview.style.backgroundImage = '';
       preview.style.removeProperty('--p');
     }
-
     this.updateThemeSelection('greenery');
     if (typeof UI !== 'undefined') UI.showToast('已清除自定义背景');
-
-    // ★ 核心修复：重新应用默认主题，恢复状态栏和原生颜色
     this.applyTheme('greenery', false);
   },
 
-  /* 启动时恢复自定义预览 */
   restoreCustomPreview: function () {
     try {
       const bg = localStorage.getItem('slh.customBg.v1');
       const custom = JSON.parse(localStorage.getItem('slh.customTheme.v1') || 'null');
       const preview = document.getElementById('customPreview');
-      if (bg && preview) {
-        preview.style.backgroundImage = 'url(' + bg + ')';
-      }
-      if (custom && custom.primary && preview) {
-        preview.style.setProperty('--p', custom.primary);
-      }
+      if (bg && preview) preview.style.backgroundImage = 'url(' + bg + ')';
+      if (custom && custom.primary && preview) preview.style.setProperty('--p', custom.primary);
     } catch (e) {}
   },
-
-  
 
   init: function () {
     Categories.init();
@@ -643,15 +760,12 @@ const App = {
     Calendar.init();
     Modal.init();
     UI.init();
-
     this.initTheme();
     this.initGlassMode();
     this.currentMonth = Ledger.todayMonth();
     this.setMonthButton(this.currentMonth);
     this.setDateButton(Ledger.today());
     this.setIncomeDateButton(Ledger.today());
-    
-
     UI.renderAll(this.currentMonth);
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
@@ -679,28 +793,20 @@ const App = {
     const splitInput = splitEl || UI.els.splitInput;
     const preview = previewEl || UI.els.amountPreview;
     if (!amountInput || !preview) return;
-
     const raw = Number(amountInput.value);
     const split = UI.getSplitCount(splitInput);
-
     if (!raw || raw <= 0 || split <= 1) {
       preview.hidden = true;
       preview.textContent = '';
       return;
     }
-
     const per = Math.round((raw / split) * 100) / 100;
     preview.hidden = false;
-    preview.innerHTML = '￥' + raw.toFixed(2) + ' ÷ ' + split
-                      + ' 人 = 实记 <strong>￥' + per.toFixed(2) + '</strong>';
+    preview.innerHTML = '￥' + raw.toFixed(2) + ' ÷ ' + split + ' 人 = 实记 <strong>￥' + per.toFixed(2) + '</strong>';
   },
 
   updateIncomeAmountPreview: function () {
-    this.updateAmountPreview(
-      UI.els.incomeAmountInput,
-      UI.els.incomeSplitInput,
-      UI.els.incomeAmountPreview
-    );
+    this.updateAmountPreview(UI.els.incomeAmountInput, UI.els.incomeSplitInput, UI.els.incomeAmountPreview);
   },
 
   setIncomeDateButton: function (date) {
@@ -738,23 +844,13 @@ const App = {
       UI.showToast('请先选择收入来源');
       return;
     }
-
-    const _valid = IncomeCategories.list.some(function (c) {
-      return c.id === categoryId;
-    });
+    const _valid = IncomeCategories.list.some(function (c) { return c.id === categoryId; });
     if (!_valid) {
       UI.showToast('收入来源无效，请重新选择');
       return;
     }
 
-    Ledger.add({
-      type: 'income',
-      amount: amount,
-      categoryId: categoryId,
-      note: noteInput.value || '',
-      date: date,
-    });
-
+    Ledger.add({ type: 'income', amount: amount, categoryId: categoryId, note: noteInput.value || '', date: date });
     amountInput.value = '';
     splitInput.value = '';
     noteInput.value = '';
@@ -765,25 +861,16 @@ const App = {
       this.currentMonth = month;
       this.setMonthButton(month);
     }
-
     UI.renderAll(this.currentMonth);
-
-    const tip = split > 1
-      ? ('已记收入 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2)
-         + ' ÷ ' + split + '人）')
-      : '收入记好啦 ✓';
+    const tip = split > 1 ? ('已记收入 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2) + ' ÷ ' + split + '人）') : '收入记好啦 ✓';
     UI.showToast(tip);
   },
 
   openBudgetModal: function () {
     const currentBudget = Ledger.getBudget(this.currentMonth);
-    
-    // 生成分类列表 HTML
     let catHtml = '';
     Categories.list.forEach(function(c) {
       const limit = c.limit || '';
-      
-      // 去掉了外层的背景卡片，改成纯文本行
       catHtml += 
         '<div class="budget-cat-item">' +
           '<div class="budget-cat-left">' +
@@ -796,7 +883,6 @@ const App = {
           '</div>' +
         '</div>';
     });
-
     const html = 
       '<div style="text-align:left; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">' +
         '<div style="margin-bottom: 24px;">' +
@@ -806,85 +892,46 @@ const App = {
             '<input type="number" id="modalBudgetInput" style="flex:1;padding:14px 0 14px 8px;font-size:20px;font-weight:700;background:transparent;border:none;outline:none;color:var(--c-text);" value="' + (currentBudget > 0 ? currentBudget : '') + '" placeholder="输入总预算">' +
           '</div>' +
         '</div>' +
-        
         '<label style="font-size:13px;font-weight:600;color:var(--c-text-sub);display:block;margin-bottom:8px;">分类单独限额（可选）</label>' +
         '<div class="budget-cat-list">' + catHtml + '</div>' +
       '</div>';
-
     Modal.open({
-      type: 'none',
-      title: '🎯 预算设置',
-      html: html,
-      actions: [
-        { text: '取消', value: null },
-        { text: '保存', value: 'save', primary: true }
-      ]
+      type: 'none', title: '🎯 预算设置', html: html,
+      actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
     }).then(function(res) {
       if (res === 'save') {
-        // 1. 保存总预算
         const totalInput = document.getElementById('modalBudgetInput').value;
         const total = Number(totalInput);
-        if (total > 0) {
-          Ledger.setBudget(App.currentMonth, total);
-        } else {
-          Ledger.setBudget(App.currentMonth, 0);
-        }
-
-        // 2. 保存分类预算
+        if (total > 0) Ledger.setBudget(App.currentMonth, total);
+        else Ledger.setBudget(App.currentMonth, 0);
         document.querySelectorAll('.cat-limit-input').forEach(function(input) {
-          const catId = input.dataset.cat;
-          const val = Number(input.value);
-          Categories.setLimit(catId, val > 0 ? val : 0);
+          Categories.setLimit(input.dataset.cat, Number(input.value) > 0 ? Number(input.value) : 0);
         });
-
-        // 3. 重新渲染
         UI.renderAll(App.currentMonth);
         UI.showToast('预算设置已保存');
       }
     });
   },
 
-  /* ==========================================================
-     数据备份与恢复
-     ========================================================== */
   exportData: function () {
     const data = {};
-    // 严格白名单：只导出纯数据，不包含任何主题、背景等外观配置
-    const allowedKeys = [
-      'slh.records.v1',
-      'slh.budgets.v1',
-      'slh.categories.v1',
-      'slh.checkin.v1'
-    ];
-    
+    const allowedKeys = ['slh.records.v1', 'slh.budgets.v1', 'slh.categories.v1', 'slh.checkin.v1'];
     allowedKeys.forEach(key => {
       const val = localStorage.getItem(key);
-      if (val !== null) {
-        data[key] = val;
-      }
+      if (val !== null) data[key] = val;
     });
-    
-    if (Object.keys(data).length === 0) {
-      UI.showToast('没有可导出的数据');
-      return;
-    }
-
+    if (Object.keys(data).length === 0) { UI.showToast('没有可导出的数据'); return; }
     const jsonStr = JSON.stringify(data, null, 2);
-    
     const now = new Date();
     const pad = function(n) { return String(n).padStart(2, '0'); };
     const dateStr = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
     const timeStr = pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
-    const filename = `有序星球_备份_${dateStr}_${timeStr}.json`;
-
-    // 如果是安卓环境，调用原生下载
+    const filename = '有序星球_备份_' + dateStr + '_' + timeStr + '.json';
     if (window.Android && typeof window.Android.downloadFile === 'function') {
       window.Android.downloadFile(filename, jsonStr);
       UI.showToast('备份文件已保存到下载目录');
       return;
     }
-
-    // 如果是浏览器环境，使用传统 Blob 下载兜底
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -899,36 +946,27 @@ const App = {
 
   importData: async function (file) {
     const reader = new FileReader();
-    
     reader.onload = async function (e) {
       try {
         const content = e.target.result;
         const data = JSON.parse(content);
-        
         if (typeof data !== 'object' || data === null) throw new Error('格式错误');
 
-        /* ---------- 1. 合并分类 ---------- */
         const importedCatsStr = data['slh.categories.v1'];
         let newCatsCount = 0;
         if (importedCatsStr) {
           const importedCats = JSON.parse(importedCatsStr);
           const existingCatNames = new Set(Categories.list.map(c => c.name));
-          
           importedCats.forEach(c => {
-            // 如果本地没有同名分类，就加进去
             if (!existingCatNames.has(c.name)) {
               Categories.list.push(c);
               existingCatNames.add(c.name);
               newCatsCount++;
             }
           });
-          if (newCatsCount > 0) {
-            Categories.reorder();
-            Categories.save();
-          }
+          if (newCatsCount > 0) { Categories.reorder(); Categories.save(); }
         }
 
-        /* ---------- 2. 合并预算 ---------- */
         const importedBudgetsStr = data['slh.budgets.v1'];
         if (importedBudgetsStr) {
           const importedBudgets = JSON.parse(importedBudgetsStr);
@@ -936,197 +974,106 @@ const App = {
           Storage.write(CONFIG.budgetKey, Ledger.budgets);
         }
 
-        /* ---------- 3. 合并账单（智能去重） ---------- */
         const importedRecordsStr = data['slh.records.v1'];
         let addedCount = 0;
         let duplicateList = [];
-
         if (importedRecordsStr) {
           const importedRecords = JSON.parse(importedRecordsStr);
-          
-          // 建立本地现有记录的“签名库”用于查重
-          // 签名 = 时间戳 + 金额 + 分类ID + 备注
           const existingSignatures = new Set();
-          Ledger.records.forEach(r => {
-            existingSignatures.add(`${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`);
-          });
-
+          Ledger.records.forEach(r => existingSignatures.add(`${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`));
           importedRecords.forEach(r => {
             const sig = `${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`;
-            
-            if (existingSignatures.has(sig)) {
-              // 发现重复
-              duplicateList.push(r);
-            } else {
-              // 全新记录，加入本地数组
-              Ledger.records.push(r);
-              existingSignatures.add(sig);
-              addedCount++;
-            }
+            if (existingSignatures.has(sig)) duplicateList.push(r);
+            else { Ledger.records.push(r); existingSignatures.add(sig); addedCount++; }
           });
-          
-          if (addedCount > 0) {
-            Ledger.saveRecords();
-          }
+          if (addedCount > 0) Ledger.saveRecords();
         }
 
-        /* ---------- 4. 生成结果提示 ---------- */
         let msgHtml = `<div style="text-align:center;">`;
         msgHtml += `<p style="margin-bottom:12px;font-size:15px;">成功导入 <strong>${addedCount}</strong> 笔新记录。</p>`;
-        if (newCatsCount > 0) {
-          msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newCatsCount}</strong> 个分类。</p>`;
-        }
-
+        if (newCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newCatsCount}</strong> 个分类。</p>`;
         if (duplicateList.length > 0) {
           msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);margin-top:8px;">已自动跳过 <strong>${duplicateList.length}</strong> 笔重复记录。</p>`;
-          
-          // 列出前 5 笔重复记录
           msgHtml += `<div style="margin-top:12px; text-align:left; font-size:12px; max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; color:var(--c-text-sub);">`;
           msgHtml += `<strong style="color:var(--c-text);">重复项清单：</strong><br>`;
-          
           duplicateList.slice(0, 5).forEach(r => {
             const cat = Categories.get(r.categoryId);
             const time = new Date(r.createdAt);
             const pad = function(n){ return String(n).padStart(2,'0'); };
             const timeStr = pad(time.getHours()) + ':' + pad(time.getMinutes()) + ':' + pad(time.getSeconds());
             const noteStr = r.note ? ' · ' + UI.escapeHtml(r.note) : '';
-            
-            msgHtml += `<div style="padding:4px 0; border-bottom:1px dashed rgba(0,0,0,0.05);">
-              • ${UI.escapeHtml(cat.name)} ￥${r.amount.toFixed(2)}${noteStr} (${timeStr})
-            </div>`;
+            msgHtml += `<div style="padding:4px 0; border-bottom:1px dashed rgba(0,0,0,0.05);">• ${UI.escapeHtml(cat.name)} ￥${r.amount.toFixed(2)}${noteStr} (${timeStr})</div>`;
           });
-          
-          if (duplicateList.length > 5) {
-            msgHtml += `<div style="text-align:center; margin-top:6px;">...等共 ${duplicateList.length} 笔</div>`;
-          }
+          if (duplicateList.length > 5) msgHtml += `<div style="text-align:center; margin-top:6px;">...等共 ${duplicateList.length} 笔</div>`;
           msgHtml += `</div>`;
         }
         msgHtml += `</div>`;
 
-        Modal.alert({
-          type: 'success',
-          title: '导入完成',
-          html: msgHtml,
-          buttonText: '太棒了'
-        }).then(() => {
-          // 点击确定后刷新页面，让新数据渲染出来
-          window.location.reload();
-        });
-
+        Modal.alert({ type: 'success', title: '导入完成', html: msgHtml, buttonText: '太棒了' }).then(() => { window.location.reload(); });
       } catch (err) {
         console.error(err);
-        Modal.alert({
-          type: 'danger',
-          title: '导入失败',
-          message: '文件格式不正确或已损坏，请确保选择了正确的备份文件。'
-        });
+        Modal.alert({ type: 'danger', title: '导入失败', message: '文件格式不正确或已损坏，请确保选择了正确的备份文件。' });
       }
     };
-    
     reader.readAsText(file);
   },
 
   handleSavings: async function (isDeposit) {
     const amountEl = UI.els.savingsAmount;
     const noteEl = UI.els.savingsNote;
-    
     const amount = Number(amountEl.value);
-    if (!amount || amount <= 0) {
-      UI.showToast('请输入金额');
-      amountEl.focus();
-      return;
-    }
-
+    if (!amount || amount <= 0) { UI.showToast('请输入金额'); amountEl.focus(); return; }
     if (!isDeposit) {
       const currentTotal = Ledger.getSavingsTotal();
-      if (amount > currentTotal) {
-        Modal.alert({ type: 'warn', title: '余额不足', message: '小金库里没有那么多钱哦～' });
-        return;
-      }
+      if (amount > currentTotal) { Modal.alert({ type: 'warn', title: '余额不足', message: '小金库里没有那么多钱哦～' }); return; }
     }
-
     const finalAmount = isDeposit ? amount : -amount;
     const note = noteEl.value || '';
-
     Ledger.addSavings(finalAmount, note);
-    
-    // 清空表单
     amountEl.value = '';
     noteEl.value = '';
-    
-    // 更新 UI
     UI.renderSavings();
     UI.showToast(isDeposit ? '存入成功！' : '取出成功！');
   },
 
   bindEvents: function () {
     const self = this;
-
     UI.els.tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
-        UI.els.tabs.forEach(function (t) {
-          t.classList.toggle('is-active', t === tab);
-        });
-        UI.els.pages.forEach(function (page) {
-          page.classList.toggle('is-active', page.id === tab.dataset.page);
-        });
-        
-        // 切换顶栏显示
+        UI.els.tabs.forEach(function (t) { t.classList.toggle('is-active', t === tab); });
+        UI.els.pages.forEach(function (page) { page.classList.toggle('is-active', page.id === tab.dataset.page); });
         UI.updateHeader(self.currentMonth);
-        
         UI.updateTabbarThumb();
-        requestAnimationFrame(function () {
-          UI.updateSegThumb();
-          UI.updateChartTabsThumb();
-        });
+        requestAnimationFrame(function () { UI.updateSegThumb(); UI.updateChartTabsThumb(); });
       });
     });
 
     UI.els.monthPicker.addEventListener('click', function () {
-      if (Calendar.isOpen) {
-        Calendar.close();
-        return;
-      }
-      Calendar.open(
-        UI.els.monthPicker, 'month',
-        UI.els.monthPicker.dataset.value || self.currentMonth,
-        function (month) {
-          self.currentMonth = month;
-          self.setMonthButton(month);
-          const b = Ledger.getBudget(month);
-          
-          UI.renderAll(month);
-        }
-      );
+      if (Calendar.isOpen) { Calendar.close(); return; }
+      Calendar.open(UI.els.monthPicker, 'month', UI.els.monthPicker.dataset.value || self.currentMonth, function (month) {
+        self.currentMonth = month;
+        self.setMonthButton(month);
+        UI.renderAll(month);
+      });
     });
 
     UI.els.dateInput.addEventListener('click', function () {
-      if (Calendar.isOpen && Calendar.triggerEl === UI.els.dateInput) {
-        Calendar.close();
-        return;
-      }
-      Calendar.open(
-        UI.els.dateInput, 'date',
-        UI.els.dateInput.dataset.value || Ledger.today(),
-        function (date) { self.setDateButton(date); }
-      );
+      if (Calendar.isOpen && Calendar.triggerEl === UI.els.dateInput) { Calendar.close(); return; }
+      Calendar.open(UI.els.dateInput, 'date', UI.els.dateInput.dataset.value || Ledger.today(), function (date) { self.setDateButton(date); });
     });
 
     UI.els.catGrid.addEventListener('click', function (e) {
       const delBtn = e.target.closest('[data-cat-del]');
-      if (delBtn) {
-        e.stopPropagation();
-        self.removeCategory(delBtn.dataset.catDel);
-        return;
-      }
+      if (delBtn) { e.stopPropagation(); self.removeCategory(delBtn.dataset.catDel); return; }
       const addBtn = e.target.closest('[data-cat-add]');
       if (addBtn) { self.promptAddCategory(); return; }
       const cat = e.target.closest('.cat');
       if (cat && cat.dataset.cat) UI.selectCategory(cat.dataset.cat);
     });
 
-    
-    /* ===== 快捷记账事件 ===== */
+    UI.els.amountInput.addEventListener('input', function () { self.updateAmountPreview(); });
+    UI.els.splitInput.addEventListener('input', function () { self.updateAmountPreview(); });
+
     const quickActions = document.getElementById('quickActions');
     if (quickActions) {
       let pressTimer = null;
@@ -1134,54 +1081,30 @@ const App = {
       let startY = 0;
       let isScrolling = false;
 
-      // 处理一键记账
       quickActions.addEventListener('click', function (e) {
         const chip = e.target.closest('.quick-chip');
         if (!chip || chip.id === 'quickAddBtn') return;
-        
-        if (isScrolling) {
-          isScrolling = false;
-          return;
-        }
-
+        if (isScrolling) { isScrolling = false; return; }
         const id = chip.dataset.qid;
         const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
         if (!tpl) return;
-
-        Ledger.add({
-          amount: Number(tpl.amount),
-          categoryId: tpl.categoryId,
-          note: tpl.note,
-          date: Ledger.today(),
-        });
+        const defaultAmt = tpl.amounts && tpl.amounts.length > 0 ? tpl.amounts[0] : (tpl.amount || 0);
+        Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
         UI.renderAll(self.currentMonth);
-        UI.showToast('已快捷记账 ￥' + tpl.amount);
+        UI.showToast('已快捷记账 ￥' + defaultAmt);
       });
 
-      // 长按删除逻辑
       quickActions.addEventListener('touchstart', function (e) {
         const chip = e.target.closest('.quick-chip');
         if (!chip || chip.id === 'quickAddBtn') return;
-        
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         isScrolling = false;
-
         pressTimer = setTimeout(function () {
           if (navigator.vibrate) navigator.vibrate(50);
           const id = chip.dataset.qid;
-          Modal.confirm({
-            type: 'warn',
-            title: '删除快捷记账',
-            message: '确定要删除这个快捷模板吗？',
-            danger: true
-          }).then(function (ok) {
-            if (ok) {
-              self.quickTemplates = self.quickTemplates.filter(function (t) { return t.id !== id; });
-              Storage.write('slh.quickTemplates.v1', self.quickTemplates);
-              self.renderQuickActions();
-            }
-          });
+          const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
+          if (tpl) self.showQuickPanel(tpl);
           pressTimer = null;
         }, 600);
       }, { passive: true });
@@ -1190,419 +1113,131 @@ const App = {
         if (!pressTimer) return;
         const moveX = Math.abs(e.touches[0].clientX - startX);
         const moveY = Math.abs(e.touches[0].clientY - startY);
-        
-        if (moveX > 10 || moveY > 10) {
-          clearTimeout(pressTimer);
-          pressTimer = null;
-          isScrolling = true;
-        }
+        if (moveX > 10 || moveY > 10) { clearTimeout(pressTimer); pressTimer = null; isScrolling = true; }
       }, { passive: true });
 
       quickActions.addEventListener('touchend', function () {
-        if (pressTimer) {
-          clearTimeout(pressTimer);
-          pressTimer = null;
-        }
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
       });
 
-      // 添加模板弹窗
       quickActions.addEventListener('click', function (e) {
-        if (!e.target.closest('#quickAddBtn')) return;
-        
-        const html = 
-          '<div style="text-align:left; margin-bottom:16px;">' +
-            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">名称</label>' +
-            '<input class="modal__input" id="qtName" type="text" placeholder="消费原因" maxlength="6">' +
-          '</div>' +
-          '<div style="text-align:left; margin-bottom:16px;">' +
-            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">金额</label>' +
-            '<input class="modal__input" id="qtAmount" type="number" placeholder="0.00" step="0.01">' +
-          '</div>' +
-          '<div style="text-align:left; margin-bottom:16px;">' +
-            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">选择分类</label>' +
-            '<div class="modal__input" id="qtCatBtn" style="text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none;">' +
-              '<span id="qtCatLabel">' + UI.escapeHtml(Categories.list[0].name) + '</span>' +
-              '<span style="font-size:10px; color:var(--c-text-light); opacity:0.8;">▼</span>' +
-            '</div>' +
-            '<input type="hidden" id="qtCat" value="' + Categories.list[0].id + '">' +
-          '</div>';
-
-        Modal.open({
-          type: 'info',
-          title: '添加快捷记账',
-          html: html,
-          actions: [
-            { text: '取消', value: null },
-            { text: '保存', value: 'save', primary: true }
-          ]
-        }).then(function (res) {
-          if (res === 'save') {
-            const name = document.getElementById('qtName').value.trim();
-            const amt = Number(document.getElementById('qtAmount').value);
-            const catId = document.getElementById('qtCat').value;
-
-            if (!name) { UI.showToast('请填写名称'); return; }
-            if (!amt || amt <= 0) { UI.showToast('请填写正确金额'); return; }
-
-            const newTpl = {
-              id: 'q' + Date.now().toString(36),
-              name: name,
-              amount: amt,
-              categoryId: catId,
-              note: name
-            };
-            self.quickTemplates.push(newTpl);
-            Storage.write('slh.quickTemplates.v1', self.quickTemplates);
-            self.renderQuickActions();
-            UI.showToast('快捷按钮已添加');
-          }
-        });
-
-        // 绑定子弹窗逻辑
-        setTimeout(function() {
-          const qtCatBtn = document.getElementById('qtCatBtn');
-          if (!qtCatBtn) return;
-
-          qtCatBtn.addEventListener('click', function() {
-            // 动态创建子弹窗
-            let overlay = document.createElement('div');
-            overlay.className = 'sub-modal-overlay';
-            
-            let listHtml = Categories.list.map(function(c) {
-              return '<button class="sub-modal-item" data-id="' + c.id + '" type="button">' +
-                       '<span class="sub-modal-dot" style="background:' + c.color + '"></span>' +
-                       '<span>' + UI.escapeHtml(c.name) + '</span>' +
-                     '</button>';
-            }).join('');
-
-            overlay.innerHTML = 
-              '<div class="sub-modal">' +
-                '<div class="sub-modal__header">选择分类</div>' +
-                '<div class="sub-modal__list">' + listHtml + '</div>' +
-              '</div>';
-            
-            document.body.appendChild(overlay);
-            
-            // 触发动画
-            void overlay.offsetWidth;
-            overlay.classList.add('is-show');
-
-            // 关闭子弹窗函数
-            const closeSubModal = function() {
-              overlay.classList.remove('is-show');
-              setTimeout(function() { 
-                if (overlay.parentNode) overlay.parentNode.removeChild(overlay); 
-              }, 250);
-            };
-
-            overlay.addEventListener('click', function(evt) {
-              if (evt.target === overlay) {
-                closeSubModal();
-                return;
-              }
-              
-              const btn = evt.target.closest('.sub-modal-item');
-              if (btn) {
-                const id = btn.dataset.id;
-                const name = btn.querySelector('span:last-child').textContent;
-                
-                document.getElementById('qtCat').value = id;
-                document.getElementById('qtCatLabel').textContent = name;
-                
-                closeSubModal();
-              }
-            });
-          });
-        }, 100);
+        if (e.target.closest('#quickAddBtn')) self.openAddQuickTemplate();
       });
     }
 
-
-    /* ===== 月度账单海报 ===== */
     const generatePosterBtn = document.getElementById('generatePosterBtn');
     if (generatePosterBtn) {
       generatePosterBtn.addEventListener('click', function () {
         const month = self.currentMonth;
         const list = Ledger.byMonth(month, 'expense');
-        if (list.length === 0) {
-          UI.showToast('本月还没有记账哦');
-          return;
-        }
-
+        if (list.length === 0) { UI.showToast('本月还没有记账哦'); return; }
         generatePosterBtn.textContent = '生成中...';
         generatePosterBtn.disabled = true;
-
         setTimeout(function() {
           try {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const W = 750, H = 1200;
-            canvas.width = W;
-            canvas.height = H;
-
-            // 获取当前主题颜色
+            canvas.width = W; canvas.height = H;
             const style = getComputedStyle(document.documentElement);
             const primary = style.getPropertyValue('--c-primary').trim() || '#6667AB';
             const bg = style.getPropertyValue('--c-bg').trim() || '#F2F2F7';
             const textSub = style.getPropertyValue('--c-text-sub').trim() || '#6E6878';
-
-            // 1. 背景
-            ctx.fillStyle = '#F5F6F8';
-            ctx.fillRect(0, 0, W, H);
-
-            // 2. 核心数据计算
+            ctx.fillStyle = '#F5F6F8'; ctx.fillRect(0, 0, W, H);
             const expenseTotal = Ledger.sum(list);
             const incomeList = Ledger.byMonth(month, 'income');
             const incomeTotal = Ledger.sum(incomeList);
             const netTotal = incomeTotal - expenseTotal;
             const budget = Ledger.getBudget(month);
             let budgetPercent = 0;
-            if (budget > 0) {
-              budgetPercent = Math.min(100, (expenseTotal / budget) * 100);
-            }
-
-            // 【修复】计算分类消费总额 (排行榜专用)
+            if (budget > 0) budgetPercent = Math.min(100, (expenseTotal / budget) * 100);
             const catTotals = {};
             list.forEach(r => { catTotals[r.categoryId] = (catTotals[r.categoryId] || 0) + r.amount; });
 
-            // 3. 顶部主卡片
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.06)';
-            ctx.shadowBlur = 20;
-            ctx.shadowOffsetY = 10;
-            ctx.fillStyle = primary;
-            ctx.beginPath();
-            ctx.roundRect(40, 40, W - 80, 360, 32);
-            ctx.fill();
-            ctx.restore();
+            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.06)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 10;
+            ctx.fillStyle = primary; ctx.beginPath(); ctx.roundRect(40, 40, W - 80, 360, 32); ctx.fill(); ctx.restore();
+            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 32px sans-serif'; ctx.fillText('有序星球', 80, 110);
+            ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillText(month.replace('-', ' 年 ') + ' 月财务报告', 80, 150);
+            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 72px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(2), 80, 260);
+            ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillText('本月总支出', 80, 300);
 
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 32px sans-serif';
-            ctx.fillText('有序星球', 80, 110);
-            
-            ctx.font = '20px sans-serif';
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.fillText(month.replace('-', ' 年 ') + ' 月财务报告', 80, 150);
-
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 72px sans-serif';
-            ctx.fillText('￥' + expenseTotal.toFixed(2), 80, 260);
-            
-            ctx.font = '20px sans-serif';
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            ctx.fillText('本月总支出', 80, 300);
-
-            // 预算进度条
             if (budget > 0) {
-              ctx.fillStyle = 'rgba(255,255,255,0.2)';
-              ctx.beginPath();
-              ctx.roundRect(80, 330, W - 160, 12, 6);
-              ctx.fill();
+              ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(80, 330, W - 160, 12, 6); ctx.fill();
+              ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(80, 330, (W - 160) * (budgetPercent / 100), 12, 6); ctx.fill();
+              ctx.font = '16px sans-serif'; ctx.fillText('预算已使用 ' + budgetPercent.toFixed(1) + '%', 80, 375);
+            } else { ctx.font = '16px sans-serif'; ctx.fillText('本月未设置预算', 80, 345); }
 
-              ctx.fillStyle = '#FFFFFF';
-              ctx.beginPath();
-              ctx.roundRect(80, 330, (W - 160) * (budgetPercent / 100), 12, 6);
-              ctx.fill();
-              
-              ctx.font = '16px sans-serif';
-              ctx.fillText('预算已使用 ' + budgetPercent.toFixed(1) + '%', 80, 375);
-            } else {
-              ctx.font = '16px sans-serif';
-              ctx.fillText('本月未设置预算', 80, 345);
-            }
-
-            // 4. 中间双列数据卡 (收入 & 结余)
             const cardW = (W - 80 - 16) / 2;
-            
-            // 左卡：收入
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.roundRect(40, 430, cardW, 160, 24);
-            ctx.fill();
-            ctx.restore();
+            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40, 430, cardW, 160, 24); ctx.fill(); ctx.restore();
+            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif'; ctx.fillText('本月总收入', 70, 480);
+            ctx.fillStyle = '#5C7A6A'; ctx.font = 'bold 40px sans-serif'; ctx.fillText('+￥' + incomeTotal.toFixed(2), 70, 540);
 
-            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif';
-            ctx.fillText('本月总收入', 70, 480);
-            ctx.fillStyle = '#5C7A6A'; // 绿色
-            ctx.font = 'bold 40px sans-serif';
-            ctx.fillText('+￥' + incomeTotal.toFixed(2), 70, 540);
+            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40 + cardW + 16, 430, cardW, 160, 24); ctx.fill(); ctx.restore();
+            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif'; ctx.fillText('本月净结余', 70 + cardW + 16, 480);
+            ctx.fillStyle = netTotal >= 0 ? primary : '#A85E52'; ctx.font = 'bold 40px sans-serif';
+            const netSign = netTotal >= 0 ? '+' : '-'; ctx.fillText(netSign + '￥' + Math.abs(netTotal).toFixed(2), 70 + cardW + 16, 540);
 
-            // 右卡：结余
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.roundRect(40 + cardW + 16, 430, cardW, 160, 24);
-            ctx.fill();
-            ctx.restore();
-
-            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif';
-            ctx.fillText('本月净结余', 70 + cardW + 16, 480);
-            ctx.fillStyle = netTotal >= 0 ? primary : '#A85E52';
-            ctx.font = 'bold 40px sans-serif';
-            const netSign = netTotal >= 0 ? '+' : '-';
-            ctx.fillText(netSign + '￥' + Math.abs(netTotal).toFixed(2), 70 + cardW + 16, 540);
-
-            // 5. 饼状图卡片
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.roundRect(40, 630, W - 80, 420, 24);
-            ctx.fill();
-            ctx.restore();
-
-            ctx.fillStyle = textSub; ctx.font = 'bold 22px sans-serif';
-            ctx.fillText('支出分类占比', 70, 690);
+            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40, 630, W - 80, 420, 24); ctx.fill(); ctx.restore();
+            ctx.fillStyle = textSub; ctx.font = 'bold 22px sans-serif'; ctx.fillText('支出分类占比', 70, 690);
 
             const sortedCats = Object.keys(catTotals || {}).map(id => ({id, amt: catTotals[id]})).sort((a,b) => b.amt - a.amt);
-            
-            // 将前 5 名之外的数据合并为“其他”
             let chartData = [];
             if (sortedCats.length > 5) {
               chartData = sortedCats.slice(0, 5);
               const othersAmt = sortedCats.slice(5).reduce((sum, item) => sum + item.amt, 0);
               chartData.push({ id: 'other_merged', amt: othersAmt, name: '其他' });
-            } else {
-              chartData = sortedCats;
-            }
+            } else { chartData = sortedCats; }
 
-            // 饼图圆心和半径
-            const cx = 230; 
-            const cy = 860; 
-            const radius = 110;
-            
-            let startAngle = -Math.PI / 2; // 从顶部开始
-
+            const cx = 230, cy = 860, radius = 110;
+            let startAngle = -Math.PI / 2;
             chartData.forEach(item => {
               const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
               const sliceAngle = (item.amt / expenseTotal) * Math.PI * 2;
-              
-              // 绘制扇形
-              ctx.beginPath();
-              ctx.moveTo(cx, cy);
-              ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
-              ctx.closePath();
-              ctx.fillStyle = cat.color;
-              ctx.fill();
-              
-              // 添加白色描边
-              ctx.strokeStyle = '#FFFFFF';
-              ctx.lineWidth = 4;
-              ctx.stroke();
-
+              ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle); ctx.closePath();
+              ctx.fillStyle = cat.color; ctx.fill(); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 4; ctx.stroke();
               startAngle += sliceAngle;
             });
 
-            // 中心挖空
-            ctx.beginPath();
-            ctx.arc(cx, cy, 60, 0, Math.PI * 2);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fill();
-
-            // 中心文字
-            ctx.fillStyle = textSub; ctx.font = '16px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('总支出', cx, cy - 10);
-            ctx.fillStyle = primary; ctx.font = 'bold 24px sans-serif';
-            ctx.fillText('￥' + expenseTotal.toFixed(0), cx, cy + 22);
+            ctx.beginPath(); ctx.arc(cx, cy, 60, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+            ctx.fillStyle = textSub; ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('总支出', cx, cy - 10);
+            ctx.fillStyle = primary; ctx.font = 'bold 24px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(0), cx, cy + 22);
             ctx.textAlign = 'left';
 
-            // 右侧图例
             let legendY = 730;
             chartData.forEach(item => {
               const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
               const percent = (item.amt / expenseTotal * 100).toFixed(1);
-              
-              // 色块
-              ctx.fillStyle = cat.color;
-              ctx.beginPath();
-              ctx.roundRect(W - 250, legendY - 14, 14, 14, 4);
-              ctx.fill();
-
-              // 名称
-              ctx.fillStyle = textSub; ctx.font = '18px sans-serif';
-              ctx.fillText(cat.name, W - 220, legendY);
-
-              // 百分比
-              ctx.fillStyle = textSub; ctx.font = 'bold 18px sans-serif';
-              ctx.textAlign = 'right';
-              ctx.fillText(percent + '%', W - 80, legendY);
-              ctx.textAlign = 'left';
-
-              legendY += 50; // 间距调整
+              ctx.fillStyle = cat.color; ctx.beginPath(); ctx.roundRect(W - 250, legendY - 14, 14, 14, 4); ctx.fill();
+              ctx.fillStyle = textSub; ctx.font = '18px sans-serif'; ctx.fillText(cat.name, W - 220, legendY);
+              ctx.fillStyle = textSub; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'right'; ctx.fillText(percent + '%', W - 80, legendY);
+              ctx.textAlign = 'left'; legendY += 50;
             });
 
-            // 6. 水印
-            ctx.fillStyle = 'rgba(0,0,0,0.15)';
-            ctx.font = '18px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1140);
-            ctx.textAlign = 'left';
+            ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.font = '18px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1140); ctx.textAlign = 'left';
 
             const base64 = canvas.toDataURL('image/jpeg', 0.9);
-            generatePosterBtn.textContent = '✨ 生成海报';
-            generatePosterBtn.disabled = false;
-
-            // 预览与保存弹窗
+            generatePosterBtn.textContent = '✨ 生成海报'; generatePosterBtn.disabled = false;
             Modal.open({
-              type: 'none',
-              title: '月度账单已生成',
-              html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
-              actions: [
-                { text: '关闭', value: null },
-                { text: '保存到相册', value: 'save', primary: true }
-              ]
+              type: 'none', title: '月度账单已生成', html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
+              actions: [{ text: '关闭', value: null }, { text: '保存到相册', value: 'save', primary: true }]
             }).then(function (res) {
               if (res === 'save') {
-                if (window.Android && typeof window.Android.saveImage === 'function') {
-                  window.Android.saveImage(base64);
-                } else {
-                  // 浏览器兜底：直接下载
-                  const a = document.createElement('a');
-                  a.href = base64;
-                  a.download = '有序星球_月度海报_' + month + '.jpg';
-                  a.click();
-                  UI.showToast('图片已下载');
-                }
+                if (window.Android && typeof window.Android.saveImage === 'function') window.Android.saveImage(base64);
+                else { const a = document.createElement('a'); a.href = base64; a.download = '有序星球_海报_' + month + '.jpg'; a.click(); UI.showToast('图片已下载'); }
               }
             });
-
-          } catch (err) {
-            console.error(err);
-            UI.showToast('海报生成失败');
-            generatePosterBtn.textContent = '✨ 生成海报';
-            generatePosterBtn.disabled = false;
-          }
+          } catch (err) { console.error(err); UI.showToast('海报生成失败'); generatePosterBtn.textContent = '✨ 生成海报'; generatePosterBtn.disabled = false; }
         }, 100);
       });
     }
 
-    UI.els.amountInput.addEventListener('input', function () {
-      self.updateAmountPreview();
-    });
-    UI.els.splitInput.addEventListener('input', function () {
-      self.updateAmountPreview();
-    });
-
-
-    /* 存钱罐按钮 */
-    const savingsInBtn = document.getElementById('savingsInBtn');
-    const savingsOutBtn = document.getElementById('savingsOutBtn');
-    if (savingsInBtn) savingsInBtn.addEventListener('click', function () { self.handleSavings(true); });
-    if (savingsOutBtn) savingsOutBtn.addEventListener('click', function () { self.handleSavings(false); });
-
-    /* 存钱罐记录的删除事件 */
-
     UI.els.submitBtn.addEventListener('click', function () { self.saveRecord(); });
-    UI.els.amountInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') self.saveRecord();
-    });
-    UI.els.splitInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') self.saveRecord();
-    });
+    UI.els.amountInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.saveRecord(); });
+    UI.els.splitInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.saveRecord(); });
 
     function onDeleteRecord(e) {
       const btn = e.target.closest('[data-del]');
@@ -1611,132 +1246,73 @@ const App = {
     }
     UI.els.recentList.addEventListener('click', onDeleteRecord);
     UI.els.recordList.addEventListener('click', onDeleteRecord);
-    if (UI.els.incomeRecentList) {
-      UI.els.incomeRecentList.addEventListener('click', onDeleteRecord);
-    }
-
-
+    if (UI.els.incomeRecentList) UI.els.incomeRecentList.addEventListener('click', onDeleteRecord);
 
     UI.els.statModeSeg.addEventListener('click', function (e) {
       const btn = e.target.closest('.seg__btn');
-      if (!btn) return;
-      UI.setStatMode(btn.dataset.mode);
+      if (btn) UI.setStatMode(btn.dataset.mode);
     });
 
     UI.els.statPeriodBtn.addEventListener('click', function () {
-      if (Calendar.isOpen && Calendar.triggerEl === UI.els.statPeriodBtn) {
-        Calendar.close();
-        return;
-      }
+      if (Calendar.isOpen && Calendar.triggerEl === UI.els.statPeriodBtn) { Calendar.close(); return; }
       if (UI.statMode === 'year') {
-        Calendar.open(UI.els.statPeriodBtn, 'year', UI.statPeriod,
-          function (year) {
-            UI.statPeriod = year;
-            UI.renderStatAll();
-          }
-        );
+        Calendar.open(UI.els.statPeriodBtn, 'year', UI.statPeriod, function (year) { UI.statPeriod = year; UI.renderStatAll(); });
       } else {
-        Calendar.open(UI.els.statPeriodBtn, 'month', UI.statPeriod,
-          function (month) {
-            UI.statPeriod = month;
-            UI.renderStatAll();
-          }
-        );
+        Calendar.open(UI.els.statPeriodBtn, 'month', UI.statPeriod, function (month) { UI.statPeriod = month; UI.renderStatAll(); });
       }
     });
 
-    UI.els.statCatSelect.addEventListener('change', function () {
-      UI.statCategoryId = UI.els.statCatSelect.value;
-      UI.renderStatAll();
-    });
-
-    UI.els.statCompareToggle.addEventListener('change', function () {
-      UI.statCompare = UI.els.statCompareToggle.checked;
-      UI.comparePeriod = ''; // 切换开关时，重置自定义周期
-      UI.renderStatSummary();
-    });
+    UI.els.statCatSelect.addEventListener('change', function () { UI.statCategoryId = UI.els.statCatSelect.value; UI.renderStatAll(); });
+    UI.els.statCompareToggle.addEventListener('change', function () { UI.statCompare = UI.els.statCompareToggle.checked; UI.comparePeriod = ''; UI.renderStatSummary(); });
 
     UI.els.statComparePeriodBtn.addEventListener('click', function () {
-      if (Calendar.isOpen && Calendar.triggerEl === UI.els.statComparePeriodBtn) {
-        Calendar.close();
-        return;
-      }
-      if (!UI.statCompare) return; // 没开对比，点了也没用
-
+      if (Calendar.isOpen && Calendar.triggerEl === UI.els.statComparePeriodBtn) { Calendar.close(); return; }
+      if (!UI.statCompare) return;
       if (UI.statMode === 'year') {
-        Calendar.open(UI.els.statComparePeriodBtn, 'year', UI.comparePeriod || Ledger.prevYear(UI.statPeriod), function (year) {
-          UI.comparePeriod = year;
-          UI.renderStatSummary();
-        });
+        Calendar.open(UI.els.statComparePeriodBtn, 'year', UI.comparePeriod || Ledger.prevYear(UI.statPeriod), function (year) { UI.comparePeriod = year; UI.renderStatSummary(); });
       } else {
-        Calendar.open(UI.els.statComparePeriodBtn, 'month', UI.comparePeriod || Ledger.prevMonth(UI.statPeriod), function (month) {
-          UI.comparePeriod = month;
-          UI.renderStatSummary();
-        });
+        Calendar.open(UI.els.statComparePeriodBtn, 'month', UI.comparePeriod || Ledger.prevMonth(UI.statPeriod), function (month) { UI.comparePeriod = month; UI.renderStatSummary(); });
       }
     });
 
     UI.els.chartTabs.addEventListener('click', function (e) {
       const btn = e.target.closest('.chart-tab');
-      if (!btn || btn.hidden) return;
-      UI.setChartType(btn.dataset.chart);
+      if (btn && !btn.hidden) UI.setChartType(btn.dataset.chart);
     });
 
     UI.els.catManageList.addEventListener('click', function (e) {
       const limitBtn = e.target.closest('[data-cat-limit]');
       if (limitBtn) { self.editCategoryLimit(limitBtn.dataset.catLimit); return; }
       const delBtn = e.target.closest('[data-cat-del]');
-      if (!delBtn || delBtn.disabled) return;
-      self.removeCategory(delBtn.dataset.catDel);
+      if (delBtn && !delBtn.disabled) self.removeCategory(delBtn.dataset.catDel);
     });
 
-    /* 预算管理弹窗 */
     const budgetOverviewBtn = document.getElementById('headerBudgetBlock') || document.getElementById('budgetOverviewBtn');
-    if (budgetOverviewBtn) {
-      budgetOverviewBtn.addEventListener('click', function () {
-        self.openBudgetModal();
-      });
-    }
+    if (budgetOverviewBtn) budgetOverviewBtn.addEventListener('click', function () { self.openBudgetModal(); });
 
-    /* 数据备份与恢复 */
     const exportBtn = document.getElementById('exportBtn');
     const importBtn = document.getElementById('importBtn');
     const importFileInput = document.getElementById('importFileInput');
-
-    if (exportBtn) {
-      exportBtn.addEventListener('click', function () {
-        self.exportData();
-      });
-    }
-
+    if (exportBtn) exportBtn.addEventListener('click', function () { self.exportData(); });
     if (importBtn && importFileInput) {
-      importBtn.addEventListener('click', function () {
-        importFileInput.click();
-      });
+      importBtn.addEventListener('click', function () { importFileInput.click(); });
       importFileInput.addEventListener('change', function (e) {
         const file = e.target.files && e.target.files[0];
         if (file) self.importData(file);
-        e.target.value = ''; // 允许重复选择同一文件
+        e.target.value = '';
       });
     }
-
-    /* 主题卡片点击 */
 
     const themeGrid = document.getElementById('themeGrid');
     if (themeGrid) {
       themeGrid.addEventListener('click', function (e) {
         const btn = e.target.closest('.theme-item');
         if (!btn) return;
-        const name = btn.dataset.theme;
-        if (name === 'custom') {
-          self.applyCustomTheme();
-        } else {
-          self.applyTheme(name);
-        }
+        if (btn.dataset.theme === 'custom') self.applyCustomTheme();
+        else self.applyTheme(btn.dataset.theme);
       });
     }
 
-    /* 自定义背景上传 */
     const bgInput = document.getElementById('customBgInput');
     if (bgInput) {
       bgInput.addEventListener('change', function (e) {
@@ -1747,220 +1323,99 @@ const App = {
     }
 
     const bgClear = document.getElementById('customBgClear');
-    if (bgClear) {
-      bgClear.addEventListener('click', function () {
-        self.clearCustomBg();
-      });
-    }
+    if (bgClear) bgClear.addEventListener('click', function () { self.clearCustomBg(); });
 
-    UI.els.addCatBtn.addEventListener('click', function () {
-      self.addCategoryFromInput();
-    });
-    UI.els.newCatInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') self.addCategoryFromInput();
-    });
+    UI.els.addCatBtn.addEventListener('click', function () { self.addCategoryFromInput(); });
+    UI.els.newCatInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.addCategoryFromInput(); });
 
-    /* ===== 收入记账 ===== */
     if (UI.els.incomeCatGrid) {
       UI.els.incomeCatGrid.addEventListener('click', function (e) {
         const delBtn = e.target.closest('[data-cat-del]');
-        if (delBtn) {
-          e.stopPropagation();
-          self.removeIncomeCategory(delBtn.dataset.catDel);
-          return;
-        }
+        if (delBtn) { e.stopPropagation(); self.removeIncomeCategory(delBtn.dataset.catDel); return; }
         const addBtn = e.target.closest('[data-cat-add]');
         if (addBtn) { self.promptAddIncomeCategory(); return; }
         const cat = e.target.closest('.cat');
         if (cat && cat.dataset.cat) UI.selectIncomeCategory(cat.dataset.cat);
       });
     }
-    if (UI.els.incomeAmountInput) {
-      UI.els.incomeAmountInput.addEventListener('input', function () {
-        self.updateIncomeAmountPreview();
-      });
-    }
+    if (UI.els.incomeAmountInput) UI.els.incomeAmountInput.addEventListener('input', function () { self.updateIncomeAmountPreview(); });
     if (UI.els.incomeSplitInput) {
-      UI.els.incomeSplitInput.addEventListener('input', function () {
-        self.updateIncomeAmountPreview();
-      });
-      UI.els.incomeSplitInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') self.saveIncomeRecord();
-      });
+      UI.els.incomeSplitInput.addEventListener('input', function () { self.updateIncomeAmountPreview(); });
+      UI.els.incomeSplitInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.saveIncomeRecord(); });
     }
-    if (UI.els.incomeAmountInput) {
-      UI.els.incomeAmountInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') self.saveIncomeRecord();
-      });
-    }
+    if (UI.els.incomeAmountInput) UI.els.incomeAmountInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.saveIncomeRecord(); });
     if (UI.els.incomeDateInput) {
       UI.els.incomeDateInput.addEventListener('click', function () {
-        if (Calendar.isOpen) {
-          Calendar.close();
-          return;
-        }
-        Calendar.open(
-          UI.els.incomeDateInput, 'date',
-          UI.els.incomeDateInput.dataset.value || Ledger.today(),
-          function (date) { self.setIncomeDateButton(date); }
-        );
+        if (Calendar.isOpen) { Calendar.close(); return; }
+        Calendar.open(UI.els.incomeDateInput, 'date', UI.els.incomeDateInput.dataset.value || Ledger.today(), function (date) { self.setIncomeDateButton(date); });
       });
     }
-    if (UI.els.incomeSubmitBtn) {
-      UI.els.incomeSubmitBtn.addEventListener('click', function () {
-        self.saveIncomeRecord();
-      });
-    }
+    if (UI.els.incomeSubmitBtn) UI.els.incomeSubmitBtn.addEventListener('click', function () { self.saveIncomeRecord(); });
 
-    /* ===== 统计类型切换（支出 / 收入） ===== */
     if (UI.els.statTypeSeg) {
       UI.els.statTypeSeg.addEventListener('click', function (e) {
         const btn = e.target.closest('.seg__btn');
-        if (!btn) return;
-        UI.setStatType(btn.dataset.type);
+        if (btn) UI.setStatType(btn.dataset.type);
       });
     }
   },
 
   promptAddIncomeCategory: async function () {
-    const name = await Modal.prompt({
-      type: 'info',
-      title: '新收入来源',
-      message: '名字最多 6 个字',
-      input: { placeholder: '比如：家教', maxLength: 6 },
-    });
+    const name = await Modal.prompt({ type: 'info', title: '新收入来源', message: '名字最多 6 个字', input: { placeholder: '输入来源名称', maxLength: 6 } });
     if (name === null) return;
-
     const res = IncomeCategories.add(name);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
-
     UI.renderIncomeCategories();
     UI.showToast('收入来源已添加');
   },
 
-    removeIncomeCategory: async function (id) {
+  removeIncomeCategory: async function (id) {
     const cat = IncomeCategories.get(id);
     const count = Ledger.countByCategory(id);
-
-    if (count > 0) {
-      Modal.alert({
-        type: 'warn',
-        title: '无法删除',
-        html: '「' + UI.escapeHtml(cat.name) + '」下还有 <strong>' + count + '</strong> 笔收入记录。<br><br>请先删除这些记录。',
-      });
-      return;
-    }
-
-    const ok = await Modal.confirm({
-      type: 'warn',
-      title: '删除「' + UI.escapeHtml(cat.name) + '」？',
-      message: '删除后无法恢复。',
-      okText: '删除',
-      danger: true,
-    });
+    if (count > 0) { Modal.alert({ type: 'warn', title: '无法删除', html: '「' + UI.escapeHtml(cat.name) + '」下还有 <strong>' + count + '</strong> 笔收入记录。<br><br>请先删除这些记录。' }); return; }
+    const ok = await Modal.confirm({ type: 'warn', title: '删除「' + UI.escapeHtml(cat.name) + '」？', message: '删除后无法恢复。', okText: '删除', danger: true });
     if (!ok) return;
-
-    // 【核心修复】：正确查找收入分类的格子节点
-    const nodes = [];
-    document.querySelectorAll('.cat[data-cat="' + id + '"]').forEach(function (n) {
-      nodes.push(n);
-    });
-
+    const nodes = document.querySelectorAll('.cat[data-cat="' + id + '"]');
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) {
-        Shatter.play(nodes, {
-          windX: 220,
-          windY: -160,
-          duration: 1100,
-          maxPieces: 80,
-          targetPieceSize: 12,
-        }, resolve);
-      });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 1100, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
-
     const res = IncomeCategories.remove(id);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
-
-    if (UI.selectedIncomeCategoryId === id) {
-      UI.selectedIncomeCategoryId = IncomeCategories.list[0].id;
-    }
+    if (UI.selectedIncomeCategoryId === id) UI.selectedIncomeCategoryId = IncomeCategories.list[0].id;
     UI.renderIncomeCategories();
     UI.renderIncomeRecent();
     UI.showToast('收入来源已删除');
   },
 
   confirmDeleteSavings: async function (id) {
-    const ok = await Modal.confirm({
-      type: 'warn',
-      title: '删除这条记录？',
-      message: '小金库记录删除后无法恢复',
-      okText: '删除',
-      danger: true,
-    });
+    const ok = await Modal.confirm({ type: 'warn', title: '删除这条记录？', message: '小金库记录删除后无法恢复', okText: '删除', danger: true });
     if (!ok) return;
-
-    // 收集所有承载此 id 的节点，准备播放碎片特效
     const nodes = document.querySelectorAll('[data-id="' + id + '"]');
-
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) {
-        Shatter.play(nodes, {
-          windX: 240,
-          windY: -150,
-          duration: 1200,
-          maxPieces: 80,
-          targetPieceSize: 12,
-        }, resolve);
-      });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 240, windY: -150, duration: 1200, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
-
     Ledger.removeSavings(id);
     UI.renderSavings();
     UI.showToast('已删除');
   },
 
   confirmDeleteRecord: async function (id) {
-    const ok = await Modal.confirm({
-      type: 'warn',
-      title: '删除这条记录？',
-      message: '删除后无法恢复',
-      okText: '删除',
-      danger: true,
-    });
+    const ok = await Modal.confirm({ type: 'warn', title: '删除这条记录？', message: '删除后无法恢复', okText: '删除', danger: true });
     if (!ok) return;
-
-    /* 收集所有承载此 id 的节点（最近记录 / 明细两处） */
     const nodes = document.querySelectorAll('[data-id="' + id + '"]');
-
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) {
-        Shatter.play(nodes, {
-          windX: 240,
-          windY: -150,
-          duration: 1200,
-          maxPieces: 80,
-          targetPieceSize: 12,
-        }, resolve);
-      });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 240, windY: -150, duration: 1200, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
-
     Ledger.remove(id);
     UI.renderAll(this.currentMonth);
     UI.showToast('已删除');
   },
 
   promptAddCategory: async function () {
-    const name = await Modal.prompt({
-      type: 'info',
-      title: '新分类',
-      message: '名字最多 6 个字',
-      input: { placeholder: '比如：奶茶', maxLength: 6 },
-    });
+    const name = await Modal.prompt({ type: 'info', title: '新分类', message: '名字最多 6 个字', input: { placeholder: '输入分类名称', maxLength: 6 } });
     if (name === null) return;
-
     const res = Categories.add(name);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
-
     UI.renderCategories();
     UI.renderStatFilter();
     UI.renderCatManage(this.currentMonth);
@@ -1970,7 +1425,6 @@ const App = {
   addCategoryFromInput: function () {
     const res = Categories.add(UI.els.newCatInput.value);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
-
     UI.els.newCatInput.value = '';
     UI.renderCategories();
     UI.renderStatFilter();
@@ -1981,60 +1435,19 @@ const App = {
   removeCategory: async function (id) {
     const cat = Categories.get(id);
     const count = Ledger.countByCategory(id);
-
-    // 1. 如果该分类下有记录，直接拦截，不再走后面的删除流程
-    if (count > 0) {
-      Modal.alert({
-        type: 'warn',
-        title: '无法删除',
-        html: '「' + UI.escapeHtml(cat.name) + '」下还有 <strong>' + count + '</strong> 笔记录。<br><br>为了保证数据安全，请先删除或修改这些记录。',
-      });
-      return;
-    }
-
-    // 2. 没记录了，才弹确认框
-    const ok = await Modal.confirm({
-      type: 'warn',
-      title: '删除「' + UI.escapeHtml(cat.name) + '」？',
-      message: '删除后无法恢复，且该分类会从列表移除。',
-      okText: '删除',
-      danger: true,
-    });
+    if (count > 0) { Modal.alert({ type: 'warn', title: '无法删除', html: '「' + UI.escapeHtml(cat.name) + '」下还有 <strong>' + count + '</strong> 笔记录。<br><br>为了保证数据安全，请先删除或修改这些记录。' }); return; }
+    const ok = await Modal.confirm({ type: 'warn', title: '删除「' + UI.escapeHtml(cat.name) + '」？', message: '删除后无法恢复，且该分类会从列表移除。', okText: '删除', danger: true });
     if (!ok) return;
-
-    // 3. 收集该分类所有 DOM，准备播放动画
     const nodes = [];
-    document.querySelectorAll('.cat[data-cat="' + id + '"]').forEach(function (n) {
-      nodes.push(n);
-    });
-    document.querySelectorAll('[data-cat-del="' + id + '"]').forEach(function (btn) {
-      const li = btn.closest('li');
-      if (li) nodes.push(li);
-    });
-
+    document.querySelectorAll('.cat[data-cat="' + id + '"]').forEach(function (n) { nodes.push(n); });
+    document.querySelectorAll('[data-cat-del="' + id + '"]').forEach(function (btn) { const li = btn.closest('li'); if (li) nodes.push(li); });
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) {
-        Shatter.play(nodes, {
-          windX: 220,
-          windY: -160,
-          duration: 1100,
-          maxPieces: 80,
-          targetPieceSize: 12,
-        }, resolve);
-      });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 1100, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
-
-    // 4. 正式移除
     const res = Categories.remove(id);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
-
-    if (UI.selectedCategoryId === id) {
-      UI.selectedCategoryId = Categories.list[0].id;
-    }
-    if (UI.statCategoryId === id) {
-      UI.statCategoryId = '';
-    }
-
+    if (UI.selectedCategoryId === id) UI.selectedCategoryId = Categories.list[0].id;
+    if (UI.statCategoryId === id) UI.statCategoryId = '';
     UI.renderCategories();
     UI.renderAll(this.currentMonth);
     UI.showToast('分类已删除');
@@ -2043,27 +1456,11 @@ const App = {
   editCategoryLimit: async function (id) {
     const cat = Categories.get(id);
     const current = (cat.limit && cat.limit > 0) ? String(cat.limit) : '';
-
-    const value = await Modal.prompt({
-      type: 'info',
-      title: '「' + cat.name + '」月度额度',
-      message: '输入每月上限，留空或填 0 表示取消',
-      input: { placeholder: '比如：300', value: current, type: 'number' },
-    });
+    const value = await Modal.prompt({ type: 'info', title: '「' + cat.name + '」月度额度', message: '输入每月上限，留空或填 0 表示取消', input: { placeholder: '输入限额', value: current, type: 'number' } });
     if (value === null) return;
-
     const num = Number(value);
-
-    if (value === '' || num === 0) {
-      Categories.setLimit(id, 0);
-      UI.renderCatManage(this.currentMonth);
-      UI.showToast('已取消额度');
-      return;
-    }
-    if (isNaN(num) || num < 0) {
-      Modal.alert({ type: 'warn', message: '请输入正确的金额' });
-      return;
-    }
+    if (value === '' || num === 0) { Categories.setLimit(id, 0); UI.renderCatManage(this.currentMonth); UI.showToast('已取消额度'); return; }
+    if (isNaN(num) || num < 0) { Modal.alert({ type: 'warn', message: '请输入正确的金额' }); return; }
     Categories.setLimit(id, num);
     UI.renderCatManage(this.currentMonth);
     UI.showToast('额度已设为 ￥' + num);
@@ -2074,202 +1471,84 @@ const App = {
     const splitInput  = UI.els.splitInput;
     const dateInput   = UI.els.dateInput;
     const noteInput   = UI.els.noteInput;
-
     const rawAmount = Number(amountInput.value);
-    if (!rawAmount || rawAmount <= 0) {
-      UI.showToast('请先填写金额');
-      amountInput.focus();
-      return;
-    }
-
+    if (!rawAmount || rawAmount <= 0) { UI.showToast('请先填写金额'); amountInput.focus(); return; }
     const split = UI.getSplitCount();
     const amount = Math.round((rawAmount / split) * 100) / 100;
-
-    if (!amount || amount <= 0) {
-      UI.showToast('金额太小了');
-      return;
-    }
-
+    if (!amount || amount <= 0) { UI.showToast('金额太小了'); return; }
     const date = dateInput.dataset.value || Ledger.today();
     const categoryId = UI.selectedCategoryId;
     const month = date.slice(0, 7);
-
-    const beforeSpent = Ledger
-      .byMonth(month)
-      .filter(function (r) { return r.categoryId === categoryId; })
-      .reduce(function (s, r) { return s + r.amount; }, 0);
-
+    const beforeSpent = Ledger.byMonth(month).filter(function (r) { return r.categoryId === categoryId; }).reduce(function (s, r) { return s + r.amount; }, 0);
     const note = noteInput.value || '';
-
-    Ledger.add({
-      amount: amount,
-      categoryId: categoryId,
-      note: note,
-      date: date,
-    });
-
+    Ledger.add({ amount: amount, categoryId: categoryId, note: note, date: date });
     amountInput.value = '';
     splitInput.value = '';
     noteInput.value = '';
     this.updateAmountPreview();
     amountInput.focus();
-
-    if (month !== this.currentMonth) {
-      this.currentMonth = month;
-      this.setMonthButton(month);
-      const b2 = Ledger.getBudget(month);
-      
-    }
-
+    if (month !== this.currentMonth) { this.currentMonth = month; this.setMonthButton(month); }
     UI.renderAll(this.currentMonth);
-
-    const tip = split > 1
-      ? ('已记 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2)
-         + ' ÷ ' + split + '人）')
-      : '记好啦 ✓';
+    const tip = split > 1 ? ('已记 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2) + ' ÷ ' + split + '人）') : '记好啦 ✓';
     UI.showToast(tip);
-
-    try { this.checkLimit(categoryId, beforeSpent, beforeSpent + amount); }
-    catch (e) { console.warn(e); }
+    try { this.checkLimit(categoryId, beforeSpent, beforeSpent + amount); } catch (e) { console.warn(e); }
   },
 
   checkLimit: function (categoryId, beforeSpent, afterSpent) {
     const cat = Categories.get(categoryId);
     if (!cat.limit || cat.limit <= 0) return;
-
     const limit = cat.limit;
     const beforeRatio = beforeSpent / limit;
     const afterRatio = afterSpent / limit;
-
     if (afterRatio >= 1) {
-      Modal.alert({
-        type: 'danger',
-        title: '「' + cat.name + '」已超支',
-        html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>'
-            + '额度 ￥' + limit.toFixed(2)
-            + '，超出 <strong>￥' + (afterSpent - limit).toFixed(2) + '</strong>',
-        buttonText: '知道了',
-      });
+      Modal.alert({ type: 'danger', title: '「' + cat.name + '」已超支', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，超出 <strong>￥' + (afterSpent - limit).toFixed(2) + '</strong>', buttonText: '知道了' });
       return;
     }
-
     if (afterRatio >= 0.5 && beforeRatio < 0.5) {
-      Modal.alert({
-        type: 'warn',
-        title: '「' + cat.name + '」已用一半',
-        html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>'
-            + '额度 ￥' + limit.toFixed(2)
-            + '，剩 <strong>￥' + (limit - afterSpent).toFixed(2) + '</strong>',
-        buttonText: '知道了',
-      });
+      Modal.alert({ type: 'warn', title: '「' + cat.name + '」已用一半', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，剩 <strong>￥' + (limit - afterSpent).toFixed(2) + '</strong>', buttonText: '知道了' });
     }
   },
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  // 全局事件委托处理顶部切换
   document.body.addEventListener('click', function(e) {
     const btn = e.target.closest('.header-mode-btn');
     if (!btn) return;
-    
     const mode = btn.dataset.mode;
     if (UI.globalMode === mode) return;
     UI.globalMode = mode;
-    
-    // 更新按钮状态
     const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
+    if (seg) { seg.querySelectorAll('.header-mode-btn').forEach(function (b) { b.classList.toggle('is-active', b.dataset.mode === mode); }); }
     const eForm = document.getElementById('expenseFormCard');
     const iForm = document.getElementById('incomeFormCard');
     const eRec = document.getElementById('recentExpenseCard');
     const iRec = document.getElementById('recentIncomeCard');
-    
     if (eForm) eForm.hidden = (mode === 'income');
     if (iForm) iForm.hidden = (mode === 'expense');
     if (eRec) eRec.hidden = (mode === 'income');
     if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
+    if (typeof UI !== 'undefined' && UI.showToast) UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
   });
-
-  // 全局事件委托处理顶部切换
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    
-    // 更新按钮状态
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
-  });
-
   App.init();
 });
 
-/* ==========================================================
-   玻璃样式切换（独立绑定，不依赖 App.init）
-   ========================================================== */
 (function () {
   function applyMode(mode) {
     const html = document.documentElement;
-    if (mode === 'clear') {
-      html.setAttribute('data-glass-mode', 'clear');
-    } else {
-      html.removeAttribute('data-glass-mode');
-      mode = 'frosted';
-    }
+    if (mode === 'clear') html.setAttribute('data-glass-mode', 'clear');
+    else { html.removeAttribute('data-glass-mode'); mode = 'frosted'; }
     try { localStorage.setItem('slh.glassMode.v1', mode); } catch (e) {}
-
     const grid = document.getElementById('glassMode');
     if (grid) {
-      Array.prototype.forEach.call(
-        grid.querySelectorAll('.glass-mode__btn'),
-        function (btn) {
-          btn.classList.toggle('is-active', btn.dataset.mode === mode);
-        }
-      );
+      Array.prototype.forEach.call(grid.querySelectorAll('.glass-mode__btn'), function (btn) {
+        btn.classList.toggle('is-active', btn.dataset.mode === mode);
+      });
     }
   }
-
   function init() {
-    /* 恢复上次的模式 */
     let mode = 'frosted';
-    try {
-      mode = localStorage.getItem('slh.glassMode.v1') || 'frosted';
-    } catch (e) {}
+    try { mode = localStorage.getItem('slh.glassMode.v1') || 'frosted'; } catch (e) {}
     applyMode(mode);
-
-    /* 事件委托到 document（最高可靠性） */
     document.addEventListener('click', function (e) {
       const btn = e.target.closest('.glass-mode__btn');
       if (!btn) return;
@@ -2277,291 +1556,68 @@ document.addEventListener('DOMContentLoaded', function () {
       applyMode(btn.dataset.mode);
     }, true);
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-  // 全局事件委托处理顶部切换
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    
-    // 更新按钮状态
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
-  });
-
-  // 全局事件委托处理顶部切换
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    
-    // 更新按钮状态
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
-  });
-
-      setTimeout(init, 100);
-    });
-  } else {
-    setTimeout(init, 100);
-  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 100); }); }
+  else { setTimeout(init, 100); }
 })();
 
-/* ==========================================================
-   签到功能（独立绑定，防冲突）
-   ========================================================== */
 (function () {
   function getTodayStr() {
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
-
   function getYesterdayStr() {
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
+    const d = new Date(); d.setDate(d.getDate() - 1);
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
-
   function initCheckin() {
     const streakEl = document.getElementById('checkinStreak');
     const btn = document.getElementById('checkinBtn');
     const btnText = document.getElementById('checkinBtnText');
-
-    if (!streakEl || !btn || !btnText) {
-      console.warn('[签到] 找不到 DOM 元素，可能 HTML 没插进去');
-      return;
-    }
-
+    if (!streakEl || !btn || !btnText) return;
     let data = { lastDate: '', streak: 0 };
-    try {
-      const saved = JSON.parse(localStorage.getItem('slh.checkin.v1'));
-      if (saved) data = saved;
-    } catch (e) {
-      console.error('[签到] 读取数据失败', e);
-    }
-
-    const today = getTodayStr();
-    const yest = getYesterdayStr();
-
+    try { const saved = JSON.parse(localStorage.getItem('slh.checkin.v1')); if (saved) data = saved; } catch (e) {}
+    const today = getTodayStr(), yest = getYesterdayStr();
     let currentStreak = data.streak || 0;
-
-    // 如果断签
-    if (data.lastDate && data.lastDate !== today && data.lastDate !== yest) {
-      currentStreak = 0;
-    }
-
+    if (data.lastDate && data.lastDate !== today && data.lastDate !== yest) currentStreak = 0;
     streakEl.textContent = currentStreak;
-
-    if (data.lastDate === today) {
-      btn.classList.add('is-checked');
-      btnText.textContent = '今日已打卡';
-    } else {
-      btn.classList.remove('is-checked');
-      btnText.textContent = '点击打卡';
-    }
+    if (data.lastDate === today) { btn.classList.add('is-checked'); btnText.textContent = '今日已打卡'; }
+    else { btn.classList.remove('is-checked'); btnText.textContent = '点击打卡'; }
   }
-
   function handleCheckin() {
     const btn = document.getElementById('checkinBtn');
     if (!btn || btn.classList.contains('is-checked')) return;
-
     let data = { lastDate: '', streak: 0 };
-    try {
-      const saved = JSON.parse(localStorage.getItem('slh.checkin.v1'));
-      if (saved) data = saved;
-    } catch (e) {}
-
-    const today = getTodayStr();
-    const yest = getYesterdayStr();
-
-    if (data.lastDate === yest) {
-      data.streak = (data.streak || 0) + 1;
-    } else if (data.lastDate === today) {
-      return; // 已经签过了
-    } else {
-      data.streak = 1;
-    }
+    try { const saved = JSON.parse(localStorage.getItem('slh.checkin.v1')); if (saved) data = saved; } catch (e) {}
+    const today = getTodayStr(), yest = getYesterdayStr();
+    if (data.lastDate === yest) data.streak = (data.streak || 0) + 1;
+    else if (data.lastDate === today) return;
+    else data.streak = 1;
     data.lastDate = today;
-
-    try {
-      localStorage.setItem('slh.checkin.v1', JSON.stringify(data));
-    } catch (e) {
-      console.error('[签到] 存储失败', e);
-    }
-
-    // 更新 UI
+    try { localStorage.setItem('slh.checkin.v1', JSON.stringify(data)); } catch (e) {}
     document.getElementById('checkinStreak').textContent = data.streak;
     btn.classList.add('is-checked');
     document.getElementById('checkinBtnText').textContent = '今日已打卡';
-
-    // 弹窗
     showPopup(data.streak);
   }
-
   function showPopup(streak) {
     let popup = document.getElementById('checkinPopup');
-    if (!popup) {
-      popup = document.createElement('div');
-      popup.id = 'checkinPopup';
-      popup.className = 'checkin-popup';
-      document.body.appendChild(popup);
-    }
-
+    if (!popup) { popup = document.createElement('div'); popup.id = 'checkinPopup'; popup.className = 'checkin-popup'; document.body.appendChild(popup); }
     const fortune = getLuoguFortune();
-    const yi = fortune.yi;
-    const ji = fortune.ji;
-    const yiDesc = fortune.yiDesc;
-    const jiDesc = fortune.jiDesc;
-    const level = fortune.level;
-    const isSpecial = fortune.isSpecial;
-
     popup.innerHTML = 
       '<div class="checkin-popup__content">' +
         '<div class="checkin-popup__title">今日运势</div>' +
-        '<div class=\"checkin-popup__fortune\">§ ' + level + ' §</div>' +
-        '<div class=\"checkin-popup__row yi\"><span>宜：</span><strong>' + yi + '</strong>' + (yiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + yiDesc + '</span>' : '') + '</div>' +
-        '<div class=\"checkin-popup__row ji\"><span>忌：</span><strong>' + ji + '</strong>' + (jiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + jiDesc + '</span>' : '') + '</div>' +
+        '<div class=\"checkin-popup__fortune\">§ ' + fortune.level + ' §</div>' +
+        '<div class=\"checkin-popup__row yi\"><span>宜：</span><strong>' + fortune.yi + '</strong>' + (fortune.yiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + fortune.yiDesc + '</span>' : '') + '</div>' +
+        '<div class=\"checkin-popup__row ji\"><span>忌：</span><strong>' + fortune.ji + '</strong>' + (fortune.jiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + fortune.jiDesc + '</span>' : '') + '</div>' +
         '<div class="checkin-popup__footer">你已经在有序星球连续打卡了 ' + streak + ' 天</div>' +
         '<button class="checkin-popup__close" type="button" id="checkinPopupClose">收下好运</button>' +
       '</div>';
-
     void popup.offsetWidth;
     popup.classList.add('is-show');
-
-    popup.querySelector('#checkinPopupClose').addEventListener('click', function () {
-      popup.classList.remove('is-show');
-    });
-    popup.addEventListener('click', function (e) {
-      if (e.target === popup) popup.classList.remove('is-show');
-    });
+    popup.querySelector('#checkinPopupClose').addEventListener('click', function () { popup.classList.remove('is-show'); });
+    popup.addEventListener('click', function (e) { if (e.target === popup) popup.classList.remove('is-show'); });
   }
-
-  // 绑定事件（事件委托）
-  document.addEventListener('click', function (e) {
-    const btn = e.target.closest('#checkinBtn');
-    if (btn) {
-      handleCheckin();
-    }
-  });
-
-  // 延迟初始化，确保 DOM 已经渲染
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-  // 全局事件委托处理顶部切换
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    
-    // 更新按钮状态
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
-  });
-
-  // 全局事件委托处理顶部切换
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    
-    // 更新按钮状态
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) {
-      seg.querySelectorAll('.header-mode-btn').forEach(function (b) {
-        b.classList.toggle('is-active', b.dataset.mode === mode);
-      });
-    }
-    
-    // 切换表单显隐
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    
-    if (typeof UI !== 'undefined' && UI.showToast) {
-      UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-    }
-  });
-
-      setTimeout(initCheckin, 200);
-    });
-  } else {
-    setTimeout(initCheckin, 200);
-  }
+  document.addEventListener('click', function (e) { if (e.target.closest('#checkinBtn')) handleCheckin(); });
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(initCheckin, 200); }); }
+  else { setTimeout(initCheckin, 200); }
 })();

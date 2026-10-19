@@ -5610,3 +5610,622 @@ html.light-theme-active .overview__label span {
 
 
 
+
+
+/* ==========================================================
+   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
+   ========================================================== */
+
+/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 2. 透玻璃（亚克力）模式：同样保持统一 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
+:root[data-custom-bg="on"] .cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
+  color: var(--c-primary) !important;
+  font-weight: 600 !important;
+}
+
+
+/* ==========================================================
+   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
+   ========================================================== */
+
+/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 2. 透玻璃（亚克力）模式：同样保持统一 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
+:root[data-custom-bg="on"] .cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
+  color: var(--c-primary) !important;
+  font-weight: 600 !important;
+}
+
+
+/* ==========================================================
+   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
+   ========================================================== */
+
+/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 2. 透玻璃（亚克力）模式：同样保持统一 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
+:root[data-custom-bg="on"] .cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
+  color: var(--c-primary) !important;
+  font-weight: 600 !important;
+}
+
+
+/* ==========================================================
+   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
+   ========================================================== */
+
+/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 2. 透玻璃（亚克力）模式：同样保持统一 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
+:root[data-custom-bg="on"] .cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
+  color: var(--c-primary) !important;
+  font-weight: 600 !important;
+}
+
+
+
+/* ==========================================================
+   终极统一：所有框框组件（更透、更干净）
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式（极度通透） ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .quick-chip,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item {
+  /* 更透的背景：降到 15% 的白，让背景图完全透出来 */
+  background: rgba(255, 255, 255, 0.15) !important;
+  /* 极细的白色半透明边框，代替硬朗的黑色/灰色 */
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  /* 顶部微弱高光 + 外部极淡投影 */
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.02) !important;
+  /* 去除历史遗留的奇怪阴影 */
+  color: var(--c-text) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .input,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .amount,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__input,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat-fake,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .record,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-manage__item,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .legend-item,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-mini,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ---------- 3. 细节修复 ---------- */
+
+/* 金额框里的分隔线 */
+:root[data-custom-bg="on"] .amount__sep {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 分类格子内部的选中态：微微泛出主色 */
+:root[data-custom-bg="on"] .cat.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.2) !important;
+  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.6) !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
+}
+
+/* 记录列表右侧的金额和删除按钮对齐 */
+:root[data-custom-bg="on"] .record {
+  padding: 12px 14px !important;
+}
+
+/* 输入框获得焦点时的光晕调整 */
+:root[data-custom-bg="on"] .input:focus,
+:root[data-custom-bg="on"] .amount:focus-within,
+:root[data-custom-bg="on"] .modal__input:focus {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 确保“常用金额”容器（被设为 modal__input 的那个）高度自适应 */
+.modal__input[style*="display:flex"] {
+  height: auto !important;
+  align-items: flex-start !important;
+}
+
+
+
+
+/* === 修复选择分类按钮的垂直居中 === */
+#qtCatBtn {
+  height: 44px !important;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important; /* 强制垂直居中 */
+  justify-content: space-between !important;
+  padding: 0 14px !important;
+  line-height: normal !important;
+  box-sizing: border-box !important;
+}
+
+#qtCatBtn span {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+
+
+
+/* === 终极升级：全站按钮与选中态的半透明彩色玻璃效果 === */
+
+/* ---------- 1. 主按钮（保存、提交等）变为带主色的半透玻璃 ---------- */
+.btn--primary,
+.modal__btn--primary {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ---------- 2. 普通按钮（取消、关闭、今日已打卡、普通按钮）变为通透白 ---------- */
+.btn,
+.modal__btn,
+.checkin-btn.is-checked,
+.quick-chip {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  color: var(--c-text) !important;
+}
+
+/* 今日已打卡文字稍微淡一点 */
+.checkin-btn.is-checked {
+  color: var(--c-text-sub) !important;
+}
+
+/* ---------- 3. 签到按钮（未打卡） ---------- */
+.checkin-btn {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2) !important;
+  color: #fff !important;
+}
+
+/* ---------- 4. 分段选择器滑块（支出/收入、按月/按年、图表Tab） ---------- */
+.seg::before,
+.chart-tabs::before {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
+  backdrop-filter: blur(8px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 2px 8px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 确保滑块上的文字清晰 */
+.seg .seg__btn.is-active,
+.chart-tabs .chart-tab.is-active {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ---------- 5. 顶栏的“支出/收入”切换按钮 ---------- */
+.header-mode-btn.is-active {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  color: var(--c-primary-dark) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ---------- 6. 分类弹窗里的选中项 ---------- */
+.cat-modal__item.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
+  border: 1px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.3) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* ---------- 7. 亚克力（透玻璃）模式适配 ---------- */
+/* 透玻璃模式下因为没有 backdrop-filter 模糊，稍微调高一点不透明度以防看不清 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .btn--primary,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn--primary,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .seg::before,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .chart-tabs::before {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85) !important;
+}
+
+:root[data-custom-bg="on"][data-glass-mode="clear"] .btn,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn.is-checked,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+
+
+
+/* === 修复：打卡按钮跟随主题变色 === */
+
+/* 覆盖掉上一版强制写死的白色背景，恢复为跟随主题的表面色 */
+.checkin-btn.is-checked {
+  background: color-mix(in srgb, var(--c-surface) 65%, transparent) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  color: var(--c-text-sub) !important;
+}
+
+/* 透玻璃模式下稍微实一点 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn.is-checked {
+  background: color-mix(in srgb, var(--c-surface) 85%, transparent) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+
+
+
+/* === 终极修复：打卡按钮（未打卡状态）高级玻璃质感 === */
+
+.checkin-btn {
+  /* 使用 color-mix 完美自适应任何主题色，混合 75% 的不透明度 */
+  background: color-mix(in srgb, var(--c-primary) 75%, transparent) !important;
+  
+  /* 强模糊，透出底色 */
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  
+  /* 剔除生硬的边框，换成半透明的白色切边 */
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  
+  /* 核心：模拟液态玻璃的立体高光与折射 */
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.5),   /* 顶部强水光 */
+    inset 0 -2px 5px rgba(0, 0, 0, 0.15),        /* 底部暗角厚度 */
+    inset 2px 0 3px rgba(255, 255, 255, 0.1),    /* 左侧反光 */
+    0 4px 15px color-mix(in srgb, var(--c-primary) 35%, transparent) !important; /* 外部主色投影 */
+    
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 透玻璃（亚克力）模式适配：无模糊，但保持高透和光泽 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
+  background: color-mix(in srgb, var(--c-primary) 85%, transparent) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+
+
+
+/* === 纠错：仅允许在自定义背景（壁纸）下应用玻璃特效 === */
+
+/* 当没有自定义背景（正常主题）时，强制恢复原本的实色质感 */
+
+/* 1. 恢复主按钮的实色渐变 */
+:root:not([data-custom-bg="on"]) .btn--primary,
+:root:not([data-custom-bg="on"]) .modal__btn--primary,
+:root:not([data-custom-bg="on"]) .checkin-btn {
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(60, 50, 80, 0.2) !important;
+  text-shadow: none !important;
+}
+
+/* 2. 恢复普通按钮 / 取消 / 关闭的实色 */
+:root:not([data-custom-bg="on"]) .btn:not(.btn--primary),
+:root:not([data-custom-bg="on"]) .modal__btn:not(.modal__btn--primary),
+:root:not([data-custom-bg="on"]) .quick-chip,
+:root:not([data-custom-bg="on"]) .checkin-btn.is-checked {
+  background: var(--c-surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--c-border) !important;
+  box-shadow: var(--c-shadow-sm) !important;
+  color: var(--c-text) !important;
+}
+
+/* 3. 恢复分段选择器（按月/按年）滑块的实色 */
+:root:not([data-custom-bg="on"]) .seg::before,
+:root:not([data-custom-bg="on"]) .chart-tabs::before {
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(60, 50, 80, 0.2) !important;
+}
+
+/* 4. 恢复顶栏切换按钮 / 分类选中项的实色 */
+:root:not([data-custom-bg="on"]) .header-mode-btn.is-active {
+  background: #fff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+:root:not([data-custom-bg="on"]) .cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 12%, var(--c-card)) !important;
+  border: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 5. 恢复所有输入框、卡片、分类格子、记录行的实色边框和背景 */
+:root:not([data-custom-bg="on"]) .input,
+:root:not([data-custom-bg="on"]) .amount,
+:root:not([data-custom-bg="on"]) .modal__input,
+:root:not([data-custom-bg="on"]) .stat-period,
+:root:not([data-custom-bg="on"]) .stat-cat-fake,
+:root:not([data-custom-bg="on"]) .cat,
+:root:not([data-custom-bg="on"]) .record,
+:root:not([data-custom-bg="on"]) .cat-manage__item,
+:root:not([data-custom-bg="on"]) .legend-item,
+:root:not([data-custom-bg="on"]) .stat-mini,
+:root:not([data-custom-bg="on"]) .theme-item {
+  background: var(--c-surface) !important;
+  border: 1.5px solid var(--c-border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  color: var(--c-text) !important;
+}
+
+
+
+
+/* === 最终优化：打卡按钮对齐“保存这一笔”的平整毛玻璃质感 === */
+
+/* 仅在自定义壁纸下生效 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-btn {
+  /* 使用主题色混合较高的透明度（透出背后颜色） */
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.45) !important;
+  
+  /* 强毛玻璃模糊 */
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  
+  /* 极细的浅色切边 */
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  
+  /* 干净柔和的边缘高光，去掉厚重的果冻感 */
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    
+  color: #fff !important;
+  text-shadow: none !important; /* 去掉文字发光 */
+}
+
+/* 透玻璃（亚克力）模式下的平替质感 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.75) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+
+
+/* === 最终对齐：未打卡按钮与主按钮同款彩色透玻璃 === */
+
+/* 仅在自定义壁纸下生效 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-btn {
+  /* 提高主题色浓度（65%），透出彩色质感 */
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
+  
+  /* 强毛玻璃模糊 */
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  
+  /* 极细的白色切边 */
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  
+  /* 顶部微光 + 底部极淡投影 */
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    
+  color: #fff !important;
+}
+
+/* 透玻璃（亚克力）模式下的纯色半透保证 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+
+
+
+/* === 终极状态：打卡后透明镂空 === */
+
+/* 覆盖之前的所有实色，强制背景透明、无模糊、无阴影 */
+.checkin-btn.is-checked {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  color: var(--c-text-light) !important; /* 文字变淡，表示已完成 */
+  opacity: 0.8;
+}
+
+/* 如果是在自定义壁纸下，给它保留一圈极淡的白色虚边，提示它曾是一个按钮 */
+:root[data-custom-bg="on"] .checkin-btn.is-checked {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 移除按压反馈，因为已经不能再点击了 */
+.checkin-btn.is-checked:active {
+  transform: none !important;
+}
+
