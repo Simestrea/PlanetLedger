@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>有序星球</title>
+<link rel="stylesheet" href="style/reset.css">
+<link rel="stylesheet" href="style/main.css">
+<link rel="stylesheet" href="style/components.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__top">
+        <h1 class="header__title">有序星球</h1>
+        <button class="header__month" id="monthPicker" type="button">2026 年 1 月</button>
+      </div>
+
+      <div class="overview">
+        <div class="overview__item">
+          <span class="overview__label" id="headerAmountLabel">本月支出</span>
+          <strong class="overview__value" id="monthExpense">￥0.00</strong>
+        </div>
+        <div class="overview__item" id="headerBudgetBlock" style="cursor:pointer;">
+          <span class="overview__label">
+            <span id="monthLeftLabel">剩余预算</span>
+            <span style="font-size:12px;opacity:.8;margin-left:4px;">✎ 修改</span>
+          </span>
+          <strong class="overview__value" id="monthLeft">￥0.00</strong>
+        </div>
+      </div>
+
+      <div class="budget-bar" id="headerBudgetBar">
+        <div class="budget-bar__fill" id="budgetFill"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section class="page is-active" id="page-home">
+        <div class="checkin-card" id="checkinCard">
+          <div class="checkin-left">
+            <h2 class="checkin-title">欢迎回来</h2>
+            <div class="checkin-streak">
+              已连续签到 <strong id="checkinStreak">0</strong> 天
+            </div>
+          </div>
+          <button class="checkin-btn" id="checkinBtn" type="button">
+            <span id="checkinBtnText">点击打卡</span>
+          </button>
+        </div>
+
+      <div class="home-grid">
+        
+
+        <div class="home-col">
+<div class="card" id="expenseFormCard">
+            <h2 class="card__title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <span>✏️ 记一笔</span>
+            <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); letter-spacing: 0.5px; opacity: 0.8;">长按速记可删除</span>
+          </h2>
+            <div class="quick-actions" id="quickActions"></div>
+
+            <div class="field">
+              <label class="field__label">分类</label>
+              <div class="cat-grid" id="catGrid"></div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="amountInput">金额</label>
+              <div class="amount">
+                <span class="amount__symbol">￥</span>
+                <input class="amount__input" id="amountInput" type="number"
+                       inputmode="decimal" step="0.01" min="0" placeholder="0.00">
+
+                <span class="amount__sep"></span>
+                <span class="amount__div">÷</span>
+                <input class="amount__split" id="splitInput" type="number"
+                       inputmode="numeric" min="1" step="1" placeholder="1">
+                <span class="amount__unit">人</span>
+              </div>
+              <p class="amount__preview" id="amountPreview" hidden></p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="field__label">日期</label>
+                <button class="input input--date" id="dateInput" type="button">选择日期</button>
+              </div>
+              <div class="field">
+                <label class="field__label" for="noteInput">备注</label>
+                <input class="input" id="noteInput" type="text" maxlength="20"
+                       placeholder="消费原因">
+              </div>
+            </div>
+
+            <button class="btn btn--primary" id="submitBtn" type="button">保存这一笔</button>
+          </div>
+
+          
+        </div>
+
+        <div class="home-col">
+          <div class="card" id="recentExpenseCard">
+            <h2 class="card__title">📋 最近记录</h2>
+            <ul class="record-list" id="recentList"></ul>
+            <p class="empty" id="recentEmpty">还没有记账，从左边开始记一笔吧～</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+        <section class="page" id="page-chart">
+
+      <!-- 筛选栏 -->
+      <div class="card">
+        <div class="stat-filter">
+          <div class="stat-filter__top">
+            <div class="seg" id="statTypeSeg">
+              <button class="seg__btn is-active" data-type="expense" type="button">支出</button>
+              <button class="seg__btn" data-type="income" type="button">收入</button>
+              <button class="seg__btn" data-type="net" type="button">净收入</button>
+            </div>
+            <div class="stat-compare">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" id="statCompareToggle" checked>
+                <span>对比</span>
+              </label>
+              <span id="statComparePeriodBtn" style="cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;margin-left:4px;">
+                上期
+              </span>
+            </div>
+          </div>
+
+          <div class="stat-filter__row">
+            <div class="seg" id="statModeSeg" style="width:100%;">
+              <button class="seg__btn is-active" data-mode="month" type="button" style="flex:1;">按月</button>
+              <button class="seg__btn" data-mode="year" type="button" style="flex:1;">按年</button>
+            </div></div>
+
+          <div class="stat-filter__row">
+            <button class="stat-period" id="statPeriodBtn" type="button">
+              <span id="statPeriodLabel">2026 年 10 月</span>
+              <span class="stat-period__caret"></span>
+            </button>
+            <div class="custom-select-wrap">
+              <select class="stat-cat" id="statCatSelect">
+                <option value="">全部分类</option>
+              </select>
+              <button class="stat-cat-fake" id="statCatFakeBtn" type="button">
+                <span id="statCatFakeLabel">全部</span>
+                <span class="stat-cat__caret"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 对比概览 -->
+      <div class="card">
+        <div class="stat-summary" id="statSummary"></div>
+      </div>
+
+      <!-- 图表 -->
+      <div class="card">
+        <h2 class="card__title" id="chartTitle">📊 支出图表</h2>
+        <div class="chart-tabs" id="chartTabs">
+          <button class="chart-tab is-active" data-chart="bars"    type="button">条形</button>
+          <button class="chart-tab"           data-chart="pie"     type="button">饼图</button>
+          <button class="chart-tab"           data-chart="daily"   type="button">按天</button>
+          <button class="chart-tab"           data-chart="line"    type="button">趋势</button>
+          <button class="chart-tab"           data-chart="monthly" type="button" hidden>按月</button>
+        </div>
+        <div class="chart" id="chart"></div>
+        <p class="empty" id="chartEmpty">暂无数据</p>
+      </div>
+
+      
+
+      <div class="card" id="catManageCard">
+        <h2 class="card__title">⚙️ 管理分类与额度</h2>
+        <ul class="cat-manage__list" id="catManageList"></ul>
+        <div class="cat-manage__add">
+          <input class="input" id="newCatInput" type="text" maxlength="6"
+                 placeholder="新分类名，最多 6 个字">
+          <button class="btn btn--primary" id="addCatBtn" type="button">添加</button>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="page" id="page-savings">
+
+      
+
+      <div class="card">
+        <h2 class="card__title">💰 记一笔收入</h2>
+
+        <div class="field">
+          <label class="field__label">收入来源</label>
+          <div class="cat-grid" id="incomeCatGrid"></div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="incomeAmountInput">金额</label>
+          <div class="amount">
+            <span class="amount__symbol">￥</span>
+            <input class="amount__input" id="incomeAmountInput" type="number"
+                   inputmode="decimal" step="0.01" min="0" placeholder="0.00">
+
+            <span class="amount__sep"></span>
+            <span class="amount__div">÷</span>
+            <input class="amount__split" id="incomeSplitInput" type="number"
+                   inputmode="numeric" min="1" step="1" placeholder="1">
+            <span class="amount__unit">人</span>
+          </div>
+          <p class="amount__preview" id="incomeAmountPreview" hidden></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label">日期</label>
+            <button class="input input--date" id="incomeDateInput" type="button">选择日期</button>
+          </div>
+          <div class="field">
+            <label class="field__label" for="incomeNoteInput">备注</label>
+            <input class="input" id="incomeNoteInput" type="text" maxlength="20"
+                   placeholder="收入说明">
+          </div>
+        </div>
+
+        <button class="btn btn--primary" id="incomeSubmitBtn" type="button">保存这笔收入</button>
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">📋 最近收入</h2>
+        <ul class="record-list" id="incomeRecentList"></ul>
+        <p class="empty" id="incomeRecentEmpty">还没有收入记录～</p>
+      </div>
+
+    </section>
+
+    <section class="page" id="page-list">
+      <div class="card">
+        <h2 class="card__title">📋 本月明细</h2>
+        <ul class="record-list" id="recordList"></ul>
+        <p class="empty" id="listEmpty">这个月还没有记账哦～</p>
+      </div>
+    </section>
+    <section class="page" id="page-settings">
+
+      <div class="card">
+        <h2 class="card__title">🎨 主题 · Pantone 年度色</h2>
+        <div class="theme-grid" id="themeGrid">
+          <button class="theme-item" data-theme="greenery" title="草木绿" type="button">
+            <span class="theme-preview" style="--p:#88B04B;--bg:#F4F8EC;--card:#FCFEF8"></span>
+            <span class="theme-name">草木绿</span>
+          </button>
+          <button class="theme-item" data-theme="periwinkle" title="长春花蓝" type="button">
+            <span class="theme-preview" style="--p:#6667AB;--bg:#F2F2F7;--card:#FDFDFF"></span>
+            <span class="theme-name">长春花蓝</span>
+          </button>
+          <button class="theme-item" data-theme="magenta" title="洋红万岁" type="button">
+            <span class="theme-preview" style="--p:#BE3455;--bg:#F8EFF2;--card:#FEFCFD"></span>
+            <span class="theme-name">洋红万岁</span>
+          </button>
+          <button class="theme-item" data-theme="peach" title="柔和桃" type="button">
+            <span class="theme-preview" style="--p:#FFBE98;--bg:#FFF6F0;--card:#FFFEFC"></span>
+            <span class="theme-name">柔和桃</span>
+          </button>
+          <button class="theme-item" data-theme="mocha" title="摩卡慕斯" type="button">
+            <span class="theme-preview" style="--p:#A47864;--bg:#F8F1EC;--card:#FEFBF9"></span>
+            <span class="theme-name">摩卡慕斯</span>
+          </button>
+          <button class="theme-item" data-theme="classic" title="经典蓝" type="button">
+            <span class="theme-preview" style="--p:#0F4C81;--bg:#EEF3F8;--card:#FBFCFE"></span>
+            <span class="theme-name">经典蓝</span>
+          </button>
+          <button class="theme-item" data-theme="coral" title="活珊瑚橘" type="button">
+            <span class="theme-preview" style="--p:#FF6F61;--bg:#FFF1EE;--card:#FFFCFB"></span>
+            <span class="theme-name">活珊瑚橘</span>
+          </button>
+          <button class="theme-item" data-theme="ultraviolet" title="紫外光" type="button">
+            <span class="theme-preview" style="--p:#5F4B8B;--bg:#F3F0F7;--card:#FDFCFE"></span>
+            <span class="theme-name">紫外光</span>
+          </button>
+          <button class="theme-item" data-theme="quartz" title="玫瑰石英" type="button">
+            <span class="theme-preview" style="--p:#F7CAC9;--bg:#FDF5F5;--card:#FFFEFE"></span>
+            <span class="theme-name">玫瑰石英</span>
+          </button>
+          <button class="theme-item" data-theme="serenity" title="宁静蓝" type="button">
+            <span class="theme-preview" style="--p:#92A8D1;--bg:#F1F4FA;--card:#FDFDFF"></span>
+            <span class="theme-name">宁静蓝</span>
+          </button>
+          <button class="theme-item" data-theme="marsala" title="玛萨拉酒红" type="button">
+            <span class="theme-preview" style="--p:#955251;--bg:#F7F0EF;--card:#FEFCFC"></span>
+            <span class="theme-name">玛萨拉酒红</span>
+          </button>
+          <button class="theme-item" data-theme="orchid" title="兰花紫" type="button">
+            <span class="theme-preview" style="--p:#B565A7;--bg:#F8F0F6;--card:#FEFCFE"></span>
+            <span class="theme-name">兰花紫</span>
+          </button>
+          <button class="theme-item" data-theme="emerald" title="翡翠绿" type="button">
+            <span class="theme-preview" style="--p:#009473;--bg:#ECF6F2;--card:#FBFEFD"></span>
+            <span class="theme-name">翡翠绿</span>
+          </button>
+          <button class="theme-item" data-theme="tangerine" title="探戈橘" type="button">
+            <span class="theme-preview" style="--p:#DD4124;--bg:#FBEFEB;--card:#FFFCFB"></span>
+            <span class="theme-name">探戈橘</span>
+          </button>
+          <button class="theme-item" data-theme="honeysuckle" title="忍冬红" type="button">
+            <span class="theme-preview" style="--p:#D94F70;--bg:#FBEEF1;--card:#FFFCFD"></span>
+            <span class="theme-name">忍冬红</span>
+          </button>
+          <button class="theme-item" data-theme="turquoise" title="绿松石" type="button">
+            <span class="theme-preview" style="--p:#45B5AA;--bg:#EFF7F6;--card:#FCFEFE"></span>
+            <span class="theme-name">绿松石</span>
+          </button>
+          <button class="theme-item" data-theme="mimosa" title="含羞草黄" type="button">
+            <span class="theme-preview" style="--p:#EFC050;--bg:#FBF6E9;--card:#FFFEFA"></span>
+            <span class="theme-name">含羞草黄</span>
+          </button>
+          <button class="theme-item" data-theme="iris" title="鸢尾蓝" type="button">
+            <span class="theme-preview" style="--p:#5A5B9F;--bg:#F1F1F7;--card:#FDFDFF"></span>
+            <span class="theme-name">鸢尾蓝</span>
+          </button>
+          <button class="theme-item" data-theme="chili" title="辣椒红" type="button">
+            <span class="theme-preview" style="--p:#9B1B30;--bg:#F9EEF0;--card:#FEFCFD"></span>
+            <span class="theme-name">辣椒红</span>
+          </button>
+          <button class="theme-item" data-theme="sand" title="沙色" type="button">
+            <span class="theme-preview" style="--p:#DECDBE;--bg:#FAF7F3;--card:#FFFEFC"></span>
+            <span class="theme-name">沙色</span>
+          </button>
+          <button class="theme-item" data-theme="red1" title="脉冲红" type="button">
+            <span class="theme-preview" style="--p:#EB0029;--bg:#FFF5F6;--card:#FFFEFC"></span>
+            <span class="theme-name">脉冲红</span>
+          </button>
+          <button class="theme-item" data-theme="custom" type="button" id="customThemeBtn">
+            <span class="theme-preview theme-preview--image" id="customPreview"></span>
+            <span class="theme-name">自定义</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card card--glass-mode">
+        <h2 class="card__title">🪟 玻璃样式</h2>
+        <div class="glass-mode" id="glassMode">
+
+          <button type="button" class="glass-mode__btn is-active" data-mode="frosted">
+            <span class="glass-mode__preview glass-mode__preview--frosted">
+              <span class="glass-mode__check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
+            </span>
+            <span class="glass-mode__info">
+              <span class="glass-mode__label">毛玻璃</span>
+            </span>
+          </button>
+
+          <button type="button" class="glass-mode__btn" data-mode="clear">
+            <span class="glass-mode__preview glass-mode__preview--clear">
+              <span class="glass-mode__check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
+            </span>
+            <span class="glass-mode__info">
+              <span class="glass-mode__label">透玻璃</span>
+            </span>
+          </button>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">🖼️ 自定义背景</h2>
+        <div class="custom-upload">
+          <label class="custom-upload__label" for="customBgInput">
+            <span>＋</span>
+            <span>上传图片作为背景</span>
+          </label>
+          <input class="custom-upload__input" id="customBgInput"
+                 type="file" accept="image/*">
+          <p class="custom-upload__hint">
+            上传后自动提取主色作为主题色。
+          </p>
+          <div class="custom-actions">
+            <button class="btn" type="button" id="customBgClear">清除背景</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">💾 数据备份</h2>
+        <div class="backup-actions">
+          <button class="btn" id="exportBtn" type="button">导出备份</button>
+          <button class="btn" id="importBtn" type="button">导入恢复</button>
+        </div>
+        <p class="custom-upload__hint" style="margin-top: 12px;">
+          仅导出账单、预算、分类和签到数据。<br>
+          不包含背景图与主题样式，导入不会影响当前设备的外观设置。
+        </p>
+        <!-- 隐藏的文件上传框 -->
+        <input type="file" id="importFileInput" accept=".json,application/json" style="display: none;">
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">ℹ️ 关于</h2>
+        <div class="about-row">
+          <span class="about-row__label">应用名称</span>
+          <span class="about-row__value">有序星球</span>
+        </div>
+        <div class="about-row">
+          <span class="about-row__label">版本</span>
+          <span class="about-row__value">5.1.18</span>
+        </div>
+        <div class="about-row">
+          <span class="about-row__label">定位</span>
+          <span class="about-row__value">大学生记账</span>
+        </div>
+        <p class="about-hint">
+          所有数据保存在本机存储中，卸载 App 前请手动备份记账数据。
+        </p>
+      </div>
+
+    </section>
+
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab is-active" data-page="page-home" type="button">
+      <span class="tab__icon">✏️</span>
+      <span class="tab__text">记一笔</span>
+    </button>
+    <button class="tab" data-page="page-savings" type="button">
+      <span class="tab__icon">💰</span>
+      <span class="tab__text">收入</span>
+    </button>
+    <button class="tab" data-page="page-chart" type="button">
+      <span class="tab__icon">📊</span>
+      <span class="tab__text">统计</span>
+    </button>
+    <button class="tab" data-page="page-list" type="button">
+      <span class="tab__icon">📋</span>
+      <span class="tab__text">明细</span>
+    </button>
+    <button class="tab" data-page="page-settings" type="button">
+      <span class="tab__icon">⚙️</span>
+      <span class="tab__text">设置</span>
+    </button>
+  </nav>
+
+
+<div class="toast" id="toast"></div>
+
+<script src="script/storage.js"></script>
+<script src="script/config.js"></script>
+<script src="script/ledger.js"></script>
+<script src="script/calendar.js"></script>
+<script src="script/modal.js"></script>
+<script src="script/shatter.js"></script>
+<script src="script/ui.js"></script>
+<script src="script/main.js"></script>
+<script src="script/cat_picker.js"></script>
+</body>
+</html>

@@ -1,0 +1,5609 @@
+.field {
+  margin-bottom: 16px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-sub);
+}
+
+.field-row {
+  display: flex;
+  gap: var(--gap-sm);
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+/* ==========================================================
+   分类格子
+   ========================================================== */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 8px;
+  font-size: 13px;
+  color: var(--c-text-sub);
+  background: var(--c-surface);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: all .18s var(--ease);
+  cursor: pointer;
+  text-align: center;
+}
+
+.cat--wide {
+  /* 每行固定列数，不再需要占 2 格 */
+  grid-column: span 1;
+}
+
+.cat__name {
+  pointer-events: none;
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.25;
+  word-break: break-all;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.cat::before {
+  content: '';
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cat-color, #A8A2B0);
+  transition: transform .18s var(--ease);
+  pointer-events: none;
+}
+
+.cat.is-active {
+  color: var(--cat-color);
+  border-color: var(--cat-color);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--cat-color) 8%, var(--c-card));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--cat-color) 15%, transparent);
+}
+
+.cat.is-active::before {
+  transform: scale(1.35);
+}
+
+.cat__del {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--c-text-light);
+  background: transparent;
+  border-radius: 50%;
+  transition: background .15s, color .15s;
+}
+
+.cat__del:hover {
+  color: #fff;
+  background: var(--c-danger);
+}
+
+.cat--add {
+  border-style: dashed;
+  border-color: var(--c-border);
+  color: var(--c-text-light);
+  background: transparent;
+  font-weight: 500;
+}
+
+.cat--add::before {
+  display: none;
+}
+
+.cat--add:hover {
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 6%, transparent);
+}
+
+/* ==========================================================
+   金额（含分账）
+   ========================================================== */
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px 8px 14px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--c-border);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+
+.amount:focus-within {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+.amount__symbol {
+  flex: none;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--c-text-light);
+  line-height: 1;
+}
+
+.amount__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+  color: var(--c-text);
+  text-align: left;
+}
+
+.amount__input::placeholder {
+  font-weight: 400;
+  color: var(--c-text-light);
+}
+
+/* 竖向分隔线 */
+.amount__sep {
+  flex: none;
+  align-self: stretch;
+  width: 1px;
+  margin: 4px 8px;
+  background: var(--c-border);
+}
+
+.amount__div {
+  flex: none;
+  margin-right: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-text-sub);
+}
+
+.amount__split {
+  flex: none;
+  width: 30px;
+  padding: 6px 0;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--c-primary);
+  background: transparent;
+}
+
+.amount__split::placeholder {
+  color: var(--c-text-light);
+  font-weight: 400;
+}
+
+.amount__unit {
+  flex: none;
+  margin-left: 2px;
+  font-size: 12px;
+  color: var(--c-text-sub);
+}
+
+/* 分账预览条 */
+.amount__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 8%, transparent);
+  border-radius: var(--radius-sm);
+  animation: previewIn .18s var(--ease);
+}
+
+.amount__preview[hidden] {
+  display: none;
+}
+
+.amount__preview strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@keyframes previewIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ==========================================================
+   普通输入框
+   ========================================================== */
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  text-align: left;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--c-border);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+
+.input:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+.input::placeholder {
+  color: var(--c-text-light);
+}
+
+.input--date {
+  position: relative;
+  display: block;
+  padding-right: 40px;
+  color: var(--c-text);
+  cursor: pointer;
+}
+
+.input--date::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 4px;
+  background:
+    linear-gradient(var(--c-primary), var(--c-primary)) no-repeat 0 0 / 100% 3px,
+    linear-gradient(var(--c-primary), var(--c-primary)) no-repeat 0 6px / 2px 100%,
+    linear-gradient(var(--c-primary), var(--c-primary)) no-repeat 100% 6px / 2px 100%,
+    linear-gradient(var(--c-primary), var(--c-primary)) no-repeat 0 100% / 100% 3px;
+  opacity: .65;
+  transition: opacity .18s var(--ease);
+}
+
+.input--date:hover {
+  border-color: var(--c-primary-light);
+}
+
+.input--date:hover::after {
+  opacity: 1;
+}
+
+/* ==========================================================
+   按钮
+   ========================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--c-shadow-sm);
+  transition: transform .12s var(--ease), opacity .15s, box-shadow .2s;
+}
+
+.btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 6px 18px rgba(60, 50, 80, .28);
+}
+
+.btn:active {
+  transform: scale(.98);
+  opacity: .9;
+}
+
+/* ==========================================================
+   记录列表
+   ========================================================== */
+.record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.record {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  transition: background .15s var(--ease);
+}
+
+.record:hover {
+  background: color-mix(in srgb, var(--c-primary) 4%, var(--c-surface));
+}
+
+.record__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.record__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.record__name {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.record__date {
+  font-size: 12px;
+  color: var(--c-text-light);
+  margin-top: 1px;
+}
+
+.record__amount {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-danger);
+  white-space: nowrap;
+}
+
+.record__del {
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--c-text-light);
+  border-radius: 6px;
+  transition: background .15s, color .15s;
+}
+
+.record__del:hover {
+  color: var(--c-danger);
+  background: color-mix(in srgb, var(--c-danger) 10%, transparent);
+}
+
+/* ==========================================================
+   图表切换 tab
+   ========================================================== */
+.chart-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 18px;
+  background: var(--c-surface);
+  border-radius: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.chart-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.chart-tab {
+  flex: 1 0 auto;
+  min-width: 56px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text-sub);
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: all .2s var(--ease);
+}
+
+.chart-tab.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 4px 12px rgba(60, 50, 80, .28);
+}
+
+/* ==========================================================
+   图表容器
+   ========================================================== */
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bar__head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.bar__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c-text);
+  font-weight: 500;
+}
+
+.bar__name::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bar-color, #A8A2B0);
+  flex: none;
+}
+
+.bar__value {
+  color: var(--c-text-sub);
+  font-size: 12px;
+}
+
+.bar__track {
+  height: 8px;
+  overflow: hidden;
+  background: var(--c-surface);
+  border-radius: 99px;
+}
+
+.bar__fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .5s var(--ease);
+}
+
+.pie-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 4px;
+}
+
+.pie-svg {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(60, 50, 80, .12));
+}
+
+.pie-svg path,
+.pie-svg circle {
+  transition: opacity .2s var(--ease);
+}
+
+.pie-svg path:hover,
+.pie-svg circle:hover {
+  opacity: .82;
+}
+
+.pie-center-label {
+  font-size: 10px;
+  fill: var(--c-text-light);
+  font-weight: 500;
+}
+
+.pie-center-value {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--c-text);
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+  background: var(--c-surface);
+  border-radius: 8px;
+}
+
+.legend-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-name {
+  flex: 1;
+  color: var(--c-text);
+  font-weight: 500;
+}
+
+.legend-value {
+  color: var(--c-text-sub);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.daily-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 10px 0 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.daily-col {
+  flex: 1 0 16px;
+  min-width: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.daily-bar-wrap {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.daily-bar {
+  width: 100%;
+  min-height: 2px;
+  background: linear-gradient(180deg, #A196B8, #7B6B9E);
+  border-radius: 4px 4px 2px 2px;
+  transition: height .4s var(--ease);
+}
+
+.daily-bar.is-empty {
+  background: var(--c-surface);
+}
+
+.daily-bar.is-peak {
+  background: linear-gradient(180deg, #C29A4A, #A85E52);
+}
+
+.daily-label {
+  font-size: 10px;
+  color: var(--c-text-light);
+  line-height: 1;
+}
+
+.line-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.line-axis-label {
+  font-size: 9px;
+  fill: var(--c-text-light);
+}
+
+.chart-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--c-text-light);
+}
+
+/* ==========================================================
+   预算表单
+   ========================================================== */
+.budget-form {
+  display: flex;
+  gap: 10px;
+}
+
+.budget-form .input {
+  flex: 1;
+}
+
+.budget-form .btn {
+  flex: none;
+  width: auto;
+  padding: 12px 24px;
+}
+
+/* ==========================================================
+   分类管理
+   ========================================================== */
+.cat-manage__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.cat-manage__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+}
+
+.cat-manage__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.cat-manage__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cat-manage__limit {
+  flex: none;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text-sub);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  transition: all .15s var(--ease);
+  white-space: nowrap;
+}
+
+.cat-manage__limit:hover {
+  color: var(--c-primary);
+  border-color: var(--c-primary-light);
+}
+
+.cat-manage__limit.has-limit {
+  color: var(--c-primary);
+  border-color: var(--c-primary-light);
+  background: color-mix(in srgb, var(--c-primary) 8%, transparent);
+}
+
+.cat-manage__limit.is-warn {
+  color: #B8823F;
+  border-color: #C29A4A;
+  background: color-mix(in srgb, #C29A4A 10%, transparent);
+}
+
+.cat-manage__limit.is-over {
+  color: #A85E52;
+  border-color: #A85E52;
+  background: color-mix(in srgb, #A85E52 10%, transparent);
+}
+
+.cat-manage__del {
+  flex: none;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--c-text-light);
+  border-radius: 8px;
+  transition: background .15s, color .15s;
+}
+
+.cat-manage__del:hover:not(:disabled) {
+  color: var(--c-danger);
+  background: color-mix(in srgb, var(--c-danger) 10%, transparent);
+}
+
+.cat-manage__del:disabled {
+  color: var(--c-text-light);
+  opacity: .5;
+  cursor: default;
+}
+
+.cat-manage__add {
+  display: flex;
+  gap: 8px;
+}
+
+.cat-manage__add .input {
+  flex: 1;
+}
+
+.cat-manage__add .btn {
+  flex: none;
+  width: auto;
+  padding: 12px 20px;
+}
+
+/* ==========================================================
+   空状态
+   ========================================================== */
+.empty {
+  padding: 32px 0;
+  font-size: 13px;
+  text-align: center;
+  color: var(--c-text-light);
+}
+
+.empty[hidden] {
+  display: none;
+}
+
+/* ==========================================================
+   Toast
+   ========================================================== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 110px;
+  z-index: 99;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(46, 42, 54, .88);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+  transition: opacity .28s var(--ease), transform .28s var(--ease);
+}
+
+.toast.is-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================
+   自定义弹窗
+   ========================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(46, 42, 54, .5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s var(--ease);
+}
+
+.modal-overlay.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  width: 100%;
+  max-width: 340px;
+  padding: 24px 20px 16px;
+  background: var(--c-card);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(46, 42, 54, .3);
+  transform: translateY(10px) scale(.96);
+  transition: transform .25s var(--ease);
+}
+
+.modal-overlay.is-show .modal {
+  transform: none;
+}
+
+.modal__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 50%;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.modal__icon--info    { background: linear-gradient(135deg, #6E7E92, #4A6078); }
+.modal__icon--warn    { background: linear-gradient(135deg, #C29A4A, #B8823F); }
+.modal__icon--danger  { background: linear-gradient(135deg, #A85E52, #A85E52); }
+.modal__icon--success { background: linear-gradient(135deg, #5C7A6A, #4E7B6A); }
+
+.modal__title {
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--c-text);
+}
+
+.modal__message {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  text-align: center;
+  color: var(--c-text-sub);
+}
+
+.modal__message strong {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.modal__input {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  font-size: 15px;
+  text-align: center;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--c-border);
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+
+.modal__input:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+.modal__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal__btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text-sub);
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  transition: all .15s var(--ease);
+}
+
+.modal__btn:active {
+  transform: scale(.97);
+}
+
+.modal__btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 4px 12px rgba(60, 50, 80, .3);
+}
+
+.modal__btn--danger {
+  color: #fff;
+  background: linear-gradient(135deg, #A85E52, #A85E52);
+  box-shadow: 0 4px 12px rgba(168, 94, 82, .3);
+}
+
+/* ==========================================================
+   自定义日历面板
+   ========================================================== */
+.calendar-panel {
+  position: absolute;
+  z-index: 200;
+  width: 300px;
+  padding: 18px 16px 12px;
+  background: var(--c-card);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 48px rgba(46, 42, 54, .18),
+              0 2px 8px rgba(46, 42, 54, .06);
+  animation: calIn .18s var(--ease);
+  transform-origin: top center;
+}
+
+@keyframes calIn {
+  from { opacity: 0; transform: translateY(-6px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.calendar-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-panel__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text);
+  letter-spacing: .3px;
+}
+
+.calendar-nav {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--c-text-sub);
+  border-radius: 50%;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+
+.calendar-nav:hover {
+  color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+.calendar-nav:active {
+  transform: scale(.92);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.calendar-weekday {
+  padding: 6px 0;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--c-text-light);
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar-day {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text);
+  border-radius: 50%;
+  transition: background .15s var(--ease), color .15s var(--ease),
+              transform .12s var(--ease);
+}
+
+.calendar-day:hover {
+  background: var(--c-surface);
+}
+
+.calendar-day:active {
+  transform: scale(.9);
+}
+
+.calendar-day.is-other {
+  color: var(--c-text-light);
+  opacity: .45;
+  font-weight: 400;
+}
+
+.calendar-day.is-today {
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+.calendar-day.is-today::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--c-primary);
+}
+
+.calendar-day.is-selected {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 4px 10px rgba(60, 50, 80, .35);
+}
+
+.calendar-day.is-selected:hover {
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+}
+
+.calendar-day.is-selected::after {
+  background: #fff;
+}
+
+.calendar-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.calendar-month {
+  padding: 16px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text);
+  border-radius: var(--radius-sm);
+  transition: background .15s var(--ease), color .15s var(--ease),
+              transform .12s var(--ease);
+}
+
+.calendar-month:hover {
+  background: var(--c-surface);
+}
+
+.calendar-month:active {
+  transform: scale(.96);
+}
+
+.calendar-month.is-selected {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 4px 10px rgba(60, 50, 80, .35);
+}
+
+.calendar-foot {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--c-border);
+}
+
+.calendar-today-btn {
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-primary);
+  border-radius: 999px;
+  transition: background .15s var(--ease);
+}
+
+.calendar-today-btn:hover {
+  background: color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+/* ==========================================================
+   响应式
+   ========================================================== */
+@media (max-width: 360px) {
+
+  .amount__input {
+    font-size: 22px;
+  }
+  .amount__split {
+    width: 26px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 769px) {
+  .daily-col {
+    flex-basis: 22px;
+    min-width: 22px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .pie-svg {
+    max-width: 280px;
+  }
+}
+
+
+/* ==========================================================
+   统计筛选栏
+   ========================================================== */
+.stat-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-filter__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 分段选择器 */
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--c-surface);
+  border-radius: 999px;
+}
+
+.seg__btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-sub);
+  border-radius: 999px;
+  transition: all .18s var(--ease);
+}
+
+.seg__btn.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 2px 8px rgba(60, 50, 80, .3);
+}
+
+/* 对比开关 */
+.stat-compare {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--c-text-sub);
+  cursor: pointer;
+  user-select: none;
+}
+
+.stat-compare input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--c-primary);
+  cursor: pointer;
+}
+
+/* 时间和分类选择行 */
+.stat-filter__row {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-period {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  transition: border-color .18s var(--ease);
+  cursor: pointer;
+  text-align: left;
+}
+
+.stat-period:hover {
+  border-color: var(--c-primary-light);
+}
+
+.stat-period__caret {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--c-text-sub);
+  border-bottom: 1.5px solid var(--c-text-sub);
+  transform: rotate(45deg) translate(-2px, -2px);
+}
+
+.stat-cat {
+  flex: 1;
+  padding: 10px 36px 10px 14px;
+  font-size: 14px;
+  color: var(--c-text);
+  background-color: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--c-text-sub) 50%),
+    linear-gradient(135deg, var(--c-text-sub) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  transition: border-color .18s var(--ease);
+}
+
+.stat-cat:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+/* ==========================================================
+   统计概览
+   ========================================================== */
+.stat-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stat-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.stat-main__label {
+  font-size: 13px;
+  color: var(--c-text-sub);
+}
+
+.stat-main__value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: -.8px;
+}
+
+/* 对比条 */
+.stat-compare-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-compare-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.stat-compare-row__label {
+  flex: none;
+  min-width: 58px;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--c-text-sub);
+}
+
+.stat-compare-row__bar {
+  flex: 1;
+  height: 18px;
+  background: var(--c-surface);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.stat-compare-row__fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .45s var(--ease);
+}
+
+.stat-compare-row__value {
+  flex: none;
+  min-width: 86px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* 差值提示 */
+.stat-diff {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.stat-diff--up {
+  color: #A85E52;
+  background: color-mix(in srgb, #A85E52 10%, transparent);
+}
+
+.stat-diff--down {
+  color: #5C7A6A;
+  background: color-mix(in srgb, #5C7A6A 10%, transparent);
+}
+
+.stat-diff--same {
+  color: var(--c-text-sub);
+  background: var(--c-surface);
+}
+
+/* 年模式三个小卡片 */
+.stat-mini-row {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-mini {
+  flex: 1;
+  padding: 10px 6px;
+  text-align: center;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+}
+
+.stat-mini__label {
+  display: block;
+  font-size: 11px;
+  color: var(--c-text-sub);
+  margin-bottom: 4px;
+}
+
+.stat-mini__value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* ==========================================================
+   按月柱状图（年模式）
+   ========================================================== */
+.monthly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 10px 0 4px;
+}
+
+.monthly-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.monthly-bar-wrap {
+  width: 100%;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.monthly-bar {
+  width: 100%;
+  min-height: 3px;
+  background: linear-gradient(180deg, #A196B8, #7B6B9E);
+  border-radius: 4px 4px 2px 2px;
+  transition: height .4s var(--ease);
+}
+
+.monthly-bar.is-empty {
+  background: var(--c-surface);
+}
+
+.monthly-bar.is-peak {
+  background: linear-gradient(180deg, #C29A4A, #A85E52);
+}
+
+.monthly-label {
+  font-size: 10px;
+  color: var(--c-text-light);
+  line-height: 1;
+}
+
+/* ==========================================================
+   日历面板：年份网格
+   ========================================================== */
+.calendar-years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.calendar-year {
+  padding: 14px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text);
+  border-radius: var(--radius-sm);
+  transition: background .15s var(--ease), color .15s var(--ease),
+              transform .12s var(--ease);
+}
+
+.calendar-year:hover {
+  background: var(--c-surface);
+}
+
+.calendar-year:active {
+  transform: scale(.96);
+}
+
+.calendar-year.is-today {
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+.calendar-year.is-selected {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  box-shadow: 0 4px 10px rgba(60, 50, 80, .35);
+}
+
+
+/* ==========================================================
+   分类格子响应式（追加在最末，优先级最高）
+   ========================================================== */
+
+/* 极窄屏（老手机）：3 列 */
+@media (max-width: 359px) {
+}
+
+/* 平板 / 桌面：5 列 */
+@media (min-width: 600px) {
+}
+
+
+/* ==========================================================
+   分类格子最终版：固定列数 + 完整文字
+   ========================================================== */
+@media (max-width: 599px) {
+  .cat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .cat {
+    min-height: 66px;
+    padding: 10px 6px;
+  }
+  .cat__name {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 600px) {
+  .cat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .cat {
+    min-height: 72px;
+    padding: 12px 10px;
+  }
+  .cat__name {
+    font-size: 13px;
+  }
+}
+
+
+/* ==========================================================
+   固定布局：覆盖所有断点，所有设备一致
+   ========================================================== */
+
+/* 分类格子：固定 3 列，圆点在上，名字在下，完整显示 */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cat {
+  min-height: 66px;
+  padding: 10px 8px;
+}
+
+.cat__name {
+  font-size: 12px;
+  line-height: 1.25;
+  word-break: break-all;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* 金额区域字号固定 */
+.amount__input {
+  font-size: 26px;
+}
+
+.amount__split {
+  width: 30px;
+  font-size: 18px;
+}
+
+/* 卡片、表单间距固定 */
+.card {
+  padding: 20px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+
+/* ==========================================================
+   滑块效果：分段选择器 / 图表切换 / 底部导航
+   ========================================================== */
+
+/* --- 分段选择器（按月/按年）--- */
+.seg {
+  position: relative;
+  isolation: isolate;
+}
+
+.seg::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: var(--seg-thumb-w, 0px);
+  transform: translateX(var(--seg-thumb-x, 3px));
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(123, 107, 158, .3);
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1),
+              width .35s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seg .seg__btn,
+.seg .seg__btn.is-active {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  box-shadow: none;
+}
+
+.seg .seg__btn.is-active {
+  color: #fff;
+}
+
+/* --- 图表切换 tab --- */
+.chart-tabs {
+  position: relative;
+  isolation: isolate;
+}
+
+.chart-tabs::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: var(--tabs-thumb-w, 0px);
+  transform: translateX(var(--tabs-thumb-x, 4px));
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(123, 107, 158, .28);
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1),
+              width .35s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chart-tabs .chart-tab,
+.chart-tabs .chart-tab.is-active {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  box-shadow: none;
+}
+
+.chart-tabs .chart-tab.is-active {
+  color: #fff;
+}
+
+/* --- 底部导航：顶部短横指示器 --- */
+.tabbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 3px;
+  margin-left: -14px;
+  background: var(--c-primary);
+  border-radius: 0 0 3px 3px;
+  transform: translateX(var(--tab-thumb-x, 0px));
+  transition: transform .38s cubic-bezier(.34, 1.3, .64, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* ==========================================================
+   主题系统：20 个 Pantone 流行色 + 自定义
+   ========================================================== */
+
+
+/* --- 洋红万岁 Viva Magenta --- */
+:root[data-theme="magenta"] {
+  --c-primary: #BE3455;
+  --c-primary-light: #D66580;
+  --c-primary-dark: #9A2844;
+  --c-bg: #F8EFF2;
+  --c-card: #FEFCFD;
+  --c-surface: #EFDDE4;
+  --c-border: #E8C9D2;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 柔和桃 Peach Fuzz --- */
+:root[data-theme="peach"] {
+  --c-primary: #FFBE98;
+  --c-primary-light: #FFD4B8;
+  --c-primary-dark: #E09B6F;
+  --c-bg: #FFF6F0;
+  --c-card: #FFFEFC;
+  --c-surface: #FCE9DB;
+  --c-border: #F5D9C4;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 摩卡慕斯 Mocha Mousse --- */
+:root[data-theme="mocha"] {
+  --c-primary: #A47864;
+  --c-primary-light: #C29884;
+  --c-primary-dark: #865D4C;
+  --c-bg: #F8F1EC;
+  --c-card: #FEFBF9;
+  --c-surface: #EDDFD5;
+  --c-border: #E4CEBE;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 经典蓝 Classic Blue --- */
+:root[data-theme="classic"] {
+  --c-primary: #0F4C81;
+  --c-primary-light: #3D7AB0;
+  --c-primary-dark: #093A66;
+  --c-bg: #EEF3F8;
+  --c-card: #FBFCFE;
+  --c-surface: #DEE7F0;
+  --c-border: #D0DFEC;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 活珊瑚橘 Living Coral --- */
+:root[data-theme="coral"] {
+  --c-primary: #FF6F61;
+  --c-primary-light: #FF9589;
+  --c-primary-dark: #E05547;
+  --c-bg: #FFF1EE;
+  --c-card: #FFFCFB;
+  --c-surface: #FBDDDA;
+  --c-border: #F4C7C0;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 紫外光 Ultra Violet --- */
+:root[data-theme="ultraviolet"] {
+  --c-primary: #5F4B8B;
+  --c-primary-light: #8A79B0;
+  --c-primary-dark: #463573;
+  --c-bg: #F3F0F7;
+  --c-card: #FDFCFE;
+  --c-surface: #E7E0F0;
+  --c-border: #D8CEE4;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 草木绿 Greenery --- */
+:root[data-theme="greenery"] {
+  --c-primary: #88B04B;
+  --c-primary-light: #A8C878;
+  --c-primary-dark: #6A8F32;
+  --c-bg: #F4F8EC;
+  --c-card: #FCFEF8;
+  --c-surface: #E5F0D2;
+  --c-border: #D4E5BA;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 玫瑰石英 Rose Quartz --- */
+:root[data-theme="quartz"] {
+  --c-primary: #F7CAC9;
+  --c-primary-light: #FBDCDB;
+  --c-primary-dark: #D8A5A4;
+  --c-bg: #FDF5F5;
+  --c-card: #FFFEFE;
+  --c-surface: #F9E7E6;
+  --c-border: #F2D1D0;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 宁静蓝 Serenity --- */
+:root[data-theme="serenity"] {
+  --c-primary: #92A8D1;
+  --c-primary-light: #B4C3E0;
+  --c-primary-dark: #6E85B5;
+  --c-bg: #F1F4FA;
+  --c-card: #FDFDFF;
+  --c-surface: #E1E8F4;
+  --c-border: #D3DCEB;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 玛萨拉酒红 Marsala --- */
+:root[data-theme="marsala"] {
+  --c-primary: #955251;
+  --c-primary-light: #B47373;
+  --c-primary-dark: #763D3C;
+  --c-bg: #F7F0EF;
+  --c-card: #FEFCFC;
+  --c-surface: #EBDBDA;
+  --c-border: #E0C7C6;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 兰花紫 Radiant Orchid --- */
+:root[data-theme="orchid"] {
+  --c-primary: #B565A7;
+  --c-primary-light: #CA8AC0;
+  --c-primary-dark: #924D86;
+  --c-bg: #F8F0F6;
+  --c-card: #FEFCFE;
+  --c-surface: #EEDDE8;
+  --c-border: #E3C5D8;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 翡翠绿 Emerald --- */
+:root[data-theme="emerald"] {
+  --c-primary: #009473;
+  --c-primary-light: #3FB396;
+  --c-primary-dark: #006E56;
+  --c-bg: #ECF6F2;
+  --c-card: #FBFEFD;
+  --c-surface: #DAEBE4;
+  --c-border: #C7E0D4;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 探戈橘 Tangerine Tango --- */
+:root[data-theme="tangerine"] {
+  --c-primary: #DD4124;
+  --c-primary-light: #E86F58;
+  --c-primary-dark: #BA3218;
+  --c-bg: #FBEFEB;
+  --c-card: #FFFCFB;
+  --c-surface: #F4DCD4;
+  --c-border: #ECC5B8;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 忍冬红 Honeysuckle --- */
+:root[data-theme="honeysuckle"] {
+  --c-primary: #D94F70;
+  --c-primary-light: #E67D96;
+  --c-primary-dark: #B53A56;
+  --c-bg: #FBEEF1;
+  --c-card: #FFFCFD;
+  --c-surface: #F3DCE2;
+  --c-border: #EAC3CD;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 绿松石 Turquoise --- */
+:root[data-theme="turquoise"] {
+  --c-primary: #45B5AA;
+  --c-primary-light: #72C9C0;
+  --c-primary-dark: #329085;
+  --c-bg: #EFF7F6;
+  --c-card: #FCFEFE;
+  --c-surface: #DCEDEA;
+  --c-border: #C8E1DD;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 含羞草黄 Mimosa --- */
+:root[data-theme="mimosa"] {
+  --c-primary: #EFC050;
+  --c-primary-light: #F4D27B;
+  --c-primary-dark: #CDA035;
+  --c-bg: #FBF6E9;
+  --c-card: #FFFEFA;
+  --c-surface: #F4E9CC;
+  --c-border: #EADCAF;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 鸢尾蓝 Blue Iris --- */
+:root[data-theme="iris"] {
+  --c-primary: #5A5B9F;
+  --c-primary-light: #8586BB;
+  --c-primary-dark: #404170;
+  --c-bg: #F1F1F7;
+  --c-card: #FDFDFF;
+  --c-surface: #E3E3EE;
+  --c-border: #D3D4E1;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 辣椒红 Chili Pepper --- */
+:root[data-theme="chili"] {
+  --c-primary: #9B1B30;
+  --c-primary-light: #B94A5E;
+  --c-primary-dark: #7B1124;
+  --c-bg: #F9EEF0;
+  --c-card: #FEFCFD;
+  --c-surface: #F0DBE0;
+  --c-border: #E6C5CC;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 沙色 Sand Dollar --- */
+:root[data-theme="sand"] {
+  --c-primary: #DECDBE;
+  --c-primary-light: #EADFD4;
+  --c-primary-dark: #B8A693;
+  --c-bg: #FAF7F3;
+  --c-card: #FFFEFC;
+  --c-surface: #F1E8DC;
+  --c-border: #E5D7C4;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* --- 自定义主题 --- */
+:root[data-theme="custom"] {
+  /* 变量由 JS 动态注入，这里只做占位 */
+}
+
+/* ==========================================================
+   设置页 · 主题网格
+   ========================================================== */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.theme-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  background: var(--c-surface);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: all .18s var(--ease);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.theme-item:active {
+  transform: scale(.95);
+}
+
+.theme-item.is-active {
+  border-color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 12%, var(--c-card));
+}
+
+.theme-preview {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p) 0%, var(--p) 45%, var(--bg) 45%, var(--bg) 100%);
+  border: 2px solid var(--card);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+  overflow: hidden;
+  flex: none;
+}
+
+.theme-preview::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--p);
+  box-shadow: 0 0 0 1.5px var(--card);
+}
+
+.theme-name {
+  font-size: 10px;
+  color: var(--c-text-sub);
+  transition: color .18s var(--ease);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.theme-item.is-active .theme-name {
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+/* 自定义主题：图片封面 */
+.theme-preview--image {
+  background-size: cover;
+  background-position: center;
+}
+
+.theme-preview--image::after {
+  background: var(--p, #7B6B9E);
+}
+
+/* 自定义上传区 */
+.custom-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-upload__input {
+  display: none;
+}
+
+.custom-upload__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 6%, var(--c-card));
+  border: 1.5px dashed color-mix(in srgb, var(--c-primary) 40%, transparent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+
+.custom-upload__label:hover {
+  background: color-mix(in srgb, var(--c-primary) 10%, var(--c-card));
+  border-color: var(--c-primary);
+}
+
+.custom-upload__hint {
+  font-size: 12px;
+  color: var(--c-text-light);
+  line-height: 1.6;
+}
+
+.custom-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-actions .btn {
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+/* 设置页 - 关于卡片 */
+.about-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.about-row:last-child {
+  border-bottom: none;
+}
+
+.about-row__label {
+  color: var(--c-text-sub);
+}
+
+.about-row__value {
+  color: var(--c-text);
+  font-weight: 500;
+}
+
+.about-hint {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--c-border);
+  font-size: 12px;
+  color: var(--c-text-light);
+  line-height: 1.7;
+}
+
+
+/* ==========================================================
+   修复：滑块首次加载不播放动画
+   ========================================================== */
+.seg:not(.is-ready)::before,
+.chart-tabs:not(.is-ready)::before,
+.tabbar:not(.is-ready)::before {
+  transition: none !important;
+}
+/* 允许纵向滚动，横向拖动交给 JS */
+
+
+/* 拖动过程中：禁止选中 / 滚动 */
+
+/* 对比条：label / value 自适应，中间 bar 占满剩余 */
+.stat-compare-row__label {
+  flex: none;
+  min-width: 0;
+  max-width: 32%;
+}
+
+.stat-compare-row__value {
+  flex: none;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-compare-row__bar {
+  min-width: 0;
+}
+
+/* 顶部内容避让状态栏 */
+.header {
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+}
+
+
+/* ==========================================================
+   滑块首次渲染：不播放动画
+   ========================================================== */
+.seg::before,
+.chart-tabs::before,
+.tabbar::before {
+  animation: none;
+}
+
+/* 页面加载前 100ms 内禁用过渡，避免位置设置时闪烁 */
+html:not(.app-ready) .seg::before,
+html:not(.app-ready) .chart-tabs::before,
+html:not(.app-ready) .tabbar::before {
+  transition: none !important;
+}
+
+   ========================================================== */
+
+/* ---- body：背景图 ---- */
+/* ---- body::before：可调遮罩（保证文字可读） ---- */
+/* ---- header ---- */
+/* ---- card ---- */
+/* ---- tabbar ---- */
+.bg-opacity {
+  margin-top: 4px;
+}
+
+.bg-opacity__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--c-text-sub);
+  margin-bottom: 10px;
+}
+
+.bg-opacity__header span:last-child {
+  font-weight: 600;
+  color: var(--c-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.bg-opacity input[type="range"] {
+  display: block;
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--c-border);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.bg-opacity input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+}
+
+.bg-opacity input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.bg-opacity__tips {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--c-text-light);
+}
+
+   ========================================================== */
+
+/* ---------- 卡片内的"块"元素 ---------- */
+/* ---------- 输入框 / 金额框 / 选择框 ---------- */
+/* ---------- 按钮 ---------- */
+/* ---------- 图表 tab / 分段选择器 ---------- */
+/* ---------- 进度条底槽 / 柱状图空槽 ---------- */
+/* ---------- 弹窗 / 日历面板：加强模糊 ---------- */
+/* ---------- 卡片内分隔线统一柔和 ---------- */
+/* ---------- Toast 也半透明 ---------- */
+   ========================================================== */
+
+/* ---------- 顶栏 ---------- */
+/* 承载背景色 + 玻璃模糊 */
+/* 彩虹边缘 + 缓慢流动光斑 */
+/* 顶栏内容浮在玻璃上 */
+/* ---------- 底部 dock ---------- */
+/* dock 内容浮在玻璃上 */
+/* ---------- 卡片：轻微液态感 ---------- */
+/* 卡片：顶部一条细高光，模拟玻璃边缘 */
+/* 卡片内容浮在上层 */
+/* ---------- 关键帧：缓慢流动 ---------- */
+@keyframes liquidFlow {
+  0%, 100% {
+    background-position:
+      top center,
+      -50% -50%;
+  }
+  50% {
+    background-position:
+      top center,
+      150% 150%;
+  }
+}
+
+
+/* ==========================================================
+   高级玻璃质感
+   ========================================================== */
+
+/* ---- body：铺背景图，不要遮罩 ---- */
+/* 去掉米色遮罩，只用极淡的暗角让中心内容更聚焦 */
+/* ==========================================================
+   顶栏：清晰玻璃
+   ========================================================== */
+/* 顶栏：顶部极细高光线 */
+/* ==========================================================
+   底部 dock：清晰玻璃
+   ========================================================== */
+/* 去掉旧的 top indicator */
+/* ==========================================================
+   卡片：清晰、透亮、有立体感
+   ========================================================== */
+/* 卡片顶部高光线 */
+/* ==========================================================
+   子组件：轻微玻璃，保持清晰
+   ========================================================== */
+/* 记录行 hover */
+/* ==========================================================
+   输入框 / 金额框 / 选择器
+   ========================================================== */
+/* ==========================================================
+   按钮
+   ========================================================== */
+/* ==========================================================
+   主题卡片
+   ========================================================== */
+/* ==========================================================
+   上传按钮
+   ========================================================== */
+/* ==========================================================
+   图表 tab / 分段选择器
+   ========================================================== */
+/* ==========================================================
+   进度条底槽
+   ========================================================== */
+/* ==========================================================
+   弹窗 / 日历 / Toast
+   ========================================================== */
+/* ==========================================================
+   分隔线
+   ========================================================== */
+/* ==========================================================
+   日历面板：玻璃质感（覆盖旧规则）
+   ========================================================== */
+
+/* 日历内部的日期格子 / 月份 / 年份 也加一点玻璃感 */
+/* 选中的日期：玻璃按钮 */
+/* 导航按钮的 hover */
+/* 日历底部的"回到今天"按钮区域 */
+/* 面板标题加一点文字阴影，让它在透底上更清晰 */
+/* ==========================================================
+   玻璃质感 V4：厚玻璃 + 单向光源（参考 iOS 锁屏时钟）
+   ========================================================== */
+
+/* ---------- 卡片 ---------- */
+/* 顶部弧形反射光带 + 左上角径向光斑 */
+/* ---------- 顶栏 ---------- */
+/* ---------- 底部 dock ---------- */
+/* ---------- 日历面板 ---------- */
+/* ---------- 弹窗 ---------- */
+/* ---------- 主题卡片 ---------- */
+/* ---------- 普通按钮 ---------- */
+/* ---------- 输入框 ---------- */
+/* ---------- 图表 tab / 分段选择器 ---------- */
+/* ==========================================================
+   玻璃质感 V5：无边框玻璃
+   ========================================================== */
+
+/* ---------- 卡片 ---------- */
+/* 一点点柔和光晕，不是线 */
+/* ---------- 顶栏 ---------- */
+/* ---------- 底部 dock ---------- */
+/* ---------- 日历面板 ---------- */
+/* ---------- 弹窗 ---------- */
+/* ---------- 主题卡片 ---------- */
+/* ---------- 普通按钮 ---------- */
+/* ---------- 输入框 ---------- */
+/* ---------- 图表 tab / 分段选择器 ---------- */
+/* ---------- 子组件 ---------- */
+/* ==========================================================
+   玻璃质感 V6：厚玻璃（无白边）
+   ========================================================== */
+
+/* ---------- 卡片 ---------- */
+/* 顶部一抹柔光，模拟环境光反射 */
+/* ---------- 顶栏 ---------- */
+/* ---------- 底部 dock ---------- */
+/* ---------- 日历面板 ---------- */
+/* ---------- 弹窗 ---------- */
+/* ---------- 主题卡片 ---------- */
+/* ---------- 普通按钮 ---------- */
+/* ---------- 输入框：凹陷，厚度相反 ---------- */
+/* ---------- 图表 tab / 分段选择器 ---------- */
+/* ---------- 子组件 ---------- */
+/* ==========================================================
+   玻璃质感 V7：加强版
+   ========================================================== */
+
+/* ---------- 卡片 ---------- */
+/* 顶部弧形高光（加强，从 0.12 → 0.28） */
+/* ---------- 顶栏 ---------- */
+/* ---------- 底部 dock ---------- */
+/* ---------- 日历 ---------- */
+/* ---------- 弹窗 ---------- */
+/* ---------- 主题卡片 ---------- */
+/* ---------- 按钮 ---------- */
+/* ---------- 输入框：凹陷加深 ---------- */
+/* ---------- 图表 tab / 分段选择器 ---------- */
+/* ---------- 子组件 ---------- */
+/* ==========================================================
+   碎片飘散
+   ========================================================== */
+.shatter-container {
+  pointer-events: none;
+  will-change: transform;
+}
+
+.shatter-piece {
+  transform-origin: center center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+/* ==========================================================
+   沉浸式顶栏：header 顶到状态栏
+   ========================================================== */
+.header {
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+}
+
+/* .app 去掉顶部多余的 padding，让 header 真正贴顶 */
+.app {
+  padding-bottom: calc(var(--tabbar-h) + 24px + env(safe-area-inset-bottom, 0px));
+}
+
+
+/* ==========================================================
+   毛玻璃（唯一版本，覆盖所有旧的）
+   ========================================================== */
+
+/* ---------- 背景图 ---------- */
+:root[data-custom-bg="on"] body {
+  background-image: var(--custom-bg-url) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+}
+
+/* 去掉所有遮罩 */
+:root[data-custom-bg="on"] body::before {
+  display: none !important;
+}
+
+:root[data-custom-bg="on"] .app {
+  position: relative;
+  background: transparent !important;
+}
+
+/* ---------- ① 顶栏：毛玻璃 ---------- */
+:root[data-custom-bg="on"] .header {
+  position: relative !important;
+  isolation: isolate !important;
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.32) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  transform: translateZ(0);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root[data-custom-bg="on"] .header::before,
+:root[data-custom-bg="on"] .header::after {
+  display: none !important;
+}
+
+:root[data-custom-bg="on"] .header__inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- ② dock：毛玻璃 ---------- */
+:root[data-custom-bg="on"] .tabbar {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: var(--app-max-w) !important;
+  height: auto !important;
+  min-height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 4px) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px) !important;
+
+  background: rgba(250, 248, 245, 0.48) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  transform: translateZ(0);
+  border-top: none !important;
+  box-shadow:
+    0 -6px 18px rgba(0, 0, 0, 0.08),
+    0 -1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+:root[data-custom-bg="on"] .tabbar::before,
+:root[data-custom-bg="on"] .tabbar::after {
+  display: none !important;
+}
+
+:root[data-custom-bg="on"] .tabbar .tab {
+  position: relative;
+  z-index: 2;
+  min-height: 56px;
+}
+
+/* ---------- ③ 卡片：毛玻璃 ---------- */
+:root[data-custom-bg="on"] .card {
+  position: relative !important;
+  isolation: isolate !important;
+  background: rgba(253, 252, 251, 0.45) !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+  transform: translateZ(0);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+:root[data-custom-bg="on"] .card::before,
+:root[data-custom-bg="on"] .card::after {
+  display: none !important;
+}
+
+:root[data-custom-bg="on"] .card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- ④ 弹窗 / 日历：毛玻璃 ---------- */
+:root[data-custom-bg="on"] .modal {
+  background: rgba(253, 252, 251, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  transform: translateZ(0);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.24),
+    0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+:root[data-custom-bg="on"] .calendar-panel {
+  background: rgba(253, 252, 251, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  transform: translateZ(0);
+  border: none !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2),
+    0 6px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ---------- 子组件：无 backdrop-filter，纯半透明 ---------- */
+:root[data-custom-bg="on"] .cat,
+:root[data-custom-bg="on"] .cat-manage__item,
+:root[data-custom-bg="on"] .record,
+:root[data-custom-bg="on"] .legend-item,
+:root[data-custom-bg="on"] .stat-mini {
+  background: rgba(245, 242, 238, 0.55) !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+:root[data-custom-bg="on"] .cat.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.32) !important;
+  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
+  box-shadow: 0 3px 10px rgba(var(--c-primary-rgb, 110, 92, 150), 0.22) !important;
+}
+
+:root[data-custom-bg="on"] .cat--add {
+  background: transparent !important;
+  border: 1.5px dashed rgba(255, 255, 255, 0.45) !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 输入框 ---------- */
+:root[data-custom-bg="on"] .input,
+:root[data-custom-bg="on"] .amount,
+:root[data-custom-bg="on"] .stat-period,
+:root[data-custom-bg="on"] .stat-cat,
+:root[data-custom-bg="on"] .modal__input {
+  background: rgba(250, 248, 245, 0.6) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.03),
+    0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ---------- 按钮 ---------- */
+:root[data-custom-bg="on"] .btn {
+  background: rgba(248, 246, 243, 0.65) !important;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+:root[data-custom-bg="on"] .btn--primary {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.88) !important;
+  color: #fff !important;
+  box-shadow:
+    0 6px 18px rgba(var(--c-primary-rgb, 110, 92, 150), 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 主题卡片 ---------- */
+:root[data-custom-bg="on"] .theme-item {
+  background: rgba(245, 242, 238, 0.5) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+:root[data-custom-bg="on"] .theme-item.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.26) !important;
+  border-color: rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
+  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.22) !important;
+}
+
+/* ---------- 上传按钮 ---------- */
+:root[data-custom-bg="on"] .custom-upload__label {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
+  border: 1.5px dashed rgba(var(--c-primary-rgb, 110, 92, 150), 0.5) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* ---------- 图表 tab / 分段选择器 ---------- */
+:root[data-custom-bg="on"] .chart-tabs,
+:root[data-custom-bg="on"] .seg {
+  background: rgba(245, 242, 238, 0.5) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* ---------- 进度条底槽 ---------- */
+:root[data-custom-bg="on"] .bar__track,
+:root[data-custom-bg="on"] .stat-compare-row__bar {
+  background: rgba(240, 237, 232, 0.45) !important;
+}
+
+:root[data-custom-bg="on"] .daily-bar.is-empty,
+:root[data-custom-bg="on"] .monthly-bar.is-empty {
+  background: rgba(240, 237, 232, 0.45) !important;
+}
+
+/* ---------- Toast ---------- */
+:root[data-custom-bg="on"] .toast {
+  background: rgba(30, 26, 40, 0.82) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ---------- 分隔线 ---------- */
+:root[data-custom-bg="on"] .about-row,
+:root[data-custom-bg="on"] .about-hint,
+:root[data-custom-bg="on"] .stat-main,
+:root[data-custom-bg="on"] .calendar-foot {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+   ========================================================== */
+
+/* ---------- 卡片内深色文字：白色光晕 ---------- */
+:root[data-custom-bg="on"] .card__title,
+:root[data-custom-bg="on"] .field__label,
+:root[data-custom-bg="on"] .record__name,
+:root[data-custom-bg="on"] .record__date,
+:root[data-custom-bg="on"] .record__amount,
+:root[data-custom-bg="on"] .cat__name,
+:root[data-custom-bg="on"] .cat-manage__name,
+:root[data-custom-bg="on"] .cat-manage__limit,
+:root[data-custom-bg="on"] .legend-name,
+:root[data-custom-bg="on"] .legend-value,
+:root[data-custom-bg="on"] .bar__name,
+:root[data-custom-bg="on"] .bar__value,
+:root[data-custom-bg="on"] .chart-hint,
+:root[data-custom-bg="on"] .stat-main__label,
+:root[data-custom-bg="on"] .stat-main__value,
+:root[data-custom-bg="on"] .stat-mini__label,
+:root[data-custom-bg="on"] .stat-mini__value,
+:root[data-custom-bg="on"] .stat-compare-row__label,
+:root[data-custom-bg="on"] .stat-compare-row__value,
+:root[data-custom-bg="on"] .about-row__label,
+:root[data-custom-bg="on"] .about-row__value,
+:root[data-custom-bg="on"] .about-hint,
+:root[data-custom-bg="on"] .theme-name,
+:root[data-custom-bg="on"] .custom-upload__hint,
+:root[data-custom-bg="on"] .empty,
+:root[data-custom-bg="on"] .amount__input,
+:root[data-custom-bg="on"] .amount__split,
+:root[data-custom-bg="on"] .amount__unit,
+:root[data-custom-bg="on"] .amount__symbol,
+:root[data-custom-bg="on"] .amount__div,
+:root[data-custom-bg="on"] .input,
+:root[data-custom-bg="on"] .stat-period,
+:root[data-custom-bg="on"] .stat-cat {
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.65),
+    0 0 6px rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- 顶栏浅色文字：黑色光晕 ---------- */
+:root[data-custom-bg="on"] .header__title,
+:root[data-custom-bg="on"] .header__month,
+:root[data-custom-bg="on"] .overview__label,
+:root[data-custom-bg="on"] .overview__value {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- 按钮文字 ---------- */
+:root[data-custom-bg="on"] .btn {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+:root[data-custom-bg="on"] .btn--primary {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- 底部 dock 文字 ---------- */
+:root[data-custom-bg="on"] .tab {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+}
+
+:root[data-custom-bg="on"] .tab.is-active {
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.65),
+    0 0 4px rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- 弹窗文字 ---------- */
+:root[data-custom-bg="on"] .modal__title,
+:root[data-custom-bg="on"] .modal__message,
+:root[data-custom-bg="on"] .modal__btn {
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.6),
+    0 1px 2px rgba(255, 255, 255, 0.45);
+}
+
+:root[data-custom-bg="on"] .modal__btn--primary,
+:root[data-custom-bg="on"] .modal__btn--danger {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- 日历文字 ---------- */
+:root[data-custom-bg="on"] .calendar-panel__title,
+:root[data-custom-bg="on"] .calendar-day,
+:root[data-custom-bg="on"] .calendar-month,
+:root[data-custom-bg="on"] .calendar-year,
+:root[data-custom-bg="on"] .calendar-weekday {
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.6),
+    0 1px 2px rgba(255, 255, 255, 0.45);
+}
+
+:root[data-custom-bg="on"] .calendar-day.is-selected,
+:root[data-custom-bg="on"] .calendar-month.is-selected,
+:root[data-custom-bg="on"] .calendar-year.is-selected {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- 分段控件 / 图表 tab ---------- */
+:root[data-custom-bg="on"] .seg__btn,
+:root[data-custom-bg="on"] .chart-tab {
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.55),
+    0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+:root[data-custom-bg="on"] .seg__btn.is-active,
+:root[data-custom-bg="on"] .chart-tab.is-active {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- 输入框 placeholder ---------- */
+:root[data-custom-bg="on"] .input::placeholder,
+:root[data-custom-bg="on"] .amount__input::placeholder,
+:root[data-custom-bg="on"] .amount__split::placeholder {
+  text-shadow: none;
+  opacity: 0.85;
+}
+
+
+/* ==========================================================
+   自定义背景：灰色文字加深（提升对比度）
+   ========================================================== */
+:root[data-custom-bg="on"] {
+  --c-text:       #0F0C15;   /* 主文字：近黑 */
+  --c-text-sub:   #2C2735;   /* 副文字：深灰（标签） */
+  --c-text-light: #4A4453;   /* 浅文字：中灰（占位符） */
+}
+
+   ========================================================== */
+
+/* 透玻璃：去掉所有 backdrop-filter，只留半透明色 */
+
+
+/* 透玻璃：背景色更淡一点（因为不模糊了，背景会很清晰） */
+
+
+
+
+
+/* ---------- 设置页 UI ---------- */
+
+/* 毛玻璃预览：上面盖一层模糊块 */
+
+/* 透玻璃预览：只盖半透明色，无模糊 */
+
+
+
+   选择器带 [data-glass-mode="clear"] 高于之前的规则
+   ========================================================== */
+
+/* ---------- 卡片：亚克力 ---------- */
+
+
+/* ---------- 顶栏 ---------- */
+
+
+/* ---------- dock ---------- */
+
+
+/* ---------- 弹窗 ---------- */
+
+
+/* ---------- 日历 ---------- */
+
+
+/* ---------- 子组件：亚克力化 ---------- */
+
+
+/* ---------- 输入框 ---------- */
+
+
+/* ---------- 主按钮 ---------- */
+
+
+/* ---------- 普通按钮 ---------- */
+
+
+/* ---------- 主题卡片 ---------- */
+
+
+
+
+/* ---------- 图表 tab / 分段选择器 ---------- */
+
+
+/* ---------- 上传按钮 ---------- */
+
+
+/* ---------- 进度条 ---------- */
+
+
+
+
+   ========================================================== */
+
+/* ---------- 预览块 ---------- */
+
+/* 毛玻璃预览：加模糊 + 半透明白 */
+
+/* 透玻璃预览：只加半透明白（不模糊） */
+
+/* ---------- 勾选图标（右上角，仅选中时显示） ---------- */
+
+/* ---------- 文字信息 ---------- */
+
+/* ---------- 自定义背景 + 玻璃模式下的协调 ---------- */
+:root[data-custom-bg="on"] 
+
+:root[data-custom-bg="on"] 
+
+/* 窄屏时单列 */
+@media (max-width: 360px) {
+  
+  
+}
+
+
+/* ==========================================================
+   透玻璃 = 亚克力质感（最终版）
+   ========================================================== */
+
+/* ---------- 通用：卡片类元素 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .card,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+
+  /* 不模糊 */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  /* 亚克力奶白底 —— 比"透玻璃"更实 */
+  background: rgba(248, 245, 242, 0.72) !important;
+
+  /* 1.5px 切边 */
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: var(--radius) !important;
+
+  /* 立体感 + 厚度 */
+  box-shadow:
+    /* 顶边强高光（受光） */
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
+    /* 底边弱高光（反光） */
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
+    /* 左右内白 */
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
+    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
+    /* 内部极淡阴影，增加实心感 */
+    inset 0 0 40px rgba(255, 255, 255, 0.2),
+    /* 实心投影：像一块板浮在桌面上 */
+    0 10px 28px rgba(0, 0, 0, 0.16),
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 表面磨砂颗粒（用伪元素叠加） ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .card {
+  position: relative;
+  isolation: isolate;
+}
+
+:root[data-custom-bg="on"][data-glass-mode="clear"] .card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
+
+  /* 磨砂颗粒：3px 间距的微小白点 + 斜向细纹 */
+  background-image:
+    radial-gradient(circle at 1px 1px,
+      rgba(255, 255, 255, 0.12) 1px,
+      transparent 1px),
+    radial-gradient(circle at 2px 3px,
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  background-size: 3px 4px, 5px 5px, 100% 100%;
+  mix-blend-mode: overlay;
+}
+
+:root[data-custom-bg="on"][data-glass-mode="clear"] .card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- 顶栏 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .header {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.8) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.2),
+    0 10px 28px rgba(0, 0, 0, 0.18),
+    0 4px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ---------- dock ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .tabbar {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(248, 245, 242, 0.85) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 8px -6px rgba(255, 255, 255, 0.6),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.4),
+    0 -8px 24px rgba(0, 0, 0, 0.12),
+    0 -2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 子组件：亚克力化 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-manage__item,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .record,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .legend-item,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-mini {
+  background: rgba(248, 245, 242, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.5),
+    0 3px 8px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* 选中的分类 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat.is-active {
+  background: color-mix(in srgb, var(--cat-color) 35%, rgba(255, 255, 255, 0.5)) !important;
+  border: 1.5px solid var(--cat-color) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 4px 12px color-mix(in srgb, var(--cat-color) 35%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 输入框 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .input,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .amount,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__input {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ---------- 按钮 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .btn {
+  background: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.6),
+    inset -1px 0 0 rgba(255, 255, 255, 0.6),
+    0 3px 8px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+:root[data-custom-bg="on"][data-glass-mode="clear"] .btn--primary {
+  background: color-mix(in srgb, var(--c-primary) 92%, white) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.15),
+    inset 1px 0 0 rgba(255, 255, 255, 0.25),
+    inset -1px 0 0 rgba(255, 255, 255, 0.25),
+    0 8px 20px color-mix(in srgb, var(--c-primary) 42%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ---------- 主题卡片 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item {
+  background: rgba(248, 245, 242, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 32%, rgba(255, 255, 255, 0.5)) !important;
+  border: 1.5px solid var(--c-primary) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    0 4px 12px color-mix(in srgb, var(--c-primary) 35%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 图表 tab / 分段选择器 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .chart-tabs,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .seg {
+  background: rgba(248, 245, 242, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ---------- 上传按钮 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .custom-upload__label {
+  background: color-mix(in srgb, var(--c-primary) 22%, rgba(255, 255, 255, 0.6)) !important;
+  border: 1.5px dashed color-mix(in srgb, var(--c-primary) 55%, transparent) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+
+/* ==========================================================
+   玻璃样式卡片（重建）
+   ========================================================== */
+
+.glass-mode {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  width: 100%;
+}
+
+.glass-mode__btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  margin: 0 !important;
+  background: var(--c-surface) !important;
+  border: 2px solid transparent !important;
+  border-radius: 14px !important;
+  cursor: pointer;
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .12s ease;
+  text-align: left;
+  min-width: 0;
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.glass-mode__btn:active {
+  transform: scale(.97);
+}
+
+.glass-mode__btn.is-active {
+  border-color: var(--c-primary) !important;
+  background: color-mix(in srgb, var(--c-primary) 10%, var(--c-card)) !important;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--c-primary) 18%, transparent),
+    0 4px 14px color-mix(in srgb, var(--c-primary) 22%, transparent) !important;
+}
+
+/* 预览块 */
+.glass-mode__preview {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 60px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-image: linear-gradient(135deg,
+    #FFD89B 0%,
+    #FF9A56 35%,
+    #C97B84 55%,
+    #6A8CB8 75%,
+    #2C5AA0 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.glass-mode__preview--frosted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.glass-mode__preview--clear::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* 勾选图标 */
+.glass-mode__check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(.5);
+  transition: opacity .2s ease, transform .25s cubic-bezier(.34, 1.4, .64, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.glass-mode__btn.is-active .glass-mode__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 文字 */
+.glass-mode__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: .2px;
+  transition: color .2s ease;
+}
+
+.glass-mode__btn.is-active .glass-mode__label {
+  color: var(--c-primary);
+}
+
+/* 自定义背景下协调 */
+:root[data-custom-bg="on"] .glass-mode__btn {
+  background: rgba(253, 252, 251, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root[data-custom-bg="on"] .glass-mode__btn.is-active {
+  background: color-mix(in srgb, var(--c-primary) 22%, rgba(255, 255, 255, 0.55)) !important;
+  border-color: var(--c-primary) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 0 0 3px color-mix(in srgb, var(--c-primary) 20%, transparent),
+    0 4px 14px color-mix(in srgb, var(--c-primary) 28%, transparent) !important;
+}
+
+/* 窄屏 */
+@media (max-width: 340px) {
+  .glass-mode {
+    grid-template-columns: 1fr !important;
+  }
+  .glass-mode__preview {
+    height: 50px;
+  }
+}
+
+
+/* ==========================================================
+   玻璃样式预览（真实感）
+   ========================================================== */
+
+/* 预览块：用当前背景图做底，没有就用 CSS 渐变 */
+.glass-mode__preview {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  isolation: isolate;
+
+  /* 背景：优先用当前上传的图 */
+  background-image:
+    var(--custom-bg-url, none),
+    linear-gradient(135deg,
+      #FFD89B 0%,
+      #FF9A56 30%,
+      #C97B84 55%,
+      #6A8CB8 78%,
+      #2C5AA0 100%);
+  background-size: cover, cover;
+  background-position: center, center;
+}
+
+/* 内部小 UI：白色小方块 + 圆点（模拟"内容"） */
+.glass-mode__preview::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  right: 12px;
+  height: 16px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* 第二行：短一点的白色小条（像文字） */
+.glass-mode__preview .glass-mode__check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(.5);
+  transition:
+    opacity .2s ease,
+    transform .25s cubic-bezier(.34, 1.4, .64, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.glass-mode__btn.is-active .glass-mode__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ========== 毛玻璃：模糊 + 微白 ========== */
+.glass-mode__preview--frosted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ========== 透玻璃（亚克力）：无模糊 + 白边 + 高光 ========== */
+.glass-mode__preview--clear::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(248, 245, 242, 0.32);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.85),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 8px -6px rgba(255, 255, 255, 0.65),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3);
+}
+
+/* 窄屏优化 */
+@media (max-width: 340px) {
+  .glass-mode__preview {
+    height: 60px;
+  }
+}
+
+
+/* ==========================================================
+   没有壁纸时隐藏玻璃样式卡片
+   ========================================================== */
+:root:not([data-custom-bg="on"]) .card--glass-mode {
+  display: none !important;
+}
+
+
+/* ==========================================================
+   毛玻璃下：分类/记录 可读性增强
+   只针对背景加实，不影响整体质感
+   ========================================================== */
+
+/* 1. 分类格子：从 0.45 左右拉高到 0.75 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat {
+  background: rgba(253, 252, 251, 0.92) !important;
+  backdrop-filter: blur(12px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 选中的分类：底子稍微透一点主色，但保持高不透度 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat.is-active {
+  background: color-mix(in srgb, var(--cat-color) 20%, rgba(253, 252, 251, 0.95)) !important;
+  border: 1.5px solid var(--cat-color) !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--cat-color) 20%, transparent) !important;
+}
+
+/* 2. 分类管理列表（设置页） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item {
+  background: rgba(253, 252, 251, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 3. 记录行 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record {
+  background: rgba(253, 252, 251, 0.92) !important;
+}
+
+/* 如果文字还是看不清，给文字加一点点非常轻微的阴影 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat__name,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record__name {
+}
+
+
+/* ==========================================================
+   分类格子：真·毛玻璃（极淡白 + 模糊）
+   只在毛玻璃模式下生效
+   ========================================================== */
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat {
+  /* 极淡的白色，几乎透明 */
+  background: rgba(255, 255, 255, 0.15) !important;
+  
+  /* 给它自己的模糊，让它和卡片融为一体 */
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  
+  /* 极淡的玻璃白边和阴影 */
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 选中状态：用主色微微染一下 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
+  box-shadow: 
+    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* "+ 添加" 按钮 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat--add {
+  background: transparent !important;
+  border: 1.5px dashed rgba(255, 255, 255, 0.5) !important;
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   全局小组件：真·毛玻璃统一质感
+   只在毛玻璃模式（非透玻璃）下生效
+   ========================================================== */
+
+/* ---------- 1. 输入框 / 选择框 / 金额框 ---------- */
+/* 为了防止输入框太透看不清字，背景稍微给到 0.25 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(0, 0, 0, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* ---------- 2. 普通按钮 / 上传按钮 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .btn,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .custom-upload__label {
+  background: rgba(255, 255, 255, 0.18) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 主按钮：使用主色玻璃，保持视觉层级 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .btn--primary {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.75) !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 4px 14px rgba(var(--c-primary-rgb, 110, 92, 150), 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  color: #fff !important;
+}
+
+/* ---------- 3. 记录行 / 分类管理 / 图例 / 小卡片 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ---------- 4. 主题卡片 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
+  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
+  box-shadow: 
+    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ---------- 5. 图表 Tab / 分段选择器 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .chart-tabs,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .seg {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 激活态的 Tab 圆角滑块保持原色，或者用微透明主色 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .chart-tabs::before,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .seg::before {
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ---------- 6. 进度条底槽 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .bar__track,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-compare-row__bar,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .daily-bar.is-empty,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .monthly-bar.is-empty {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ---------- 7. 弹窗和日历面板（稍微实一点，保证可读） ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+
+/* ==========================================================
+   补充：对比差值提示条 / 其他状态块
+   ========================================================== */
+
+/* 持平状态 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--same {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 上涨状态（红色底） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--up {
+  background: rgba(168, 94, 82, 0.15) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(168, 94, 82, 0.3) !important;
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 下跌状态（绿色底） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--down {
+  background: rgba(92, 122, 106, 0.15) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(92, 122, 106, 0.3) !important;
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 分类管理里的额度胶囊按钮（小圆角那种） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.has-limit {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
+  border-color: rgba(var(--c-primary-rgb, 110, 92, 150), 0.4) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.is-warn {
+  background: rgba(194, 154, 74, 0.15) !important;
+  border-color: rgba(194, 154, 74, 0.4) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.is-over {
+  background: rgba(168, 94, 82, 0.15) !important;
+  border-color: rgba(168, 94, 82, 0.4) !important;
+}
+
+/* 统计详情里的小卡片（有支出 / 月均 / 最高月） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-main {
+  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+
+/* ==========================================================
+   沉浸式顶栏安全区
+   ========================================================== */
+.header {
+  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* 没有自定义壁纸时，深色顶栏需要状态栏图标为白色 */
+/* 有壁纸时，通过 JS 动态控制 */
+
+
+/* ==========================================================
+   修复顶栏顶部割裂
+   ========================================================== */
+
+/* 1. 把 header 强行往上提，延伸到屏幕外面一点点 */
+.header {
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
+  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+  /* 确保顶部没有圆角 */
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+/* 2. 如果是毛玻璃，把背景层向上多延伸 50px，避免 WebView 在最边缘漏算模糊 */
+:root[data-custom-bg="on"] .header::before {
+  top: -50px !important;
+  padding-top: 50px !important;
+  box-sizing: content-box !important;
+}
+
+/* 3. 对于非自定义背景（比如长春花蓝），去掉那条阴影线 */
+:root:not([data-custom-bg="on"]) .header {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+
+/* ==========================================================
+   签到卡片
+   ========================================================== */
+.checkin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  margin-bottom: var(--gap);
+  background: var(--c-card);
+  border-radius: var(--radius);
+  box-shadow: var(--c-shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 自定义背景下的玻璃适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.checkin-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkin-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: .5px;
+}
+
+.checkin-streak {
+  font-size: 13px;
+  color: var(--c-text-sub);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.checkin-streak strong {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--c-primary);
+  font-family: 'DIN Alternate', -apple-system, sans-serif;
+  line-height: 1;
+}
+
+.checkin-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.3);
+  transition: all .2s var(--ease);
+}
+
+.checkin-btn:active {
+  transform: scale(.95);
+}
+
+.checkin-btn.is-checked {
+  background: var(--c-surface);
+  color: var(--c-text-light);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* ---------- 签到成功弹窗（大卡片） ---------- */
+.checkin-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+
+.checkin-popup.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.checkin-popup__content {
+  width: 90%;
+  max-width: 320px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  transform: translateY(20px) scale(0.9);
+  transition: transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.checkin-popup.is-show .checkin-popup__content {
+  transform: translateY(0) scale(1);
+}
+
+.checkin-popup__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2E2A36;
+  margin-bottom: 12px;
+}
+
+.checkin-popup__fortune {
+  font-size: 32px;
+  font-weight: 900;
+  color: #EE5253;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.checkin-popup__fortune span {
+  font-size: 20px;
+  opacity: 0.6;
+}
+
+.checkin-popup__row {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.checkin-popup__row.yi {
+  color: #D94F70;
+}
+.checkin-popup__row.ji {
+  color: #5C7A6A;
+}
+
+.checkin-popup__row span {
+  font-weight: 600;
+  font-size: 12px;
+  color: #999;
+}
+
+.checkin-popup__footer {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #999;
+}
+
+.checkin-popup__close {
+  margin-top: 16px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #2E2A36;
+  border-radius: 10px;
+  width: 100%;
+}
+
+    
+/* 签到按钮点击区域防遮挡 */
+.checkin-btn {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+}
+
+
+/* ==========================================================
+   修复原生 Select 下拉框样式
+   ========================================================== */
+
+/* 1. 把被覆盖掉的小箭头找回来 */
+:root[data-custom-bg="on"] .stat-cat {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--c-text-sub) 50%),
+    linear-gradient(135deg, var(--c-text-sub) 50%, transparent 50%) !important;
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50% !important;
+  background-size: 5px 5px, 5px 5px !important;
+  background-repeat: no-repeat !important;
+  padding-right: 36px !important; /* 给箭头留出空间 */
+}
+
+/* 2. 确保展开后的列表在系统层面不难看（尽量统一颜色） */
+:root[data-custom-bg="on"] .stat-cat option,
+:root[data-custom-bg="on"] select option {
+  background-color: #FDFCFB !important;
+  color: #2E2A36 !important;
+  font-size: 14px;
+}
+
+/* 3. 深色模式（如果有的话）适配 */
+:root[data-custom-bg="on"][data-theme="night"] .stat-cat option,
+:root[data-custom-bg="on"][data-theme="night"] select option {
+  background-color: #252232 !important;
+  color: #E8E4F0 !important;
+}
+
+
+/* ==========================================================
+   非侵入式分类选择弹窗
+   ========================================================== */
+.custom-select-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+}
+
+/* 隐藏原生 select，但保留它的占位和逻辑 */
+.custom-select-wrap .stat-cat {
+  position: absolute !important;
+  inset: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1;
+}
+
+/* 假按钮接管视觉 */
+.stat-cat-fake {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--c-text);
+  background-color: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .18s var(--ease), background .18s;
+}
+
+.stat-cat-fake:active {
+  opacity: 0.8;
+}
+
+.stat-cat__caret {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--c-text-sub);
+  border-bottom: 1.5px solid var(--c-text-sub);
+  transform: rotate(45deg) translate(-2px, -2px);
+  flex: none;
+  margin-left: 8px;
+}
+
+/* 弹窗遮罩 */
+.cat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(26, 26, 46, .5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s var(--ease);
+}
+
+.cat-modal-overlay.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cat-modal {
+  width: 100%;
+  max-width: 320px;
+  max-height: 75vh;
+  background: var(--c-card);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(26, 26, 46, .3);
+  transform: translateY(10px) scale(.96);
+  transition: transform .25s var(--ease);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cat-modal-overlay.is-show .cat-modal {
+  transform: none;
+}
+
+.cat-modal__header {
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+  text-align: center;
+  flex: none;
+}
+
+.cat-modal__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.cat-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--c-text);
+  border-radius: var(--radius-sm);
+  transition: background .15s var(--ease);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+}
+
+.cat-modal__item:active {
+  background: var(--c-surface);
+}
+
+.cat-modal__item.is-active {
+  background: color-mix(in srgb, var(--c-primary) 12%, var(--c-card));
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+.cat-modal__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* 毛玻璃适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item:active {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
+}
+
+/* 亚克力适配 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal {
+  background: rgba(248, 245, 242, 0.95) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+
+/* ==========================================================
+   只修复签到按钮的层级和防挤压
+   ========================================================== */
+.checkin-btn {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================
+   纯 CSS 强制锁死签到卡片布局
+   ========================================================== */
+.checkin-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.checkin-card .checkin-left {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* 强制按钮不换行、不占满全宽 */
+.checkin-card .checkin-btn {
+  flex: none !important;
+  width: auto !important;
+  display: inline-flex !important;
+  position: relative !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+
+/* ==========================================================
+   强制修复顶部 Header 被下层内容覆盖的问题
+   ========================================================== */
+
+/* 1. 把顶部 Header 的层级提到最高（确保它在所有普通内容之上） */
+.header {
+  z-index: 300 !important;
+}
+
+/* 2. 签到按钮的层级调回普通值（只要盖住它所在的卡片内部元素即可，不用抢全局） */
+.checkin-btn {
+  z-index: 1 !important;
+}
+
+/* 3. 确保 tabbar 的层级也正常，不被内容盖住（保持它原有的较高层级） */
+.tabbar {
+  z-index: 90 !important;
+}
+
+/* 4. 确保弹窗/日历等全局组件层级依然在最顶层 */
+.modal-overlay {
+  z-index: 1000 !important;
+}
+.calendar-panel {
+  z-index: 200 !important;
+}
+
+
+/* ==========================================================
+   强制修复顶栏吸附问题
+   ========================================================== */
+
+/* 无论是普通主题还是自定义主题，顶栏都必须固定在顶部 */
+.header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 300 !important;
+}
+
+/* 之前为了防割裂加了负 margin，这不会影响 sticky，
+   但为了防止某些安卓 WebView 渲染引擎的 BUG，重新确认一下 */
+.header {
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
+  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* 确保玻璃伪元素不会把 sticky 布局弄坏 */
+:root[data-custom-bg="on"] .header {
+  position: sticky !important;
+}
+
+
+/* ==========================================================
+   签到卡片：补齐玻璃质感
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(248, 245, 242, 0.72) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    /* 顶边强高光 */
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
+    /* 底边弱高光 */
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
+    /* 左右内白 */
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
+    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
+    /* 外投影 */
+    0 10px 28px rgba(0, 0, 0, 0.16),
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+
+/* ==========================================================
+   统一卡片玻璃质感（对齐签到卡片的透度）
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
+  /* 统一改用 20% 的极淡白，让背景颜色透出来 */
+  background: rgba(255, 255, 255, 0.20) !important;
+  
+  /* 稍微增加一点模糊，让背景更柔和 */
+  backdrop-filter: blur(16px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  
+  /* 统一的极细白边和内阴影 */
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .card,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(248, 245, 242, 0.72) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
+    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
+    0 10px 28px rgba(0, 0, 0, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ---------- 3. 确保内部文字清晰 ---------- */
+/* 因为卡片变透了，给里面的标题加一点点微光，防止在深色背景下看不清 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card__title,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-title,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .field__label {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+
+/* ==========================================================
+   全局统一弹窗/浮层质感
+   包含：普通弹窗(.modal)、分类选择(.cat-modal)、签到(.checkin-popup__content)、日历(.calendar-panel)
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式（高可读性 + 极度通透） ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  /* 背景稍微给到 65%，保证在深色背景下文字绝对清晰 */
+  background: rgba(250, 248, 245, 0.65) !important;
+  
+  /* 强模糊 + 饱和度提升，透出底色 */
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+  
+  /* 统一的细白边和高光阴影 */
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.18),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  /* 亚克力奶白底，非常实，不模糊 */
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  /* 亚克力的招牌白边和高低光 */
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ---------- 3. 细节清理 ---------- */
+/* 移除签到弹窗原本写死的纯白背景和旧阴影 */
+.checkin-popup__content {
+  background: #fff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 确保分类弹窗的头部和列表分割线颜色协调 */
+:root[data-custom-bg="on"] .cat-modal__header {
+  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+
+/* ==========================================================
+   统一弹窗/浮层背景质感（极致通透版，对齐日历）
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  
+  /* 大幅降低白度，让背景颜色尽情透出来 */
+  background: rgba(255, 255, 255, 0.25) !important;
+  
+  /* 极强的模糊 + 稍微降低饱和度，让透出的颜色更柔和 */
+  backdrop-filter: blur(32px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(140%) !important;
+  
+  /* 干净纤细的白边 + 极其干净的投影 */
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+/* 亚克力模式下不能模糊，用实色奶白代替 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ---------- 3. 内部元素的微调 ---------- */
+/* 确保内部的选中项在透明背景下依然清晰 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-month.is-selected,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item.is-active {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+
+/* ==========================================================
+   终极统一：弹窗与日历完全同步
+   ========================================================== */
+
+/* ---------- 1. 打薄所有全屏遮罩（解决发灰发暗的问题） ---------- */
+/* 普通弹窗遮罩 */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+/* 分类选择遮罩 */
+.cat-modal-overlay {
+  background: rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+/* 签到运势遮罩 */
+.checkin-popup {
+  background: rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* ---------- 2. 弹窗面板完全统一（对齐图1的日历） ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  /* 纯净的乳白半透明 */
+  background: rgba(255, 255, 255, 0.45) !important;
+  
+  /* 统一的强模糊和饱和增强 */
+  backdrop-filter: blur(32px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
+  
+  /* 干净的白边和内高光 */
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ---------- 3. 透玻璃（亚克力）模式同步 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+
+/* ==========================================================
+   预算设置弹窗专用样式（对齐选择分类）
+   ========================================================== */
+
+/* 列表容器 */
+.budget-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 列表项：采用和 .cat-modal__item 相同的半透明卡片质感 */
+.budget-cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  transition: background .15s ease;
+}
+
+/* 左侧：圆点 + 名字 */
+.budget-cat-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.budget-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.budget-cat-name {
+  font-size: 15px;
+  color: var(--c-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 右侧：输入框区域 */
+.budget-cat-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: none;
+  width: 110px; /* 固定宽度，对齐所有输入框 */
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.budget-cat-symbol {
+  font-size: 13px;
+  color: var(--c-text-sub);
+  margin-right: 2px;
+}
+
+.budget-cat-input {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--c-text);
+}
+
+.budget-cat-input::placeholder {
+  font-weight: 400;
+  color: var(--c-text-light);
+}
+
+/* 针对不同的玻璃模式微调透明度 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .budget-cat-item {
+  background: rgba(248, 245, 242, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+
+/* ==========================================================
+   预算列表：纯文本版（去掉胶囊背景）
+   ========================================================== */
+
+.budget-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* 行间距稍微收紧 */
+}
+
+/* 列表项：纯透明 */
+.budget-cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px; /* 左右内边距极小，和“选择分类”对齐 */
+  background: transparent !important; /* 去掉背景 */
+  border: none !important;            /* 去掉边框 */
+  transition: none;
+}
+
+/* 左侧：圆点 + 名字 */
+.budget-cat-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.budget-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.budget-cat-name {
+  font-size: 15px;
+  color: var(--c-text);
+}
+
+/* 右侧：输入框区域，只保留极简的底部横线 */
+.budget-cat-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: none;
+  width: 120px;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 只有一根细细的下划线 */
+  padding: 4px 0;
+}
+
+.budget-cat-symbol {
+  font-size: 14px;
+  color: var(--c-text-sub);
+  margin-right: 2px;
+}
+
+.budget-cat-input {
+  width: 100%;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--c-text);
+}
+
+.budget-cat-input::placeholder {
+  font-weight: 400;
+  color: var(--c-text-light);
+}
+
+/* 深色背景下下划线的颜色适配 */
+:root[data-custom-bg="on"] .budget-cat-right {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+
+/* ==========================================================
+   强制隐藏弹窗横向滚动条
+   ========================================================== */
+.modal__message {
+  overflow-x: hidden !important;
+}
+
+/* 确保内部的任何 flex 子项都不会撑破宽度 */
+.budget-cat-item,
+.budget-cat-left,
+.budget-cat-right {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+.budget-cat-right {
+  width: 110px !important; /* 稍微收窄一点，给左侧留空间 */
+}
+
+.budget-cat-input {
+  min-width: 0 !important; /* 防止输入框撑破容器 */
+}
+
+
+/* ==========================================================
+   终极修复：去掉描边 + 毛玻璃调白
+   ========================================================== */
+
+/* 1. 暴力移除所有文字描边（光晕） */
+* {
+  text-shadow: none !important;
+}
+
+/* 2. 重新设定毛玻璃的底色（调白） */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .header {
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .tabbar {
+  background: rgba(250, 248, 245, 0.75) !important;
+}
+
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
+  /* 背景改为 55% 的白，既能透出颜色，又非常清晰 */
+  background: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* 3. 卡片内的小组件（记录、分类格子）进一步调白 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 4. 输入框调白 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input {
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 5. 底部导航调白 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .dropdown-menu {
+  background: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* 6. 确保文字颜色够深 */
+:root[data-custom-bg="on"] {
+  --c-text: #1A1720 !important; /* 近黑 */
+  --c-text-sub: #4A4453 !important; /* 深灰 */
+  --c-text-light: #6E6878 !important;
+}
+
+
+/* ==========================================================
+   数据备份按钮布局
+   ========================================================== */
+.backup-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.backup-actions .btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* 毛玻璃模式适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .backup-actions .btn {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+:root[data-custom-bg="on"][data-glass-mode="clear"] .backup-actions .btn {
+  background: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+
+/* ==========================================================
+   存钱罐卡片样式
+   ========================================================== */
+.savings-card {
+  margin-top: var(--gap);
+}
+
+.savings-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 24px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.savings-label {
+  font-size: 13px;
+  color: var(--c-text-sub);
+  margin-bottom: 4px;
+}
+
+.savings-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--c-primary);
+  letter-spacing: -0.5px;
+}
+
+.savings-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.savings-actions .btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* 毛玻璃适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-balance {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 亚克力适配 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .savings-balance {
+  background: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+
+
+   ========================================================== */
+.savings-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 24px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+}
+
+.savings-label {
+  font-size: 14px;
+  color: var(--c-text-sub);
+  margin-bottom: 4px;
+}
+
+.savings-total {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--c-primary);
+  letter-spacing: -0.8px;
+}
+
+.savings-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.savings-btn-row .btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+}
+
+/* 存钱记录的增减颜色 */
+.savings-in {
+  color: var(--c-primary) !important;
+}
+.savings-out {
+  color: var(--c-danger) !important;
+}
+
+/* 适配底部 5 个 Tab 的紧凑布局 */
+.tabbar .tab {
+  font-size: 10px; /* 稍微缩小文字 */
+}
+.tab__icon {
+  font-size: 18px; /* 稍微缩小图标 */
+}
+
+/* 毛玻璃适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-header {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+
+/* ==========================================================
+   存钱页面专属样式（重构版）
+   ========================================================== */
+.savings-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 28px;
+  background: var(--c-surface);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.savings-label {
+  font-size: 14px;
+  color: var(--c-text-sub);
+  margin-bottom: 6px;
+}
+
+.savings-total {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--c-primary);
+  letter-spacing: -1px;
+}
+
+.savings-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.savings-btn-row .btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+}
+
+/* 强制覆盖主按钮的样式，防止被毛玻璃样式弄成浅色 */
+.savings-btn-row .btn--primary {
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(60, 50, 80, 0.2) !important;
+  border: none !important;
+}
+
+.savings-btn-row .btn:not(.btn--primary) {
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  border: 1px solid var(--c-border) !important;
+}
+
+/* 存钱记录的增减颜色 */
+.savings-in {
+  color: var(--c-primary) !important;
+}
+.savings-out {
+  color: var(--c-danger) !important;
+}
+
+/* 适配底部 5 个 Tab 的紧凑布局 */
+.tabbar .tab {
+  font-size: 10px;
+}
+.tab__icon {
+  font-size: 18px;
+}
+
+/* 毛玻璃/亚克力 适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-header {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+:root[data-custom-bg="on"][data-glass-mode="clear"] .savings-header {
+  background: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-btn-row .btn:not(.btn--primary) {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+
+/* ==========================================================
+   V3.3 收入模块样式
+   ========================================================== */
+.record__amount--income {
+  color: var(--c-success, #5C7A6A) !important;
+}
+
+/* 统计页：按年/按月分段占满行宽 */
+#statModeSeg {
+  width: 100%;
+}
+#statModeSeg .seg__btn {
+  flex: 1;
+  text-align: center;
+}
+
+/* 统计页：收支类型分段保持自然宽度 */
+#statTypeSeg {
+  flex: none;
+}
+
+
+/* ==========================================================
+   V3.4 净收入
+   ========================================================== */
+
+/* 主数值：正数绿，负数红 */
+.stat-main__value.is-positive {
+  color: #5C7A6A;
+}
+.stat-main__value.is-negative {
+  color: #A85E52;
+}
+
+/* ---------- 每日净收入柱状图 ---------- */
+.net-daily-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+  padding: 10px 0 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.net-daily-col {
+  flex: 1 0 16px;
+  min-width: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.net-daily-top,
+.net-daily-bottom {
+  width: 100%;
+  height: 70px;
+  display: flex;
+}
+.net-daily-top { align-items: flex-end; }
+.net-daily-bottom { align-items: flex-start; }
+
+.net-daily-bar {
+  width: 100%;
+  min-height: 1px;
+  transition: height .4s var(--ease);
+}
+.net-daily-bar--pos {
+  background: linear-gradient(180deg, #7A8F7E, #5C7A6A);
+  border-radius: 3px 3px 0 0;
+}
+.net-daily-bar--neg {
+  background: linear-gradient(180deg, #A85E52, #B8776E);
+  border-radius: 0 0 3px 3px;
+}
+
+.net-daily-label {
+  font-size: 10px;
+  color: var(--c-text-light);
+  line-height: 1;
+}
+
+/* ---------- 每月净收入柱状图 ---------- */
+.net-monthly-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  padding: 10px 0 4px;
+}
+
+.net-monthly-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.net-monthly-top,
+.net-monthly-bottom {
+  width: 100%;
+  height: 70px;
+  display: flex;
+}
+.net-monthly-top { align-items: flex-end; }
+.net-monthly-bottom { align-items: flex-start; }
+
+.net-monthly-bar {
+  width: 100%;
+  min-height: 1px;
+  transition: height .4s var(--ease);
+}
+.net-monthly-bar--pos {
+  background: linear-gradient(180deg, #7A8F7E, #5C7A6A);
+  border-radius: 3px 3px 0 0;
+}
+.net-monthly-bar--neg {
+  background: linear-gradient(180deg, #A85E52, #B8776E);
+  border-radius: 0 0 3px 3px;
+}
+
+.net-monthly-label {
+  font-size: 10px;
+  color: var(--c-text-light);
+  line-height: 1;
+}
+
+
+/* ==========================================================
+   统计页：时间与分类筛选器样式彻底统一
+   ========================================================== */
+
+/* 1. 基础形态统一：圆角、边框、内边距、字体 */
+.stat-period,
+.stat-cat-fake {
+  flex: 1 !important;
+  height: 46px !important;
+  padding: 0 14px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: var(--radius-sm) !important; /* 统一为 10px，不再是圆角胶囊 */
+  border: 1.5px solid var(--c-border) !important;
+  background-color: var(--c-surface) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  transition: border-color .18s var(--ease) !important;
+}
+
+.stat-period:hover,
+.stat-cat-fake:hover,
+.stat-period:active,
+.stat-cat-fake:active {
+  opacity: 1 !important;
+  border-color: var(--c-primary-light) !important;
+}
+
+/* 2. 毛玻璃模式：完全对齐背景 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+}
+
+/* 3. 透玻璃（亚克力）模式：完全对齐背景（解决发虚的问题） */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
+:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat-fake {
+  background-color: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 修复图标对齐 */
+.stat-period__caret,
+.stat-cat__caret {
+  margin: 0 !important;
+  flex: none !important;
+  position: static !important;
+}
+
+.stat-period {
+  text-align: left !important;
+  justify-content: space-between !important;
+  padding-right: 14px !important;
+}
+
+
+/* ==========================================================
+   统计筛选栏：顶部单行排版优化
+   ========================================================== */
+
+/* 顶部行：均匀分布，两端对齐 */
+.stat-filter__top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+/* 因为右边还有对比开关，为了防止拥挤，让左边两组自适应且不换行 */
+.stat-filter__top .seg {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}
+
+/* #statModeSeg { width: auto !important; } */
+
+#statModeSeg .seg__btn {
+  padding: 6px 12px !important; /* 稍微收窄一点内边距 */
+  font-size: 13px !important;
+}
+
+
+
+/* 如果屏幕太小，适当隐藏文字或缩小尺寸 */
+
+
+
+/* ==========================================================
+   图表切换 Tab：方形圆角化（覆盖原有胶囊样式）
+   ========================================================== */
+
+/* 1. 外层容器：减小圆角，调整内边距 */
+.chart-tabs {
+  border-radius: 10px !important;
+  padding: 4px !important;
+  gap: 0 !important; /* 取消间距，依靠滑块定位 */
+}
+
+/* 2. 滑动背景块（那个绿色的滑块）：减小圆角，贴紧边缘 */
+.chart-tabs::before {
+  border-radius: 8px !important;
+  top: 4px !important;
+  bottom: 4px !important;
+  /* 左侧初始化位置微调，确保滑块和文字居中贴合 */
+  transform: translateX(var(--tabs-thumb-x, 4px)) !important; 
+}
+
+/* 3. 文字按钮：去除圆角，让点击区域更规整 */
+.chart-tabs .chart-tab {
+  border-radius: 8px !important; 
+  padding: 8px 0 !important; /* 左右内边距归零，靠 flex 均匀分布 */
+  margin: 0 !important;
+}
+
+/* 4. 防止文字被挤压，保持居中 */
+.chart-tabs .chart-tab.is-active {
+  background: transparent !important; /* 背景交给 ::before */
+  box-shadow: none !important;
+}
+
+
+
+
+
+/* ==========================================================
+   顶部：支出/收入切换按钮
+   ========================================================== */
+.header-mode-seg {
+  display: inline-flex;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 9999 !important;
+}
+
+.header-mode-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  transition: all .2s var(--ease);
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.header-mode-btn.is-active {
+  background: #fff;
+  color: var(--c-primary);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* ==========================================================
+   彻底修复统计页筛选栏挤压、文字竖排问题
+   ========================================================== */
+
+/* 1. 强制第一行两端对齐，且绝不换行 */
+.stat-filter__top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 2. 左侧分段选择器：防止被挤压，文字绝不换行 */
+#statTypeSeg {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+}
+
+#statTypeSeg .seg__btn {
+  padding: 6px 10px !important; /* 稍微缩小左右内边距 */
+  font-size: 13px !important;
+  white-space: nowrap !important; /* 核心：禁止文字换行 */
+}
+
+/* 3. 右侧对比开关：不收缩，文字不换行 */
+.stat-compare {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+}
+
+/* 4. 限制复选框大小，防止它变成巨型方块 */
+.stat-compare input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  flex: none !important;
+}
+
+.stat-compare label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* 5. 确保按月/按年依然保持独占一行并撑满宽度 */
+.stat-filter__row {
+  width: 100% !important;
+  display: flex !important;
+  gap: 8px !important;
+}
+
+#statModeSeg {
+  width: 100% !important;
+  display: flex !important;
+}
+
+#statModeSeg .seg__btn {
+  flex: 1 !important;
+  white-space: nowrap !important;
+}
+
+
+
+
+/* ==========================================================
+   最终层级保证：日历悬浮在所有内容之上
+   ========================================================== */
+.header {
+  z-index: 100 !important;
+}
+.calendar-panel {
+  z-index: 200 !important; /* 必须大于 Header，保证顶栏的日历能弹出来 */
+}
+.modal-overlay {
+  z-index: 1000 !important;
+}
+
+
+
+
+/* --- 红1主题 (OnePlus Red) --- */
+:root[data-theme="red1"] {
+  --c-primary: #EB0029;
+  --c-primary-light: #FF3C5C;
+  --c-primary-dark: #B3001F;
+  --c-bg: #FFF5F6;
+  --c-card: #FFFEFC;
+  --c-surface: #F7E6E9;
+  --c-border: #F0D1D9;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+/* ==========================================================
+   浅色主题专属修复：顶栏变深色
+   ========================================================== */
+html.light-theme-active .header {
+  color: var(--c-text) !important;
+}
+
+html.light-theme-active .header__title,
+html.light-theme-active .overview__label,
+html.light-theme-active .overview__value {
+  color: var(--c-text) !important;
+}
+
+/* 月份按钮：浅色下变成淡淡的黑底黑字 */
+html.light-theme-active .header__month {
+  color: var(--c-text) !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 月份按钮的小箭头改成深色 */
+html.light-theme-active .header__month::after {
+  border-color: var(--c-text-sub) !important;
+}
+
+/* 进度条：底槽和填充条都加深 */
+html.light-theme-active .budget-bar {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+html.light-theme-active .budget-bar__fill {
+  background: var(--c-text) !important;
+}
+
+/* 修改按钮的文字颜色 */
+html.light-theme-active .overview__label span {
+  color: var(--c-text-sub) !important;
+}
+
+/* --- 长春花蓝（补齐 data-theme 变量） --- */
+:root[data-theme="periwinkle"] {
+  --c-primary: #6667AB;
+  --c-primary-light: #8A8BC7;
+  --c-primary-dark: #4F5090;
+  --c-bg: #F2F2F7;
+  --c-card: #FDFDFF;
+  --c-surface: #E9E9F2;
+  --c-border: #DDDEF0;
+  --c-text: #2E2A36;
+  --c-text-sub: #6E6878;
+  --c-text-light: #A8A2B0;
+  --c-shadow-sm: 0 1px 4px rgba(60, 50, 80, .05);
+  --c-shadow:    0 2px 12px rgba(60, 50, 80, .07);
+  --c-shadow-lg: 0 8px 28px rgba(60, 50, 80, .1);
+  --c-danger: #A85E52;
+  --c-success: #5C7A6A;
+  --c-warning: #B5822E;
+}
+
+
+/* ==========================================================
+   快捷记账胶囊
+   ========================================================== */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px dashed var(--c-border);
+}
+
+.quick-actions::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  transition: all 0.15s var(--ease);
+  user-select: none;
+}
+
+.quick-chip:active {
+  transform: scale(0.95);
+  background: color-mix(in srgb, var(--c-primary) 10%, var(--c-surface));
+}
+
+.quick-chip__amount {
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+.quick-chip--add {
+  border-style: dashed;
+  color: var(--c-text-light);
+  background: transparent;
+  padding: 6px 10px;
+}
+
+/* 毛玻璃适配 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .quick-chip {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+
+/* 透玻璃适配 */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip {
+  background: rgba(248, 245, 242, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================
+   分类子弹窗（覆盖在主弹窗之上）
+   ========================================================== */
+.sub-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; /* 高于主 Modal 的 1000 */
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.sub-modal-overlay.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sub-modal {
+  width: 100%;
+  max-width: 300px;
+  background: var(--c-card);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  transform: translateY(10px) scale(0.95);
+  transition: transform 0.25s var(--ease);
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.sub-modal-overlay.is-show .sub-modal {
+  transform: none;
+}
+
+.sub-modal__header {
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.sub-modal__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.sub-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--c-text);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s var(--ease);
+  cursor: pointer;
+  text-align: left;
+}
+
+.sub-modal-item:active {
+  background: var(--c-surface);
+}
+
+.sub-modal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+
+/* ==========================================================
+   子弹窗：玻璃质感适配（补齐）
+   ========================================================== */
+
+/* ---------- 1. 毛玻璃模式 ---------- */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(32px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal {
+  background: rgba(248, 245, 242, 0.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 头部和列表的边框线条也微调一下，防止在透明下太突兀 */
+:root[data-custom-bg="on"] .sub-modal__header {
+  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* 子弹窗里的每一项：加一点悬浮反馈，更像玻璃 */
+:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal-item:active {
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal-item:active {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
