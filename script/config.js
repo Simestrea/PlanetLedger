@@ -26,9 +26,18 @@ const DEFAULT_INCOME_CATEGORIES = [
 ];
 
 const COLOR_PALETTE = [
-  '#B8823F', '#6E7E92', '#7B6B9E', '#A85E52',
-  '#A85E52', '#4E7B80', '#5C7A5C', '#8B8478',
-  '#C08997', '#C29A4A', '#7A8A6E', '#5C7A6A',
+  '#B8823F', // 焦糖黄
+  '#4E7B80', // 湖水蓝
+  '#A85E52', // 陶土红
+  '#7B6B9E', // 薰衣草紫
+  '#5C7A5C', // 森林绿
+  '#D66D75', // 玫瑰粉
+  '#5A5B9F', // 鸢尾蓝
+  '#E29E4B', // 亮橙色
+  '#009473', // 翡翠绿
+  '#955251', // 玛萨拉红
+  '#92A8D1', // 宁静蓝
+  '#B565A7', // 兰花紫
 ];
 
 function createCategoryStore(storageKey, defaults) {
@@ -92,7 +101,20 @@ function createCategoryStore(storageKey, defaults) {
 
       const id = 'c' + Date.now().toString(36)
                + Math.random().toString(36).slice(2, 4);
-      const color = COLOR_PALETTE[this.list.length % COLOR_PALETTE.length];
+      
+      // 智能分配颜色：优先挑当前还没被用过的颜色
+      let color = '';
+      const usedColors = this.list.map(function(c) { return c.color; });
+      for (let i = 0; i < COLOR_PALETTE.length; i++) {
+        if (usedColors.indexOf(COLOR_PALETTE[i]) === -1) {
+          color = COLOR_PALETTE[i];
+          break;
+        }
+      }
+      // 如果 12 个颜色全被用光了，就随便挑一个随机的
+      if (!color) {
+        color = COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
+      }
 
       this.list.push({ id: id, name: trimmed, color: color });
       this.reorder();

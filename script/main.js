@@ -144,7 +144,7 @@ const App = {
             let amountsHtml = amounts.map(function(amt) {
               return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
                        '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + amt + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + amt + '</button>' +
-                       '<button class="cat__del quick-amt-del" data-amt="' + amt + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;">×</button>' +
+                       '<button class="cat__del quick-amt-del" data-amt="' + amt + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
                      '</div>';
             }).join('');
 
@@ -154,13 +154,13 @@ const App = {
               '</div>' +
               // 【精简】移除中间的自定义金额输入框和“记账”按钮
               '<div style="display:flex; gap:12px; margin-top:16px;">' +
-                '<button class="btn" id="quickEditBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-text-sub); background:var(--c-surface); border:none;">✏️ 编辑速记</button>' +
-                '<button class="btn" id="quickDelBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-danger); background:color-mix(in srgb, var(--c-danger) 8%, transparent); border:none;">🗑️ 删除速记</button>' +
+                '<button class="btn" id="quickEditBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-text-sub); background:var(--c-surface); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 编辑速记</button>' +
+                '<button class="btn" id="quickDelBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-danger); background:color-mix(in srgb, var(--c-danger) 8%, transparent); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> 删除速记</button>' +
               '</div>';
 
             Modal.open({
               type: 'none',
-              title: '⚡ ' + UI.escapeHtml(tpl.name),
+              title: '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ' + UI.escapeHtml(tpl.name),
               html: html,
               actions: [{ text: '关闭', value: null }]
             });
@@ -190,7 +190,7 @@ const App = {
                         amtList.innerHTML = tpl.amounts.map(function(a) {
                           return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
                                    '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + a + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + a + '</button>' +
-                                   '<button class="cat__del quick-amt-del" data-amt="' + a + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;">×</button>' +
+                                   '<button class="cat__del quick-amt-del" data-amt="' + a + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
                                  '</div>';
                         }).join('');
                         bindQuickAmtEvents(); 
@@ -266,7 +266,7 @@ const App = {
               let tagsHtml = tempAmounts.map(function(amt, idx) {
                 return '<div style="position:relative; display:inline-block; margin:4px;">' +
                          '<div class="btn" style="margin:4px 4px 4px 0; padding:4px 14px; font-size:14px; font-weight:bold; background:rgba(255,255,255,0.4); border-radius:8px; line-height:1.4; box-shadow:none;">￥' + amt + '</div>' +
-                         '<button class="del-temp-amt" data-idx="' + idx + '" type="button" style="position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--c-card); color:var(--c-text-sub); border:1px solid var(--c-border); font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2;">×</button>' +
+                         '<button class="del-temp-amt" data-idx="' + idx + '" type="button" style="position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--c-card); color:var(--c-text-sub); border:1px solid var(--c-border); font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
                        '</div>';
               }).join('');
 
@@ -294,7 +294,7 @@ const App = {
                 '</div>';
 
               Modal.open({
-                type: 'info',
+                type: 'none',
                 title: isEdit ? '编辑快捷记账' : '添加快捷记账',
                 html: html,
                 actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
@@ -381,9 +381,11 @@ const App = {
                     document.body.appendChild(overlay);
                     void overlay.offsetWidth;
                     overlay.classList.add('is-show');
+                    document.body.style.overflow = 'hidden';
                     
                     const closeCatModal = function() {
                       overlay.classList.remove('is-show');
+                      document.body.style.overflow = '';
                       setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 250);
                     };
                     
@@ -896,7 +898,7 @@ const App = {
         '<div class="budget-cat-list">' + catHtml + '</div>' +
       '</div>';
     Modal.open({
-      type: 'none', title: '🎯 预算设置', html: html,
+      type: 'none', title: '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> 预算设置', html: html,
       actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
     }).then(function(res) {
       if (res === 'save') {
@@ -1076,52 +1078,49 @@ const App = {
 
     const quickActions = document.getElementById('quickActions');
     if (quickActions) {
-      let pressTimer = null;
-      let startX = 0;
-      let startY = 0;
-      let isScrolling = false;
+      let lastTap = 0;
+      let tapTimer = null;
+      const DOUBLE_PRESS_DELAY = 250;
 
-      quickActions.addEventListener('click', function (e) {
+      // 暴力清理之前可能残留的所有事件
+      const newQuickActions = quickActions.cloneNode(true);
+      quickActions.parentNode.replaceChild(newQuickActions, quickActions);
+
+      newQuickActions.addEventListener('click', function (e) {
         const chip = e.target.closest('.quick-chip');
-        if (!chip || chip.id === 'quickAddBtn') return;
-        if (isScrolling) { isScrolling = false; return; }
+        if (!chip) return;
+        
+        // 点击“+ 添加”
+        if (chip.id === 'quickAddBtn') {
+          self.openAddQuickTemplate();
+          return;
+        }
+
         const id = chip.dataset.qid;
         const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
         if (!tpl) return;
-        const defaultAmt = tpl.amounts && tpl.amounts.length > 0 ? tpl.amounts[0] : (tpl.amount || 0);
-        Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
-        UI.renderAll(self.currentMonth);
-        UI.showToast('已快捷记账 ￥' + defaultAmt);
-      });
 
-      quickActions.addEventListener('touchstart', function (e) {
-        const chip = e.target.closest('.quick-chip');
-        if (!chip || chip.id === 'quickAddBtn') return;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        isScrolling = false;
-        pressTimer = setTimeout(function () {
-          if (navigator.vibrate) navigator.vibrate(50);
-          const id = chip.dataset.qid;
-          const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
-          if (tpl) self.showQuickPanel(tpl);
-          pressTimer = null;
-        }, 600);
-      }, { passive: true });
-
-      quickActions.addEventListener('touchmove', function (e) {
-        if (!pressTimer) return;
-        const moveX = Math.abs(e.touches[0].clientX - startX);
-        const moveY = Math.abs(e.touches[0].clientY - startY);
-        if (moveX > 10 || moveY > 10) { clearTimeout(pressTimer); pressTimer = null; isScrolling = true; }
-      }, { passive: true });
-
-      quickActions.addEventListener('touchend', function () {
-        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-      });
-
-      quickActions.addEventListener('click', function (e) {
-        if (e.target.closest('#quickAddBtn')) self.openAddQuickTemplate();
+        const now = Date.now();
+        
+        // 判断双击 (250ms内点击两次)
+        if (now - lastTap < DOUBLE_PRESS_DELAY) {
+          clearTimeout(tapTimer); // 取消单击的定时器
+          
+          // 双击：直接记账
+          const defaultAmt = tpl.amounts && tpl.amounts.length > 0 ? tpl.amounts[0] : (tpl.amount || 0);
+          Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
+          UI.renderAll(self.currentMonth);
+          
+          if (navigator.vibrate) navigator.vibrate(30);
+          UI.showToast('已快捷记账 ￥' + defaultAmt);
+        } else {
+          // 单击：延迟 250ms 弹出编辑面板
+          tapTimer = setTimeout(function () {
+            self.showQuickPanel(tpl);
+          }, DOUBLE_PRESS_DELAY);
+        }
+        
+        lastTap = now;
       });
     }
 
@@ -1131,7 +1130,7 @@ const App = {
         const month = self.currentMonth;
         const list = Ledger.byMonth(month, 'expense');
         if (list.length === 0) { UI.showToast('本月还没有记账哦'); return; }
-        generatePosterBtn.textContent = '生成中...';
+        generatePosterBtn.innerHTML = '生成中...';
         generatePosterBtn.disabled = true;
         setTimeout(function() {
           try {
@@ -1220,7 +1219,7 @@ const App = {
             ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1140); ctx.textAlign = 'left';
 
             const base64 = canvas.toDataURL('image/jpeg', 0.9);
-            generatePosterBtn.textContent = '✨ 生成海报'; generatePosterBtn.disabled = false;
+            generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; generatePosterBtn.disabled = false;
             Modal.open({
               type: 'none', title: '月度账单已生成', html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
               actions: [{ text: '关闭', value: null }, { text: '保存到相册', value: 'save', primary: true }]
@@ -1230,7 +1229,7 @@ const App = {
                 else { const a = document.createElement('a'); a.href = base64; a.download = '有序星球_海报_' + month + '.jpg'; a.click(); UI.showToast('图片已下载'); }
               }
             });
-          } catch (err) { console.error(err); UI.showToast('海报生成失败'); generatePosterBtn.textContent = '✨ 生成海报'; generatePosterBtn.disabled = false; }
+          } catch (err) { console.error(err); UI.showToast('海报生成失败'); generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; generatePosterBtn.disabled = false; }
         }, 100);
       });
     }

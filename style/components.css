@@ -6229,3 +6229,151 @@ html.light-theme-active .overview__label span {
   transform: none !important;
 }
 
+
+
+
+/* === SVG 图标统一样式 === */
+.icon-svg {
+  width: 1.1em;
+  height: 1.1em;
+  display: inline-block;
+  vertical-align: -0.15em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-right: 4px;
+}
+.tab__icon .icon-svg {
+  width: 24px;
+  height: 24px;
+  margin-right: 0;
+}
+.icon-close {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+  margin: 0;
+}
+
+
+/* === 弹窗 SVG 图标样式 === */
+.modal-icon-svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+
+/* === 重塑弹窗图标：去掉笨重底盘，改为轻盈的彩色线条 === */
+
+/* 1. 去除背景圆、阴影和边框 */
+.modal__icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 48px !important;
+  height: 48px !important;
+  margin: 0 auto 16px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 2. 把 SVG 放大，线条变细腻 */
+.modal-icon-svg {
+  width: 42px !important;
+  height: 42px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important; /* 更纤细的线条 */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 3. 赋予不同状态优雅的色彩（即使背景是透明的，也能一眼看出状态） */
+.modal__icon--info    { color: #6E7E92 !important; } /* 蓝灰 */
+.modal__icon--warn    { color: #B8823F !important; } /* 焦糖黄 */
+.modal__icon--danger  { color: #A85E52 !important; } /* 陶土红 */
+.modal__icon--success { color: #5C7A6A !important; } /* 森林绿 */
+
+/* 4. 如果你在自定义壁纸模式下，颜色稍微加深以保持对比度 */
+:root[data-custom-bg="on"] .modal__icon--info    { color: #4A6078 !important; }
+:root[data-custom-bg="on"] .modal__icon--warn    { color: #9A6B32 !important; }
+:root[data-custom-bg="on"] .modal__icon--danger  { color: #8F4B41 !important; }
+:root[data-custom-bg="on"] .modal__icon--success { color: #4A6653 !important; }
+
+
+
+
+/* === 终极重塑：弹窗图标统一为低调灰色 === */
+
+/* 覆盖掉之前赋予的彩色，统一成当前主题的灰色 */
+.modal__icon--info,
+.modal__icon--warn,
+.modal__icon--danger,
+.modal__icon--success,
+:root[data-custom-bg="on"] .modal__icon--info,
+:root[data-custom-bg="on"] .modal__icon--warn,
+:root[data-custom-bg="on"] .modal__icon--danger,
+:root[data-custom-bg="on"] .modal__icon--success {
+  color: var(--c-text-sub) !important; /* 使用主题的次级文字色，通常是偏灰的 */
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 确保在自定义深色壁纸下依然清晰，稍微用点带透明度的灰白 */
+:root[data-custom-bg="on"] .modal__icon {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+:root[data-custom-bg="on"][data-theme="night"] .modal__icon {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* 线条稍微再细一丢丢，显得更高级 */
+.modal-icon-svg {
+  width: 40px !important;
+  height: 40px !important;
+  stroke-width: 1.5 !important; 
+}
+
+
+
+
+/* === 终极修复：消灭弹窗顶部多余空白 === */
+
+/* 当 JS 设置 display: none 时，允许 CSS 遵从并完全隐藏图标容器，消除 48px 的占位 */
+.modal__icon[style*="display: none"] {
+  display: none !important;
+  margin: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+}
+
+/* 顺便调一下没有图标时，标题的顶部间距，让整体更紧凑舒适 */
+.modal:has(.modal__icon[style*="display: none"]) .modal__title {
+  margin-top: 8px;
+}
+
+
+
+/* 阻止长按时出现系统的选中文字或弹出菜单 */
+.cat, .quick-chip {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+/* === 修复拖拽时的文字换行 === */
+.quick-chip {
+  white-space: nowrap !important;
+}
+.quick-chip span {
+  white-space: nowrap !important;
+}

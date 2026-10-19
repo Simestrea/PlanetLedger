@@ -28,7 +28,7 @@
         <div class="overview__item" id="headerBudgetBlock" style="cursor:pointer;">
           <span class="overview__label">
             <span id="monthLeftLabel">剩余预算</span>
-            <span style="font-size:12px;opacity:.8;margin-left:4px;">✎ 修改</span>
+            <span style="font-size:12px;opacity:.8;margin-left:4px;"><svg class="icon-svg" viewBox="0 0 24 24" style="width:12px;height:12px;margin-left:4px;vertical-align:-1px;"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 修改</span>
           </span>
           <strong class="overview__value" id="monthLeft">￥0.00</strong>
         </div>
@@ -61,13 +61,13 @@
         <div class="home-col">
 <div class="card" id="expenseFormCard">
             <h2 class="card__title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
-            <span>✏️ 记一笔</span>
-            <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); letter-spacing: 0.5px; opacity: 0.8;">长按速记可编辑</span>
+            <span><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 记一笔</span>
+            <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); letter-spacing: 0.5px; opacity: 0.8;">点按展开选项 · 双击默认记账</span>
           </h2>
             <div class="quick-actions" id="quickActions"></div>
 
             <div class="field">
-              <label class="field__label">分类</label>
+              <label class="field__label" style="display:flex; justify-content:space-between; align-items:center;">分类 <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); opacity: 0.8;">长按拖拽排序</span></label>
               <div class="cat-grid" id="catGrid"></div>
             </div>
 
@@ -107,7 +107,7 @@
 
         <div class="home-col">
           <div class="card" id="recentExpenseCard">
-            <h2 class="card__title">📋 最近记录</h2>
+            <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> 最近记录</h2>
             <ul class="record-list" id="recentList"></ul>
             <p class="empty" id="recentEmpty">还没有记账，从左边开始记一笔吧～</p>
           </div>
@@ -169,7 +169,7 @@
 
       <!-- 图表 -->
       <div class="card">
-        <h2 class="card__title" id="chartTitle">📊 支出图表</h2>
+        <h2 class="card__title" id="chartTitle"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> 支出图表</h2>
         <div class="chart-tabs" id="chartTabs">
           <button class="chart-tab is-active" data-chart="bars"    type="button">条形</button>
           <button class="chart-tab"           data-chart="pie"     type="button">饼图</button>
@@ -186,7 +186,7 @@
       
 
       <div class="card" id="catManageCard">
-        <h2 class="card__title">⚙️ 管理分类与额度</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 管理分类与额度</h2>
         <ul class="cat-manage__list" id="catManageList"></ul>
         <div class="cat-manage__add">
           <input class="input" id="newCatInput" type="text" maxlength="6"
@@ -202,10 +202,10 @@
       
 
       <div class="card">
-        <h2 class="card__title">💰 记一笔收入</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg> 记一笔收入</h2>
 
         <div class="field">
-          <label class="field__label">收入来源</label>
+          <label class="field__label" style="display:flex; justify-content:space-between; align-items:center;">收入来源 <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); opacity: 0.8;">长按拖拽排序</span></label>
           <div class="cat-grid" id="incomeCatGrid"></div>
         </div>
 
@@ -241,7 +241,7 @@
       </div>
 
       <div class="card">
-        <h2 class="card__title">📋 最近收入</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> 最近收入</h2>
         <ul class="record-list" id="incomeRecentList"></ul>
         <p class="empty" id="incomeRecentEmpty">还没有收入记录～</p>
       </div>
@@ -251,8 +251,8 @@
     <section class="page" id="page-list">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <h2 class="card__title" style="margin-bottom:0;">📋 本月明细</h2>
-          <button class="btn" id="generatePosterBtn" type="button" style="width:auto; padding:6px 12px; font-size:12px; border-radius:20px; background:color-mix(in srgb, var(--c-primary) 10%, var(--c-card)); color:var(--c-primary); border:none; box-shadow:none;">✨ 生成海报</button>
+          <h2 class="card__title" style="margin-bottom:0;"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> 本月明细</h2>
+          <button class="btn" id="generatePosterBtn" type="button" style="width:auto; padding:6px 12px; font-size:12px; border-radius:20px; background:color-mix(in srgb, var(--c-primary) 10%, var(--c-card)); color:var(--c-primary); border:none; box-shadow:none;"><svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报</button>
         </div>
         <ul class="record-list" id="recordList"></ul>
         <p class="empty" id="listEmpty">这个月还没有记账哦～</p>
@@ -261,7 +261,7 @@
     <section class="page" id="page-settings">
 
       <div class="card">
-        <h2 class="card__title">🎨 主题 · Pantone 年度色</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg> 主题 · Pantone 年度色</h2>
         <div class="theme-grid" id="themeGrid">
           <button class="theme-item" data-theme="greenery" title="草木绿" type="button">
             <span class="theme-preview" style="--p:#88B04B;--bg:#F4F8EC;--card:#FCFEF8"></span>
@@ -355,7 +355,7 @@
       </div>
 
       <div class="card card--glass-mode">
-        <h2 class="card__title">🪟 玻璃样式</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> 玻璃样式</h2>
         <div class="glass-mode" id="glassMode">
 
           <button type="button" class="glass-mode__btn is-active" data-mode="frosted">
@@ -388,7 +388,7 @@
       </div>
 
       <div class="card">
-        <h2 class="card__title">🖼️ 自定义背景</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> 自定义背景</h2>
         <div class="custom-upload">
           <label class="custom-upload__label" for="customBgInput">
             <span>＋</span>
@@ -406,7 +406,7 @@
       </div>
 
       <div class="card">
-        <h2 class="card__title">💾 数据备份</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> 数据备份</h2>
         <div class="backup-actions">
           <button class="btn" id="exportBtn" type="button">导出备份</button>
           <button class="btn" id="importBtn" type="button">导入恢复</button>
@@ -420,14 +420,14 @@
       </div>
 
       <div class="card">
-        <h2 class="card__title">ℹ️ 关于</h2>
+        <h2 class="card__title"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> 关于</h2>
         <div class="about-row">
           <span class="about-row__label">应用名称</span>
           <span class="about-row__value">有序星球</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">版本</span>
-          <span class="about-row__value">5.2.0</span>
+          <span class="about-row__value">5.2.1</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">定位</span>
@@ -445,23 +445,23 @@
 
   <nav class="tabbar">
     <button class="tab is-active" data-page="page-home" type="button">
-      <span class="tab__icon">✏️</span>
+      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></span>
       <span class="tab__text">记一笔</span>
     </button>
     <button class="tab" data-page="page-savings" type="button">
-      <span class="tab__icon">💰</span>
+      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg></span>
       <span class="tab__text">收入</span>
     </button>
     <button class="tab" data-page="page-chart" type="button">
-      <span class="tab__icon">📊</span>
+      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
       <span class="tab__text">统计</span>
     </button>
     <button class="tab" data-page="page-list" type="button">
-      <span class="tab__icon">📋</span>
+      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></span>
       <span class="tab__text">明细</span>
     </button>
     <button class="tab" data-page="page-settings" type="button">
-      <span class="tab__icon">⚙️</span>
+      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
       <span class="tab__text">设置</span>
     </button>
   </nav>
@@ -478,5 +478,6 @@
 <script src="script/ui.js"></script>
 <script src="script/main.js"></script>
 <script src="script/cat_picker.js"></script>
+<script src="script/drag-sort.js"></script>
 </body>
 </html>

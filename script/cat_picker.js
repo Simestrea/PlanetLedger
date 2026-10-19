@@ -65,8 +65,9 @@
 
       void overlay.offsetWidth;
       overlay.classList.add('is-show');
+      document.body.style.overflow = 'hidden';
 
-      const close = function () { overlay.classList.remove('is-show'); };
+      const close = function () { overlay.classList.remove('is-show'); document.body.style.overflow = ''; };
 
       overlay.addEventListener('click', function (e) {
         if (e.target === overlay) close();
@@ -79,6 +80,7 @@
           nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
           updateLabel();
           close();
+          document.body.style.overflow = '';
         });
       });
     }

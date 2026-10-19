@@ -264,7 +264,7 @@ const UI = {
       const wide = nameLen >= 3 ? ' cat--wide' : '';
       const delBtn = '<button type="button" class="cat__del"'
         + ' data-cat-del="' + c.id + '"'
-        + ' aria-label="删除分类">×</button>';
+        + ' aria-label="删除分类"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>';
 
       return '<div class="cat' + wide + active + '"'
            + ' data-cat="' + c.id + '"'
@@ -337,7 +337,7 @@ const UI = {
            +     '<p class="record__date">' + UI.formatRecordTime(r) + '</p>'
            +   '</div>'
            +   '<span class="record__amount">-￥' + r.amount.toFixed(2) + '</span>'
-           +   '<button class="record__del" type="button" data-del="' + r.id + '">✕</button>'
+           +   '<button class="record__del" type="button" data-del="' + r.id + '"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>'
            + '</li>';
     }).join('');
   },
@@ -360,7 +360,7 @@ const UI = {
            +     '<p class="record__date">' + UI.formatRecordTime(r) + '</p>'
            +   '</div>'
            +   '<span class="record__amount record__amount--income">+￥' + r.amount.toFixed(2) + '</span>'
-           +   '<button class="record__del" type="button" data-del="' + r.id + '">✕</button>'
+           +   '<button class="record__del" type="button" data-del="' + r.id + '"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>'
            + '</li>';
     }).join('');
   },
@@ -394,7 +394,7 @@ const UI = {
            +     '<p class="record__date">' + UI.formatRecordTime(r) + '</p>'
            +   '</div>'
            +   '<span class="record__amount' + amtCls + '">' + sign + '￥' + r.amount.toFixed(2) + '</span>'
-           +   '<button class="record__del" type="button" data-del="' + r.id + '">✕</button>'
+           +   '<button class="record__del" type="button" data-del="' + r.id + '"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>'
            + '</li>';
     }).join('');
   },
@@ -532,10 +532,10 @@ const UI = {
 
   renderStatAll: function () {
     if (this.els.chartTitle) {
-      this.els.chartTitle.textContent =
-        this.statType === 'income' ? '📊 收入图表'
-        : this.statType === 'net' ? '📊 净收入图表'
-        : '📊 支出图表';
+      this.els.chartTitle.innerHTML =
+        this.statType === 'income' ? '<svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> 收入图表'
+        : this.statType === 'net' ? '<svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> 净收入图表'
+        : '<svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> 支出图表';
     }
     this.renderStatFilter();
     this.renderStatSummary();
@@ -1330,7 +1330,7 @@ const UI = {
            +   '<span class="' + limitCls + '" data-cat-limit="' + c.id + '">' + limitText + '</span>'
            +   '<button class="cat-manage__del" type="button"'
            +     ' data-cat-del="' + c.id + '">'
-           +     '✕'
+           +     '<svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
            +   '</button>'
            + '</li>';
     }).join('');
