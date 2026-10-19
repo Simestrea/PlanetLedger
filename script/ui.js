@@ -528,6 +528,8 @@ const UI = {
     this.renderStatAll();
   },
 
+
+
   renderStatAll: function () {
     if (this.els.chartTitle) {
       this.els.chartTitle.textContent =

@@ -1317,6 +1317,269 @@ const App = {
       });
     }
 
+
+    /* ===== 月度账单海报 ===== */
+    const generatePosterBtn = document.getElementById('generatePosterBtn');
+    if (generatePosterBtn) {
+      generatePosterBtn.addEventListener('click', function () {
+        const month = self.currentMonth;
+        const list = Ledger.byMonth(month, 'expense');
+        if (list.length === 0) {
+          UI.showToast('本月还没有记账哦');
+          return;
+        }
+
+        generatePosterBtn.textContent = '生成中...';
+        generatePosterBtn.disabled = true;
+
+        setTimeout(function() {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const W = 750, H = 1200;
+            canvas.width = W;
+            canvas.height = H;
+
+            // 获取当前主题颜色
+            const style = getComputedStyle(document.documentElement);
+            const primary = style.getPropertyValue('--c-primary').trim() || '#6667AB';
+            const bg = style.getPropertyValue('--c-bg').trim() || '#F2F2F7';
+            const textSub = style.getPropertyValue('--c-text-sub').trim() || '#6E6878';
+
+            // 1. 背景
+            ctx.fillStyle = '#F5F6F8';
+            ctx.fillRect(0, 0, W, H);
+
+            // 2. 核心数据计算
+            const expenseTotal = Ledger.sum(list);
+            const incomeList = Ledger.byMonth(month, 'income');
+            const incomeTotal = Ledger.sum(incomeList);
+            const netTotal = incomeTotal - expenseTotal;
+            const budget = Ledger.getBudget(month);
+            let budgetPercent = 0;
+            if (budget > 0) {
+              budgetPercent = Math.min(100, (expenseTotal / budget) * 100);
+            }
+
+            // 【修复】计算分类消费总额 (排行榜专用)
+            const catTotals = {};
+            list.forEach(r => { catTotals[r.categoryId] = (catTotals[r.categoryId] || 0) + r.amount; });
+
+            // 3. 顶部主卡片
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.06)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetY = 10;
+            ctx.fillStyle = primary;
+            ctx.beginPath();
+            ctx.roundRect(40, 40, W - 80, 360, 32);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.fillText('有序星球', 80, 110);
+            
+            ctx.font = '20px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fillText(month.replace('-', ' 年 ') + ' 月财务报告', 80, 150);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 72px sans-serif';
+            ctx.fillText('￥' + expenseTotal.toFixed(2), 80, 260);
+            
+            ctx.font = '20px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.fillText('本月总支出', 80, 300);
+
+            // 预算进度条
+            if (budget > 0) {
+              ctx.fillStyle = 'rgba(255,255,255,0.2)';
+              ctx.beginPath();
+              ctx.roundRect(80, 330, W - 160, 12, 6);
+              ctx.fill();
+
+              ctx.fillStyle = '#FFFFFF';
+              ctx.beginPath();
+              ctx.roundRect(80, 330, (W - 160) * (budgetPercent / 100), 12, 6);
+              ctx.fill();
+              
+              ctx.font = '16px sans-serif';
+              ctx.fillText('预算已使用 ' + budgetPercent.toFixed(1) + '%', 80, 375);
+            } else {
+              ctx.font = '16px sans-serif';
+              ctx.fillText('本月未设置预算', 80, 345);
+            }
+
+            // 4. 中间双列数据卡 (收入 & 结余)
+            const cardW = (W - 80 - 16) / 2;
+            
+            // 左卡：收入
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.roundRect(40, 430, cardW, 160, 24);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif';
+            ctx.fillText('本月总收入', 70, 480);
+            ctx.fillStyle = '#5C7A6A'; // 绿色
+            ctx.font = 'bold 40px sans-serif';
+            ctx.fillText('+￥' + incomeTotal.toFixed(2), 70, 540);
+
+            // 右卡：结余
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.roundRect(40 + cardW + 16, 430, cardW, 160, 24);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif';
+            ctx.fillText('本月净结余', 70 + cardW + 16, 480);
+            ctx.fillStyle = netTotal >= 0 ? primary : '#A85E52';
+            ctx.font = 'bold 40px sans-serif';
+            const netSign = netTotal >= 0 ? '+' : '-';
+            ctx.fillText(netSign + '￥' + Math.abs(netTotal).toFixed(2), 70 + cardW + 16, 540);
+
+            // 5. 饼状图卡片
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.roundRect(40, 630, W - 80, 420, 24);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = textSub; ctx.font = 'bold 22px sans-serif';
+            ctx.fillText('支出分类占比', 70, 690);
+
+            const sortedCats = Object.keys(catTotals || {}).map(id => ({id, amt: catTotals[id]})).sort((a,b) => b.amt - a.amt);
+            
+            // 将前 5 名之外的数据合并为“其他”
+            let chartData = [];
+            if (sortedCats.length > 5) {
+              chartData = sortedCats.slice(0, 5);
+              const othersAmt = sortedCats.slice(5).reduce((sum, item) => sum + item.amt, 0);
+              chartData.push({ id: 'other_merged', amt: othersAmt, name: '其他' });
+            } else {
+              chartData = sortedCats;
+            }
+
+            // 饼图圆心和半径
+            const cx = 230; 
+            const cy = 860; 
+            const radius = 110;
+            
+            let startAngle = -Math.PI / 2; // 从顶部开始
+
+            chartData.forEach(item => {
+              const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
+              const sliceAngle = (item.amt / expenseTotal) * Math.PI * 2;
+              
+              // 绘制扇形
+              ctx.beginPath();
+              ctx.moveTo(cx, cy);
+              ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
+              ctx.closePath();
+              ctx.fillStyle = cat.color;
+              ctx.fill();
+              
+              // 添加白色描边
+              ctx.strokeStyle = '#FFFFFF';
+              ctx.lineWidth = 4;
+              ctx.stroke();
+
+              startAngle += sliceAngle;
+            });
+
+            // 中心挖空
+            ctx.beginPath();
+            ctx.arc(cx, cy, 60, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fill();
+
+            // 中心文字
+            ctx.fillStyle = textSub; ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('总支出', cx, cy - 10);
+            ctx.fillStyle = primary; ctx.font = 'bold 24px sans-serif';
+            ctx.fillText('￥' + expenseTotal.toFixed(0), cx, cy + 22);
+            ctx.textAlign = 'left';
+
+            // 右侧图例
+            let legendY = 730;
+            chartData.forEach(item => {
+              const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
+              const percent = (item.amt / expenseTotal * 100).toFixed(1);
+              
+              // 色块
+              ctx.fillStyle = cat.color;
+              ctx.beginPath();
+              ctx.roundRect(W - 250, legendY - 14, 14, 14, 4);
+              ctx.fill();
+
+              // 名称
+              ctx.fillStyle = textSub; ctx.font = '18px sans-serif';
+              ctx.fillText(cat.name, W - 220, legendY);
+
+              // 百分比
+              ctx.fillStyle = textSub; ctx.font = 'bold 18px sans-serif';
+              ctx.textAlign = 'right';
+              ctx.fillText(percent + '%', W - 80, legendY);
+              ctx.textAlign = 'left';
+
+              legendY += 50; // 间距调整
+            });
+
+            // 6. 水印
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.font = '18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1140);
+            ctx.textAlign = 'left';
+
+            const base64 = canvas.toDataURL('image/jpeg', 0.9);
+            generatePosterBtn.textContent = '✨ 生成海报';
+            generatePosterBtn.disabled = false;
+
+            // 预览与保存弹窗
+            Modal.open({
+              type: 'none',
+              title: '月度账单已生成',
+              html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
+              actions: [
+                { text: '关闭', value: null },
+                { text: '保存到相册', value: 'save', primary: true }
+              ]
+            }).then(function (res) {
+              if (res === 'save') {
+                if (window.Android && typeof window.Android.saveImage === 'function') {
+                  window.Android.saveImage(base64);
+                } else {
+                  // 浏览器兜底：直接下载
+                  const a = document.createElement('a');
+                  a.href = base64;
+                  a.download = '有序星球_月度海报_' + month + '.jpg';
+                  a.click();
+                  UI.showToast('图片已下载');
+                }
+              }
+            });
+
+          } catch (err) {
+            console.error(err);
+            UI.showToast('海报生成失败');
+            generatePosterBtn.textContent = '✨ 生成海报';
+            generatePosterBtn.disabled = false;
+          }
+        }, 100);
+      });
+    }
+
     UI.els.amountInput.addEventListener('input', function () {
       self.updateAmountPreview();
     });

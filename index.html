@@ -181,6 +181,8 @@
         <p class="empty" id="chartEmpty">暂无数据</p>
       </div>
 
+
+
       
 
       <div class="card" id="catManageCard">
@@ -248,7 +250,10 @@
 
     <section class="page" id="page-list">
       <div class="card">
-        <h2 class="card__title">📋 本月明细</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 class="card__title" style="margin-bottom:0;">📋 本月明细</h2>
+          <button class="btn" id="generatePosterBtn" type="button" style="width:auto; padding:6px 12px; font-size:12px; border-radius:20px; background:color-mix(in srgb, var(--c-primary) 10%, var(--c-card)); color:var(--c-primary); border:none; box-shadow:none;">✨ 生成海报</button>
+        </div>
         <ul class="record-list" id="recordList"></ul>
         <p class="empty" id="listEmpty">这个月还没有记账哦～</p>
       </div>
@@ -422,7 +427,7 @@
         </div>
         <div class="about-row">
           <span class="about-row__label">版本</span>
-          <span class="about-row__value">5.1.18</span>
+          <span class="about-row__value">5.1.19</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">定位</span>
