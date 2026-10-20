@@ -534,6 +534,7 @@ const UI = {
     }
 
     this.renderStatAll();
+    this.updateHeader(this.statPeriod);
     const self = this;
     requestAnimationFrame(function () { self.updateSegThumb(); });
   },
@@ -664,9 +665,6 @@ const UI = {
       );
       const withData = monthly.filter(function (m) { return m.amount > 0; });
       const avg = withData.length > 0 ? currentTotal / withData.length : 0;
-      const peak = monthly.reduce(function (max, m) {
-        return m.amount > max.amount ? m : max;
-      }, { amount: 0, month: 0 });
 
       const label1 = this.statType === 'income' ? '有收入' : '有支出';
 
@@ -678,12 +676,6 @@ const UI = {
            +    '<div class="stat-mini">'
            +      '<span class="stat-mini__label">月均</span>'
            +      '<strong class="stat-mini__value">￥' + avg.toFixed(0) + '</strong>'
-           +    '</div>'
-           +    '<div class="stat-mini">'
-           +      '<span class="stat-mini__label">最高月</span>'
-           +      '<strong class="stat-mini__value">'
-           +        (peak.month ? peak.month + ' 月' : '—')
-           +      '</strong>'
            +    '</div>'
            +  '</div>';
     }
@@ -792,14 +784,8 @@ const UI = {
       });
       const positiveMonths = monthly.filter(function (m) { return m.net > 0; });
       const avg = withData.length > 0 ? currentTotal / withData.length : 0;
-      const peak = monthly.reduce(function (max, m) {
-        return m.net > max.net ? m : max;
-      }, { net: -Infinity, month: 0 });
 
       const avgText = (avg >= 0 ? '+' : '-') + '￥' + Math.abs(avg).toFixed(0);
-      const peakText = (peak.month && peak.net > -Infinity)
-        ? (peak.month + ' 月')
-        : '—';
 
       html += '<div class="stat-mini-row">'
            +    '<div class="stat-mini">'
@@ -809,10 +795,6 @@ const UI = {
            +    '<div class="stat-mini">'
            +      '<span class="stat-mini__label">月均净收入</span>'
            +      '<strong class="stat-mini__value">' + avgText + '</strong>'
-           +    '</div>'
-           +    '<div class="stat-mini">'
-           +      '<span class="stat-mini__label">最高月</span>'
-           +      '<strong class="stat-mini__value">' + peakText + '</strong>'
            +    '</div>'
            +  '</div>';
     }

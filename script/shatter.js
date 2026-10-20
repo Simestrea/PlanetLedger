@@ -12,10 +12,11 @@ var Shatter = (function () {
   var DEFAULTS = {
     windX: 240,
     windY: -150,
-    duration: 1100,
-    maxDelay: 160,
+    duration: 620,           /* 原 1100ms，加快飘散 */
+    maxDelay: 80,            /* 原 160ms，压缩碎片错峰 */
     maxPieces: 60,
     targetPieceSize: 14,
+    vacateRatio: 0.6,        /* 动画进行到 60% 时释放原元素占位，让内容补齐 */
   };
 
   /* ---- 注入 CSS（只注入一次） ---- */
@@ -46,7 +47,7 @@ var Shatter = (function () {
       '  position: fixed;',
       '  z-index: 9999;',
       '  overflow: visible;',
-      '  contain: strict;',
+      '  /* contain 已移除：strict 会裁剪飞出容器的碎片 */',
       '}'
     ].join('\n');
     document.head.appendChild(style);
@@ -130,6 +131,11 @@ var Shatter = (function () {
     for (var k in DEFAULTS) opts[k] = DEFAULTS[k];
     if (options) for (var k2 in options) opts[k2] = options[k2];
 
+    /* 计算占位释放时机：动画约 60% 时让原元素脱离文档流 */
+    if (typeof opts.vacateDelay !== 'number') {
+      opts.vacateDelay = Math.round(opts.duration * (opts.vacateRatio || 0.6));
+    }
+
     var total = list.length;
     var done = 0;
     var finished = false;
@@ -145,7 +151,7 @@ var Shatter = (function () {
       if (done >= total) finishOnce();
     }
 
-    setTimeout(finishOnce, opts.duration + opts.maxDelay + 500);
+    setTimeout(finishOnce, opts.duration + opts.maxDelay + 350);
 
     list.forEach(function (el) {
       shatterOne(el, opts, checkOne);
@@ -162,6 +168,11 @@ var Shatter = (function () {
     if (!dataUrl) { onDone(); return; }
 
     el.style.visibility = 'hidden';
+
+    /* 到点后让元素脱离文档流，后面内容立刻补齐；碎片在 fixed 容器里继续飞，不受影响 */
+    var vacateTimer = setTimeout(function () {
+      el.style.display = 'none';
+    }, opts.vacateDelay);
 
     var cols = Math.max(3, Math.ceil(rect.width / opts.targetPieceSize));
     var rows = Math.max(2, Math.ceil(rect.height / opts.targetPieceSize));
@@ -229,10 +240,12 @@ var Shatter = (function () {
     container.appendChild(frag);
 
     setTimeout(function () {
+      if (vacateTimer) clearTimeout(vacateTimer);
       if (container.parentNode) container.parentNode.removeChild(container);
       el.style.visibility = '';
+      el.style.display = '';
       onDone();
-    }, opts.duration + opts.maxDelay + 300);
+    }, opts.duration + opts.maxDelay + 250);
   }
 
   return { play: play };

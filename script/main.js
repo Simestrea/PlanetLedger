@@ -116,12 +116,17 @@ const App = {
         document.querySelectorAll('.quick-amt-del').forEach(function(btn) {
           btn.addEventListener('click', function(e) {
             e.stopPropagation();
+            if (tpl.amounts.length <= 1) {
+              if (typeof UI !== 'undefined' && UI.showToast) {
+                UI.showToast('至少保留一个常用金额，或删除整个速记');
+              }
+              return;
+            }
             const amtToDel = Number(this.dataset.amt);
             const parentDiv = this.closest('div');
             
             const doDelete = function() {
               tpl.amounts = tpl.amounts.filter(function(a) { return a !== amtToDel; });
-              if (tpl.amounts.length === 0) tpl.amounts = [0];
               Storage.write('slh.quickTemplates.v1', self.quickTemplates);
               self.renderQuickActions();
               
@@ -138,7 +143,7 @@ const App = {
             };
             
             if (parentDiv && typeof Shatter !== 'undefined') {
-              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doDelete);
+              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 380, maxPieces: 40 }, doDelete);
             } else { doDelete(); }
           });
         });
@@ -250,6 +255,12 @@ const App = {
       setTimeout(function() {
         document.querySelectorAll('.del-temp-amt').forEach(function(btn) {
           btn.addEventListener('click', function() {
+            if (tempAmounts.length <= 1) {
+              if (typeof UI !== 'undefined' && UI.showToast) {
+                UI.showToast('至少保留一个常用金额');
+              }
+              return;
+            }
             const parentDiv = this.closest('div');
             const idxToDel = Number(this.dataset.idx);
             const doRefresh = function() {
@@ -257,7 +268,7 @@ const App = {
               renderModal();
             };
             if (parentDiv && typeof Shatter !== 'undefined') {
-              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doRefresh);
+              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 380, maxPieces: 40 }, doRefresh);
             } else { doRefresh(); }
           });
         });
@@ -681,6 +692,7 @@ const App = {
     Modal.init();
     UI.init();
     this.initTheme();
+    this.restoreCustomPreview();
     this.initGlassMode();
     this.currentMonth = Ledger.todayMonth();
     this.setMonthButton(this.currentMonth);
@@ -835,7 +847,14 @@ const App = {
 
   exportData: function () {
     const data = {};
-    const allowedKeys = ['slh.records.v1', 'slh.budgets.v1', 'slh.categories.v1', 'slh.checkin.v1'];
+    const allowedKeys = [
+      'slh.records.v1',
+      'slh.budgets.v1',
+      'slh.categories.v1',
+      'slh.incomeCategories.v1',
+      'slh.quickTemplates.v1',
+      'slh.checkin.v1'
+    ];
     allowedKeys.forEach(key => {
       const val = localStorage.getItem(key);
       if (val !== null) data[key] = val;
@@ -872,19 +891,64 @@ const App = {
         const data = JSON.parse(content);
         if (typeof data !== 'object' || data === null) throw new Error('格式错误');
 
-        const importedCatsStr = data['slh.categories.v1'];
+        // ---- 支出分类合并（按 id 优先，同名次之） ----
+        const catIdMap = new Map();
         let newCatsCount = 0;
-        if (importedCatsStr) {
-          const importedCats = JSON.parse(importedCatsStr);
-          const existingCatNames = new Set(Categories.list.map(c => c.name));
-          importedCats.forEach(c => {
-            if (!existingCatNames.has(c.name)) {
-              Categories.list.push(c);
-              existingCatNames.add(c.name);
-              newCatsCount++;
+        const importedCatsStr = data['slh.categories.v1'];
+        const importedCats = importedCatsStr ? JSON.parse(importedCatsStr) : [];
+        const localCatByName = new Map(Categories.list.map(c => [c.name, c.id]));
+        importedCats.forEach(c => {
+          if (Categories.list.some(lc => lc.id === c.id)) {
+            catIdMap.set(c.id, c.id);
+          } else if (localCatByName.has(c.name)) {
+            catIdMap.set(c.id, localCatByName.get(c.name));
+          } else {
+            Categories.list.push(c);
+            localCatByName.set(c.name, c.id);
+            catIdMap.set(c.id, c.id);
+            newCatsCount++;
+          }
+        });
+        if (newCatsCount > 0) { Categories.reorder(); Categories.save(); }
+
+        // ---- 收入分类合并（同上） ----
+        const incomeCatIdMap = new Map();
+        let newIncomeCatsCount = 0;
+        const importedIncomeCatsStr = data['slh.incomeCategories.v1'];
+        const importedIncomeCats = importedIncomeCatsStr ? JSON.parse(importedIncomeCatsStr) : [];
+        const localIncomeCatByName = new Map(IncomeCategories.list.map(c => [c.name, c.id]));
+        importedIncomeCats.forEach(c => {
+          if (IncomeCategories.list.some(lc => lc.id === c.id)) {
+            incomeCatIdMap.set(c.id, c.id);
+          } else if (localIncomeCatByName.has(c.name)) {
+            incomeCatIdMap.set(c.id, localIncomeCatByName.get(c.name));
+          } else {
+            IncomeCategories.list.push(c);
+            localIncomeCatByName.set(c.name, c.id);
+            incomeCatIdMap.set(c.id, c.id);
+            newIncomeCatsCount++;
+          }
+        });
+        if (newIncomeCatsCount > 0) { IncomeCategories.reorder(); IncomeCategories.save(); }
+
+        // ---- 快捷模板合并（按 id 去重） ----
+        let newQuickCount = 0;
+        const importedQuickStr = data['slh.quickTemplates.v1'];
+        if (importedQuickStr) {
+          if (!App.quickTemplates) App.quickTemplates = [];
+          const importedQuick = JSON.parse(importedQuickStr);
+          const localQuickIds = new Set(App.quickTemplates.map(t => t.id));
+          importedQuick.forEach(t => {
+            if (!localQuickIds.has(t.id)) {
+              App.quickTemplates.push(t);
+              localQuickIds.add(t.id);
+              newQuickCount++;
             }
           });
-          if (newCatsCount > 0) { Categories.reorder(); Categories.save(); }
+          if (newQuickCount > 0) {
+            Storage.write('slh.quickTemplates.v1', App.quickTemplates);
+            if (typeof App.renderQuickActions === 'function') App.renderQuickActions();
+          }
         }
 
         const importedBudgetsStr = data['slh.budgets.v1'];
@@ -894,14 +958,36 @@ const App = {
           Storage.write(CONFIG.budgetKey, Ledger.budgets);
         }
 
+        // ---- 记录导入（含 categoryId 校验与映射） ----
         const importedRecordsStr = data['slh.records.v1'];
         let addedCount = 0;
         let duplicateList = [];
+        let remappedExpense = 0;
+        let remappedIncome = 0;
         if (importedRecordsStr) {
           const importedRecords = JSON.parse(importedRecordsStr);
           const existingSignatures = new Set();
           Ledger.records.forEach(r => existingSignatures.add(`${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`));
+
           importedRecords.forEach(r => {
+            if (r.type === 'income') {
+              if (incomeCatIdMap.has(r.categoryId)) {
+                r.categoryId = incomeCatIdMap.get(r.categoryId);
+              } else if (!IncomeCategories.list.some(c => c.id === r.categoryId)) {
+                const fallback = IncomeCategories.list.find(c => c.id === 'other-in');
+                r.categoryId = fallback ? fallback.id : IncomeCategories.list[0].id;
+                remappedIncome++;
+              }
+            } else {
+              if (catIdMap.has(r.categoryId)) {
+                r.categoryId = catIdMap.get(r.categoryId);
+              } else if (!Categories.list.some(c => c.id === r.categoryId)) {
+                const fallback = Categories.list.find(c => c.id === 'other');
+                r.categoryId = fallback ? fallback.id : Categories.list[0].id;
+                remappedExpense++;
+              }
+            }
+
             const sig = `${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`;
             if (existingSignatures.has(sig)) duplicateList.push(r);
             else { Ledger.records.push(r); existingSignatures.add(sig); addedCount++; }
@@ -912,12 +998,18 @@ const App = {
         let msgHtml = `<div style="text-align:center;">`;
         msgHtml += `<p style="margin-bottom:12px;font-size:15px;">成功导入 <strong>${addedCount}</strong> 笔新记录。</p>`;
         if (newCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newCatsCount}</strong> 个分类。</p>`;
+        if (newIncomeCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newIncomeCatsCount}</strong> 个收入分类。</p>`;
+        if (newQuickCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newQuickCount}</strong> 个快捷记账按钮。</p>`;
+        if (remappedExpense > 0 || remappedIncome > 0) {
+          msgHtml += `<p style="font-size:13px;color:var(--c-warning);margin-top:8px;">有 ${remappedExpense + remappedIncome} 笔记录的原始分类不存在，已自动归入「其他」。</p>`;
+        }
         if (duplicateList.length > 0) {
           msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);margin-top:8px;">已自动跳过 <strong>${duplicateList.length}</strong> 笔重复记录。</p>`;
           msgHtml += `<div style="margin-top:12px; text-align:left; font-size:12px; max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.03); padding:10px; border-radius:8px; color:var(--c-text-sub);">`;
           msgHtml += `<strong style="color:var(--c-text);">重复项清单：</strong><br>`;
           duplicateList.slice(0, 5).forEach(r => {
-            const cat = Categories.get(r.categoryId);
+            const store = r.type === 'income' ? IncomeCategories : Categories;
+            const cat = store.get(r.categoryId);
             const time = new Date(r.createdAt);
             const pad = function(n){ return String(n).padStart(2,'0'); };
             const timeStr = pad(time.getHours()) + ':' + pad(time.getMinutes()) + ':' + pad(time.getSeconds());
@@ -936,24 +1028,6 @@ const App = {
       }
     };
     reader.readAsText(file);
-  },
-
-  handleSavings: async function (isDeposit) {
-    const amountEl = UI.els.savingsAmount;
-    const noteEl = UI.els.savingsNote;
-    const amount = Number(amountEl.value);
-    if (!amount || amount <= 0) { UI.showToast('请输入金额'); amountEl.focus(); return; }
-    if (!isDeposit) {
-      const currentTotal = Ledger.getSavingsTotal();
-      if (amount > currentTotal) { Modal.alert({ type: 'warn', title: '余额不足', message: '小金库里没有那么多钱哦～' }); return; }
-    }
-    const finalAmount = isDeposit ? amount : -amount;
-    const note = noteEl.value || '';
-    Ledger.addSavings(finalAmount, note);
-    amountEl.value = '';
-    noteEl.value = '';
-    UI.renderSavings();
-    UI.showToast(isDeposit ? '存入成功！' : '取出成功！');
   },
 
   bindEvents: function () {
@@ -1295,9 +1369,17 @@ const App = {
     UI.els.statPeriodBtn.addEventListener('click', function () {
       if (Calendar.isOpen && Calendar.triggerEl === UI.els.statPeriodBtn) { Calendar.close(); return; }
       if (UI.statMode === 'year') {
-        Calendar.open(UI.els.statPeriodBtn, 'year', UI.statPeriod, function (year) { UI.statPeriod = year; UI.renderStatAll(); });
+        Calendar.open(UI.els.statPeriodBtn, 'year', UI.statPeriod, function (year) {
+          UI.statPeriod = year;
+          UI.renderStatAll();
+          UI.updateHeader(UI.statPeriod);
+        });
       } else {
-        Calendar.open(UI.els.statPeriodBtn, 'month', UI.statPeriod, function (month) { UI.statPeriod = month; UI.renderStatAll(); });
+        Calendar.open(UI.els.statPeriodBtn, 'month', UI.statPeriod, function (month) {
+          UI.statPeriod = month;
+          UI.renderStatAll();
+          UI.updateHeader(UI.statPeriod);
+        });
       }
     });
 
@@ -1416,7 +1498,7 @@ const App = {
     if (!ok) return;
     const nodes = document.querySelectorAll('.cat[data-cat="' + id + '"]');
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 1100, maxPieces: 80, targetPieceSize: 12 }, resolve); });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 620, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
     const res = IncomeCategories.remove(id);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
@@ -1426,24 +1508,12 @@ const App = {
     UI.showToast('收入来源已删除');
   },
 
-  confirmDeleteSavings: async function (id) {
-    const ok = await Modal.confirm({ type: 'warn', title: '删除这条记录？', message: '小金库记录删除后无法恢复', okText: '删除', danger: true });
-    if (!ok) return;
-    const nodes = document.querySelectorAll('[data-id="' + id + '"]');
-    if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 240, windY: -150, duration: 1200, maxPieces: 80, targetPieceSize: 12 }, resolve); });
-    }
-    Ledger.removeSavings(id);
-    UI.renderSavings();
-    UI.showToast('已删除');
-  },
-
   confirmDeleteRecord: async function (id) {
     const ok = await Modal.confirm({ type: 'warn', title: '删除这条记录？', message: '删除后无法恢复', okText: '删除', danger: true });
     if (!ok) return;
     const nodes = document.querySelectorAll('[data-id="' + id + '"]');
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 240, windY: -150, duration: 1200, maxPieces: 80, targetPieceSize: 12 }, resolve); });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 240, windY: -150, duration: 680, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
     Ledger.remove(id);
     UI.renderAll(this.currentMonth);
@@ -1481,7 +1551,7 @@ const App = {
     document.querySelectorAll('.cat[data-cat="' + id + '"]').forEach(function (n) { nodes.push(n); });
     document.querySelectorAll('[data-cat-del="' + id + '"]').forEach(function (btn) { const li = btn.closest('li'); if (li) nodes.push(li); });
     if (nodes.length > 0 && typeof Shatter !== 'undefined') {
-      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 1100, maxPieces: 80, targetPieceSize: 12 }, resolve); });
+      await new Promise(function (resolve) { Shatter.play(nodes, { windX: 220, windY: -160, duration: 620, maxPieces: 80, targetPieceSize: 12 }, resolve); });
     }
     const res = Categories.remove(id);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
@@ -1550,53 +1620,19 @@ const App = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.body.addEventListener('click', function(e) {
-    const btn = e.target.closest('.header-mode-btn');
-    if (!btn) return;
-    const mode = btn.dataset.mode;
-    if (UI.globalMode === mode) return;
-    UI.globalMode = mode;
-    const seg = document.getElementById('globalModeSeg');
-    if (seg) { seg.querySelectorAll('.header-mode-btn').forEach(function (b) { b.classList.toggle('is-active', b.dataset.mode === mode); }); }
-    const eForm = document.getElementById('expenseFormCard');
-    const iForm = document.getElementById('incomeFormCard');
-    const eRec = document.getElementById('recentExpenseCard');
-    const iRec = document.getElementById('recentIncomeCard');
-    if (eForm) eForm.hidden = (mode === 'income');
-    if (iForm) iForm.hidden = (mode === 'expense');
-    if (eRec) eRec.hidden = (mode === 'income');
-    if (iRec) iRec.hidden = (mode === 'expense');
-    if (typeof UI !== 'undefined' && UI.showToast) UI.showToast(mode === 'income' ? '已切换到收入' : '已切换到支出');
-  });
   App.init();
 });
 
+/* 玻璃模式切换：读取/应用交给 App.initGlassMode / App.applyGlassMode，这里只负责点击 */
 (function () {
-  function applyMode(mode) {
-    const html = document.documentElement;
-    if (mode === 'clear') html.setAttribute('data-glass-mode', 'clear');
-    else { html.removeAttribute('data-glass-mode'); mode = 'frosted'; }
-    try { localStorage.setItem('slh.glassMode.v1', mode); } catch (e) {}
-    const grid = document.getElementById('glassMode');
-    if (grid) {
-      Array.prototype.forEach.call(grid.querySelectorAll('.glass-mode__btn'), function (btn) {
-        btn.classList.toggle('is-active', btn.dataset.mode === mode);
-      });
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.glass-mode__btn');
+    if (!btn) return;
+    e.preventDefault();
+    if (typeof App !== 'undefined' && typeof App.applyGlassMode === 'function') {
+      App.applyGlassMode(btn.dataset.mode);
     }
-  }
-  function init() {
-    let mode = 'frosted';
-    try { mode = localStorage.getItem('slh.glassMode.v1') || 'frosted'; } catch (e) {}
-    applyMode(mode);
-    document.addEventListener('click', function (e) {
-      const btn = e.target.closest('.glass-mode__btn');
-      if (!btn) return;
-      e.preventDefault();
-      applyMode(btn.dataset.mode);
-    }, true);
-  }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 100); }); }
-  else { setTimeout(init, 100); }
+  }, true);
 })();
 
 (function () {
@@ -1646,6 +1682,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let pageEl, cardEl, hintEl, hintTextEl;
   let startY = 0, pulling = false, pullDist = 0, usingMouse = false;
 
+  /* 弹窗/面板打开时禁止触发下拉签到 */
+  var PULL_BLOCK_SELECTOR = '.tabbar, input, textarea, .quick-actions, .modal-overlay, .cat-modal-overlay, .sub-modal-overlay, .calendar-panel, .checkin-popup, .toast, .shatter-container';
+
   function init() {
     pageEl = document.getElementById('page-home');
     cardEl = document.getElementById('checkinCard');
@@ -1660,6 +1699,10 @@ document.addEventListener('DOMContentLoaded', function () {
       document.body.appendChild(hintEl);
     }
     hintTextEl = document.getElementById('pullHintText');
+
+    // 清理可能残留的抽屉元素
+    const oldDrawer = document.getElementById('fortuneDrawer');
+    if (oldDrawer) oldDrawer.remove();
 
     cardEl.style.transition = 'none';
     refreshCard();
@@ -1689,42 +1732,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function activeHome() { return pageEl && pageEl.classList.contains('is-active'); }
-  function atTop() {
-    return (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
-  }
+  function atTop() { return (window.scrollY || document.documentElement.scrollTop || 0) <= 0; }
 
   function onStart(e) {
     if (!activeHome() || !atTop() || e.touches.length !== 1) return;
-    if (e.target.closest('.tabbar, input, textarea')) return;
+    if (e.target.closest(PULL_BLOCK_SELECTOR)) return;
     
-    isDragArea = !!e.target.closest('.cat, .quick-chip, .record');
     startY = e.touches[0].clientY;
-    startX = e.touches[0].clientX;
-    pulling = !isDragArea; 
-    pullDist = 0; usingMouse = false;
+    pulling = true; pullDist = 0; usingMouse = false;
   }
+
   function onMove(e) {
-    if (!atTop()) { finishPull(false); return; }
-
-    const distY = e.touches[0].clientY - startY;
-    const distX = Math.abs(e.touches[0].clientX - startX);
-
-    if (window._isSortDragging) {
-      if (pulling) { pulling = false; resetVisual(); }
-      return;
-    }
-
-    if (isDragArea && !pulling) {
-      if (distY > 15 && distX < 20) { pulling = true; } 
-      else { return; }
-    }
-
     if (!pulling || usingMouse) return;
-    if (distY <= 0) { pullDist = 0; resetVisual(); return; }
+    if (!atTop()) { finishPull(false); return; }
+    
+    const dist = e.touches[0].clientY - startY;
+    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
     if (e.cancelable) e.preventDefault();
-    pullDist = distY;
-    updateVisual(distY);
+    pullDist = dist;
+    updateVisual(dist);
   }
+
   function onEnd() {
     if (!pulling || usingMouse) return;
     finishPull(true);
@@ -1732,43 +1760,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function onMouseDown(e) {
     if (e.button !== 0) return;
-    if (!activeHome() || !atTop()) return;
-    if (e.target.closest('button, a, input, select, textarea, .tabbar')) return;
-    
-    isDragArea = !!e.target.closest('.cat, .quick-chip, .record');
-    startY = e.clientY;
-    startX = e.clientX;
-    pulling = !isDragArea; 
-    pullDist = 0; usingMouse = true;
-  }
-  function onMouseMove(e) {
-    if (!atTop()) { finishPull(false); return; }
-    
-    const distY = e.clientY - startY;
-    const distX = Math.abs(e.clientX - startX);
-
-    if (window._isSortDragging) {
-      if (pulling) { pulling = false; resetVisual(); }
+    if (e.target.closest('button, a, input, select, textarea, ' + PULL_BLOCK_SELECTOR)) {
+      if (pulling) { pulling = false; pullDist = 0; resetVisual(); }
       return;
     }
-
-    if (isDragArea && !pulling) {
-      if (distY > 15 && distX < 20) { pulling = true; } 
-      else { return; }
-    }
-
+    if (!activeHome() || !atTop()) return;
+    startY = e.clientY;
+    pulling = true; pullDist = 0; usingMouse = true;
+  }
+  function onMouseMove(e) {
     if (!pulling || !usingMouse) return;
-    if (distY <= 0) { pullDist = 0; resetVisual(); return; }
+    if (!atTop()) { finishPull(false); return; }
+    const dist = e.clientY - startY;
+    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
     e.preventDefault();
-    pullDist = distY;
-    updateVisual(distY);
+    pullDist = dist;
+    updateVisual(dist);
   }
   function onMouseUp() {
-    if (!pulling || !usingMouse) return;
+    if (!pulling || usingMouse) return;
     finishPull(true);
   }
 
   function updateVisual(dist) {
+    pageEl.style.transition = 'none';
     pageEl.style.transform = 'translateY(' + Math.min(dist * DAMP, MAX_PULL) + 'px)';
     pageEl.classList.add('is-pulling');
     
@@ -1786,6 +1801,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function resetVisual() {
     pageEl.classList.remove('is-pulling');
+    pageEl.style.transition = '';
     pageEl.style.transform = '';
     hintEl.classList.remove('is-show', 'is-ready');
   }
@@ -1796,14 +1812,11 @@ document.addEventListener('DOMContentLoaded', function () {
     pullDist = 0;
 
     pageEl.classList.remove('is-pulling');
-    void pageEl.offsetHeight;
+    pageEl.style.transition = '';
     pageEl.style.transform = '';
     hintEl.classList.remove('is-show', 'is-ready');
 
-    if (!canTrigger || dist < THRESHOLD) {
-      if (isCheckedToday()) cardEl.classList.add('is-hidden');
-      return;
-    }
+    if (!canTrigger || dist < THRESHOLD) return;
     if (navigator.vibrate) navigator.vibrate(30);
 
     if (!isCheckedToday()) doCheckin();
@@ -1852,17 +1865,175 @@ document.addEventListener('DOMContentLoaded', function () {
         '<div class="checkin-popup__footer">已连续签到 ' + streak + ' 天' +
           (isNew ? '<br><span style="font-size:12px;font-weight:normal;opacity:.75;">以后下拉页面可再次查看今日运势</span>' : '') +
         '</div>' +
-        '<button class="checkin-popup__close" type="button" id="checkinPopupClose">收下好运</button>' +
+        
+        '<div style="display:flex; gap:10px; margin-top:20px;">' +
+          '<button class="checkin-popup__close" type="button" id="saveFortuneBtn" style="flex:1; margin-top:0; background:var(--c-surface); color:var(--c-text); border:1px solid var(--c-border);">保存运势</button>' +
+          '<button class="checkin-popup__close" type="button" id="checkinPopupClose" style="flex:1; margin-top:0;">收下好运</button>' +
+        '</div>' +
       '</div>';
 
     void popup.offsetWidth;
     popup.classList.add('is-show');
+    document.body.style.overflow = 'hidden';
 
-    popup.querySelector('#checkinPopupClose').addEventListener('click', function () {
+    var closeCheckinPopup = function () {
       popup.classList.remove('is-show');
+      document.body.style.overflow = '';
+    };
+
+    popup.querySelector('#checkinPopupClose').addEventListener('click', closeCheckinPopup);
+
+    // 保存运势图片逻辑 (高清 + 壁纸适配)
+    popup.querySelector('#saveFortuneBtn').addEventListener('click', async function () {
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 使用 2 倍分辨率防止模糊
+        const dpr = 2; 
+        const W = 750, H = 1100;
+        canvas.width = W * dpr; 
+        canvas.height = H * dpr;
+        ctx.scale(dpr, dpr);
+
+        const style = getComputedStyle(document.documentElement);
+        const primary = style.getPropertyValue('--c-primary').trim() || '#6667AB';
+        const primaryRgb = style.getPropertyValue('--c-primary-rgb').trim() || '110, 92, 150';
+
+        // 1. 绘制背景（优先读取自定义壁纸）
+        let bgImg = null;
+        const isCustomBgOn = document.documentElement.getAttribute('data-custom-bg') === 'on';
+        if (isCustomBgOn) {
+          const bgData = localStorage.getItem('slh.customBg.v1');
+          if (bgData) {
+            bgImg = new Image();
+            bgImg.src = bgData;
+            await new Promise(r => { bgImg.onload = r; bgImg.onerror = r; });
+          }
+        }
+
+        if (bgImg) {
+          // 【自定义壁纸】：铺满壁纸并压暗
+          const scale = Math.max(W / bgImg.width, H / bgImg.height);
+          const dw = bgImg.width * scale;
+          const dh = bgImg.height * scale;
+          ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+          ctx.fillRect(0, 0, W, H);
+        } else {
+          // 【非自定义壁纸】：极简浅灰底色，不要渐变
+          ctx.fillStyle = '#F5F6F8';
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        // 2. 绘制中央卡片
+        const cardW = 600, cardH = 850;
+        const cardX = (W - cardW) / 2, cardY = (H - cardH) / 2;
+        
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetY = 10;
+        // 有壁纸时半透明白，无壁纸时纯白
+        ctx.fillStyle = bgImg ? 'rgba(255, 255, 255, 0.85)' : '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 40);
+        ctx.fill();
+        ctx.restore();
+        
+        if (bgImg) {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(cardX, cardY, cardW, cardH, 40);
+          ctx.stroke();
+        }
+
+        // 3. 绘制文字
+        ctx.textAlign = 'center';
+        
+        // 标题
+        ctx.fillStyle = '#444444';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.fillText('有序星球 · 今日运势', W / 2, cardY + 80);
+        
+        const d = new Date();
+        ctx.fillStyle = '#888888';
+        ctx.font = '20px sans-serif';
+        ctx.fillText(d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日', W / 2, cardY + 120);
+
+        // 运势大字
+        ctx.fillStyle = '#EE5253';
+        ctx.font = 'bold 88px sans-serif';
+        ctx.fillText('§ ' + fortune.level + ' §', W / 2, cardY + 250);
+
+        // 宜忌背景框
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.beginPath();
+        ctx.roundRect(W / 2 - 220, cardY + 300, 440, 220, 24);
+        ctx.fill();
+
+        // 宜
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#D94F70';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText('宜：', W / 2 - 180, cardY + 360);
+        ctx.fillStyle = '#222222';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText(fortune.yi, W / 2 - 100, cardY + 360);
+        ctx.fillStyle = '#777777';
+        ctx.font = '18px sans-serif';
+        ctx.fillText(fortune.yiDesc || '运势极佳', W / 2 - 100, cardY + 395);
+
+        // 忌
+        ctx.fillStyle = '#5C7A6A';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText('忌：', W / 2 - 180, cardY + 465);
+        ctx.fillStyle = '#222222';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText(fortune.ji, W / 2 - 100, cardY + 465);
+        ctx.fillStyle = '#777777';
+        ctx.font = '18px sans-serif';
+        ctx.fillText(fortune.jiDesc || '小心行事', W / 2 - 100, cardY + 500);
+
+        // 打卡天数
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#555555';
+        ctx.font = '22px sans-serif';
+        ctx.fillText('已连续签到', W / 2, cardY + 610);
+        
+        ctx.fillStyle = primary;
+        ctx.font = 'bold 76px sans-serif';
+        ctx.fillText(streak.toString(), W / 2, cardY + 700);
+        
+        ctx.fillStyle = '#555555';
+        ctx.font = '22px sans-serif';
+        ctx.fillText('天', W / 2, cardY + 745);
+
+        // 底部水印
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        if (!bgImg) ctx.fillStyle = '#AAAAAA'; // 纯色背景时用灰色
+        ctx.font = '18px sans-serif';
+        ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, H - 40);
+
+        const base64 = canvas.toDataURL('image/jpeg', 0.95);
+        if (window.Android && typeof window.Android.saveImage === 'function') {
+          window.Android.saveImage(base64);
+        } else {
+          const a = document.createElement('a');
+          a.href = base64;
+          a.download = '有序星球_运势_' + todayStr() + '.jpg';
+          a.click();
+          UI.showToast('运势图已保存');
+        }
+      } catch(err) {
+        console.error(err);
+        UI.showToast('保存失败');
+      }
     });
+
     popup.onclick = function (e) {
-      if (e.target === popup) popup.classList.remove('is-show');
+      if (e.target === popup) closeCheckinPopup();
     };
   }
 

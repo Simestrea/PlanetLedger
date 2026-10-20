@@ -772,7 +772,7 @@
   position: fixed;
   left: 50%;
   bottom: 110px;
-  z-index: 99;
+  z-index: 2000;
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 500;
@@ -1111,16 +1111,7 @@
 /* ==========================================================
    响应式
    ========================================================== */
-@media (max-width: 360px) {
 
-  .amount__input {
-    font-size: 22px;
-  }
-  .amount__split {
-    width: 26px;
-    font-size: 16px;
-  }
-}
 
 @media (min-width: 769px) {
   .daily-col {
@@ -1499,19 +1490,7 @@
   }
 }
 
-@media (min-width: 600px) {
-  .cat-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .cat {
-    min-height: 72px;
-    padding: 12px 10px;
-  }
-  .cat__name {
-    font-size: 13px;
-  }
-}
+
 
 
 /* ==========================================================
@@ -2531,7 +2510,7 @@ html:not(.app-ready) .tabbar::before {
   background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.32) !important;
   backdrop-filter: blur(14px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-  transform: translateZ(0);
+  
   border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.12),
@@ -2564,7 +2543,7 @@ html:not(.app-ready) .tabbar::before {
   background: rgba(250, 248, 245, 0.48) !important;
   backdrop-filter: blur(16px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
-  transform: translateZ(0);
+  
   border-top: none !important;
   box-shadow:
     0 -6px 18px rgba(0, 0, 0, 0.08),
@@ -2589,7 +2568,7 @@ html:not(.app-ready) .tabbar::before {
   background: rgba(253, 252, 251, 0.45) !important;
   backdrop-filter: blur(10px) saturate(150%) !important;
   -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
-  transform: translateZ(0);
+  
   box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.06),
     0 2px 6px rgba(0, 0, 0, 0.03) !important;
@@ -2610,7 +2589,7 @@ html:not(.app-ready) .tabbar::before {
   background: rgba(253, 252, 251, 0.72) !important;
   backdrop-filter: blur(20px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  transform: translateZ(0);
+  
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.24),
     0 8px 20px rgba(0, 0, 0, 0.1) !important;
@@ -2620,7 +2599,7 @@ html:not(.app-ready) .tabbar::before {
   background: rgba(253, 252, 251, 0.72) !important;
   backdrop-filter: blur(20px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  transform: translateZ(0);
+  
   border: none !important;
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.2),
@@ -2732,131 +2711,6 @@ html:not(.app-ready) .tabbar::before {
 }
 
    ========================================================== */
-
-/* ---------- 卡片内深色文字：白色光晕 ---------- */
-:root[data-custom-bg="on"] .card__title,
-:root[data-custom-bg="on"] .field__label,
-:root[data-custom-bg="on"] .record__name,
-:root[data-custom-bg="on"] .record__date,
-:root[data-custom-bg="on"] .record__amount,
-:root[data-custom-bg="on"] .cat__name,
-:root[data-custom-bg="on"] .cat-manage__name,
-:root[data-custom-bg="on"] .cat-manage__limit,
-:root[data-custom-bg="on"] .legend-name,
-:root[data-custom-bg="on"] .legend-value,
-:root[data-custom-bg="on"] .bar__name,
-:root[data-custom-bg="on"] .bar__value,
-:root[data-custom-bg="on"] .chart-hint,
-:root[data-custom-bg="on"] .stat-main__label,
-:root[data-custom-bg="on"] .stat-main__value,
-:root[data-custom-bg="on"] .stat-mini__label,
-:root[data-custom-bg="on"] .stat-mini__value,
-:root[data-custom-bg="on"] .stat-compare-row__label,
-:root[data-custom-bg="on"] .stat-compare-row__value,
-:root[data-custom-bg="on"] .about-row__label,
-:root[data-custom-bg="on"] .about-row__value,
-:root[data-custom-bg="on"] .about-hint,
-:root[data-custom-bg="on"] .theme-name,
-:root[data-custom-bg="on"] .custom-upload__hint,
-:root[data-custom-bg="on"] .empty,
-:root[data-custom-bg="on"] .amount__input,
-:root[data-custom-bg="on"] .amount__split,
-:root[data-custom-bg="on"] .amount__unit,
-:root[data-custom-bg="on"] .amount__symbol,
-:root[data-custom-bg="on"] .amount__div,
-:root[data-custom-bg="on"] .input,
-:root[data-custom-bg="on"] .stat-period,
-:root[data-custom-bg="on"] .stat-cat {
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.65),
-    0 0 6px rgba(255, 255, 255, 0.35),
-    0 1px 2px rgba(255, 255, 255, 0.55);
-}
-
-/* ---------- 顶栏浅色文字：黑色光晕 ---------- */
-:root[data-custom-bg="on"] .header__title,
-:root[data-custom-bg="on"] .header__month,
-:root[data-custom-bg="on"] .overview__label,
-:root[data-custom-bg="on"] .overview__value {
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.35),
-    0 0 8px rgba(0, 0, 0, 0.2);
-}
-
-/* ---------- 按钮文字 ---------- */
-:root[data-custom-bg="on"] .btn {
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-:root[data-custom-bg="on"] .btn--primary {
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.25),
-    0 0 4px rgba(0, 0, 0, 0.15);
-}
-
-/* ---------- 底部 dock 文字 ---------- */
-:root[data-custom-bg="on"] .tab {
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
-}
-
-:root[data-custom-bg="on"] .tab.is-active {
-  text-shadow:
-    0 1px 2px rgba(255, 255, 255, 0.65),
-    0 0 4px rgba(255, 255, 255, 0.35);
-}
-
-/* ---------- 弹窗文字 ---------- */
-:root[data-custom-bg="on"] .modal__title,
-:root[data-custom-bg="on"] .modal__message,
-:root[data-custom-bg="on"] .modal__btn {
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.6),
-    0 1px 2px rgba(255, 255, 255, 0.45);
-}
-
-:root[data-custom-bg="on"] .modal__btn--primary,
-:root[data-custom-bg="on"] .modal__btn--danger {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-}
-
-/* ---------- 日历文字 ---------- */
-:root[data-custom-bg="on"] .calendar-panel__title,
-:root[data-custom-bg="on"] .calendar-day,
-:root[data-custom-bg="on"] .calendar-month,
-:root[data-custom-bg="on"] .calendar-year,
-:root[data-custom-bg="on"] .calendar-weekday {
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.6),
-    0 1px 2px rgba(255, 255, 255, 0.45);
-}
-
-:root[data-custom-bg="on"] .calendar-day.is-selected,
-:root[data-custom-bg="on"] .calendar-month.is-selected,
-:root[data-custom-bg="on"] .calendar-year.is-selected {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-}
-
-/* ---------- 分段控件 / 图表 tab ---------- */
-:root[data-custom-bg="on"] .seg__btn,
-:root[data-custom-bg="on"] .chart-tab {
-  text-shadow:
-    0 0 2px rgba(255, 255, 255, 0.55),
-    0 1px 2px rgba(255, 255, 255, 0.4);
-}
-
-:root[data-custom-bg="on"] .seg__btn.is-active,
-:root[data-custom-bg="on"] .chart-tab.is-active {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* ---------- 输入框 placeholder ---------- */
-:root[data-custom-bg="on"] .input::placeholder,
-:root[data-custom-bg="on"] .amount__input::placeholder,
-:root[data-custom-bg="on"] .amount__split::placeholder {
-  text-shadow: none;
-  opacity: 0.85;
-}
-
 
 /* ==========================================================
    自定义背景：灰色文字加深（提升对比度）
@@ -3837,6 +3691,7 @@ html:not(.app-ready) .tabbar::before {
   opacity: 0;
   pointer-events: none;
   transition: opacity .3s ease;
+  overscroll-behavior: contain;   /* 防止滚动穿透到 body */
 }
 
 .checkin-popup.is-show {
@@ -6739,7 +6594,3 @@ html.light-theme-active .modal__btn.modal__btn--primary {
     inset 0 2px 0 rgba(255, 255, 255, 0.3),
     0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
-
-
-
-

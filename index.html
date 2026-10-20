@@ -65,6 +65,10 @@
       }
     })();
   </script>
+
+  
+
+  
 </head>
 <body>
 
@@ -110,7 +114,7 @@
           <div class="checkin-pull" id="checkinPull">
             <span class="checkin-pull__arrow">↓</span>
             <span class="checkin-pull__text" id="checkinPullText">下拉抽取今日运势</span>
-          </div>
+          </div><button class="chart-tab" data-chart="monthly" type="button" hidden>按月</button>
         </div>
 
       <div class="home-grid">
@@ -120,7 +124,7 @@
 <div class="card" id="expenseFormCard">
             <h2 class="card__title" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
             <span><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 记一笔</span>
-            <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); letter-spacing: 0.5px; opacity: 0.8;">点按展开选项 · 双击默认记账</span>
+            <span style="font-size: 11px; font-weight: normal; color: var(--c-text-light); letter-spacing: 0.5px; opacity: 0.8;">单击展开选项 · 双击默认记账</span>
           </h2>
             <div class="quick-actions" id="quickActions"></div>
 
@@ -233,7 +237,7 @@
           <button class="chart-tab"           data-chart="pie"     type="button">饼图</button>
           <button class="chart-tab"           data-chart="daily"   type="button">按天</button>
           <button class="chart-tab"           data-chart="line"    type="button">趋势</button>
-          <button class="chart-tab"           data-chart="monthly" type="button" hidden>按月</button>
+          <button class="chart-tab"           data-chart="monthly" type="button" hidden>柱状图</button>
         </div>
         <div class="chart" id="chart"></div>
         <p class="empty" id="chartEmpty">暂无数据</p>
@@ -485,7 +489,7 @@
         </div>
         <div class="about-row">
           <span class="about-row__label">版本</span>
-          <span class="about-row__value">5.2.2</span>
+          <span class="about-row__value">5.2.3</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">定位</span>
