@@ -1695,19 +1695,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function onStart(e) {
     if (!activeHome() || !atTop() || e.touches.length !== 1) return;
-    // 排除分类、速记、记录列表等拖拽区域，防止误触下拉
-    if (e.target.closest('.cat, .quick-chip, .record, .tabbar, input, textarea')) return;
+    if (e.target.closest('.tabbar, input, textarea')) return;
+    
+    isDragArea = !!e.target.closest('.cat, .quick-chip, .record');
     startY = e.touches[0].clientY;
-    pulling = true; pullDist = 0; usingMouse = false;
+    startX = e.touches[0].clientX;
+    pulling = !isDragArea; 
+    pullDist = 0; usingMouse = false;
   }
   function onMove(e) {
-    if (!pulling || usingMouse) return;
     if (!atTop()) { finishPull(false); return; }
-    const dist = e.touches[0].clientY - startY;
-    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
+
+    const distY = e.touches[0].clientY - startY;
+    const distX = Math.abs(e.touches[0].clientX - startX);
+
+    if (window._isSortDragging) {
+      if (pulling) { pulling = false; resetVisual(); }
+      return;
+    }
+
+    if (isDragArea && !pulling) {
+      if (distY > 15 && distX < 20) { pulling = true; } 
+      else { return; }
+    }
+
+    if (!pulling || usingMouse) return;
+    if (distY <= 0) { pullDist = 0; resetVisual(); return; }
     if (e.cancelable) e.preventDefault();
-    pullDist = dist;
-    updateVisual(dist);
+    pullDist = distY;
+    updateVisual(distY);
   }
   function onEnd() {
     if (!pulling || usingMouse) return;
@@ -1717,18 +1733,35 @@ document.addEventListener('DOMContentLoaded', function () {
   function onMouseDown(e) {
     if (e.button !== 0) return;
     if (!activeHome() || !atTop()) return;
-    if (e.target.closest('button, a, input, select, textarea, .tabbar, .cat, .quick-chip, .record')) return;
+    if (e.target.closest('button, a, input, select, textarea, .tabbar')) return;
+    
+    isDragArea = !!e.target.closest('.cat, .quick-chip, .record');
     startY = e.clientY;
-    pulling = true; pullDist = 0; usingMouse = true;
+    startX = e.clientX;
+    pulling = !isDragArea; 
+    pullDist = 0; usingMouse = true;
   }
   function onMouseMove(e) {
-    if (!pulling || !usingMouse) return;
     if (!atTop()) { finishPull(false); return; }
-    const dist = e.clientY - startY;
-    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
+    
+    const distY = e.clientY - startY;
+    const distX = Math.abs(e.clientX - startX);
+
+    if (window._isSortDragging) {
+      if (pulling) { pulling = false; resetVisual(); }
+      return;
+    }
+
+    if (isDragArea && !pulling) {
+      if (distY > 15 && distX < 20) { pulling = true; } 
+      else { return; }
+    }
+
+    if (!pulling || !usingMouse) return;
+    if (distY <= 0) { pullDist = 0; resetVisual(); return; }
     e.preventDefault();
-    pullDist = dist;
-    updateVisual(dist);
+    pullDist = distY;
+    updateVisual(distY);
   }
   function onMouseUp() {
     if (!pulling || !usingMouse) return;

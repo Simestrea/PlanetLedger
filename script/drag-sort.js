@@ -54,6 +54,7 @@
 
                 pressTimer = setTimeout(() => {
                     isDragging = true;
+                    window._isSortDragging = true;
                     if (navigator.vibrate) navigator.vibrate(30);
 
                     const rect = item.getBoundingClientRect();
@@ -217,6 +218,7 @@
 
                 if (isDragging) {
                     isDragging = false;
+                    window._isSortDragging = false;
                     if (ghostEl && ghostEl.parentNode) {
                         ghostEl.parentNode.removeChild(ghostEl);
                         ghostEl = null;
