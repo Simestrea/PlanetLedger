@@ -1695,6 +1695,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function onStart(e) {
     if (!activeHome() || !atTop() || e.touches.length !== 1) return;
+    // 排除分类、速记、记录列表等拖拽区域，防止误触下拉
+    if (e.target.closest('.cat, .quick-chip, .record, .tabbar, input, textarea')) return;
     startY = e.touches[0].clientY;
     pulling = true; pullDist = 0; usingMouse = false;
   }
@@ -1715,7 +1717,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function onMouseDown(e) {
     if (e.button !== 0) return;
     if (!activeHome() || !atTop()) return;
-    if (e.target.closest('button, a, input, select, textarea, .tabbar')) return;
+    if (e.target.closest('button, a, input, select, textarea, .tabbar, .cat, .quick-chip, .record')) return;
     startY = e.clientY;
     pulling = true; pullDist = 0; usingMouse = true;
   }
