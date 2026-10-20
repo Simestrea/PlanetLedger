@@ -22,6 +22,17 @@ const Modal = {
   init: function () {
     if (this.root) return;
 
+    // 全局点击记录（捕获阶段），用于捕获弹窗弹出的初始位置
+    if (!window._lastPointerTargetInit) {
+      window._lastPointerTargetInit = true;
+      document.addEventListener('pointerdown', function(e) {
+        if (e.target.closest('.modal-overlay, .calendar-panel, .cat-modal-overlay, .sub-modal-overlay, .checkin-popup, input, textarea, select')) {
+          return;
+        }
+        window._lastPointerTarget = e.target.closest('button, .btn, .cat, .record__del, .quick-chip, .cat-manage__limit, .theme-item, .glass-mode__btn') || e.target;
+      }, { capture: true, passive: true });
+    }
+
     const root = document.createElement('div');
     root.className = 'modal-overlay';
     root.innerHTML = ''
@@ -55,7 +66,46 @@ const Modal = {
   },
 
   _close: function (value) {
-    this.root.classList.remove('is-show');
+    if (!this.root.classList.contains('is-show')) return;
+    const self = this;
+    const modalEl = this.root.querySelector('.modal');
+    const trigger = this._triggerEl;
+
+    if (trigger && modalEl && !this.root.classList.contains('no-anim')) {
+      const tr = trigger.getBoundingClientRect();
+      const mr = modalEl.getBoundingClientRect();
+
+      if (mr.width > 10 && tr.width > 10 && tr.top > -200) { // 避免页面滚动过深时错乱
+        const tx = tr.left + tr.width / 2 - (mr.left + mr.width / 2);
+        const ty = tr.top + tr.height / 2 - (mr.top + mr.height / 2);
+        const scale = Math.max(0.15, Math.min(tr.height / mr.height, tr.width / mr.width));
+
+        modalEl.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s var(--ease)';
+        modalEl.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+        modalEl.style.opacity = '0';
+        
+        this.root.classList.add('is-closing');
+        this.root.classList.remove('is-show');
+
+        setTimeout(function () {
+          modalEl.style.transition = '';
+          modalEl.style.transform = '';
+          modalEl.style.opacity = '';
+          self.root.classList.remove('is-closing');
+        }, 300);
+      } else {
+        this.root.classList.remove('is-show');
+        modalEl.style.transform = '';
+        modalEl.style.opacity = '';
+      }
+    } else {
+      this.root.classList.remove('is-show');
+      if (modalEl) {
+         modalEl.style.transform = '';
+         modalEl.style.opacity = '';
+      }
+    }
+
     document.body.style.overflow = '';
 
     const resolve = this.currentResolve;
@@ -68,6 +118,8 @@ const Modal = {
   open: function (opts) {
     this.init();
     const self = this;
+    // 记录触发弹窗的元素，用于缩放动画
+    this._triggerEl = window._lastPointerTarget;
 
     return new Promise(function (resolve) {
       self.currentResolve = resolve;
@@ -166,6 +218,47 @@ const Modal = {
       /* 显示 */
       self.root.classList.add('is-show');
       document.body.style.overflow = 'hidden';
+
+      // --- 新增：从点击元素放大弹出的动画 ---
+      const modalEl = self.root.querySelector('.modal');
+      const trigger = self._triggerEl;
+
+      if (trigger && modalEl) {
+        const tr = trigger.getBoundingClientRect();
+        
+        // 先清除内联样式，获取当前正常大小
+        modalEl.style.transition = 'none';
+        modalEl.style.transform = 'none';
+        modalEl.style.opacity = '1';
+
+        const mr = modalEl.getBoundingClientRect();
+        
+        if (mr.width > 10 && tr.width > 10) {
+          const tx = tr.left + tr.width / 2 - (mr.left + mr.width / 2);
+          const ty = tr.top + tr.height / 2 - (mr.top + mr.height / 2);
+          const scale = Math.max(0.15, Math.min(tr.height / mr.height, tr.width / mr.width));
+
+          modalEl.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+          modalEl.style.opacity = '0';
+
+          void modalEl.offsetWidth;
+
+          // 弹性动画（稍微带回弹，更接近苹果原生效果）
+          modalEl.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.2s ease-out';
+          modalEl.style.transform = '';
+          modalEl.style.opacity = '';
+
+          setTimeout(function () {
+            modalEl.style.transition = '';
+            modalEl.style.transform = '';
+            modalEl.style.opacity = '';
+          }, 350);
+        } else {
+          modalEl.style.transition = '';
+          modalEl.style.transform = '';
+          modalEl.style.opacity = '';
+        }
+      }
     });
   },
 

@@ -197,12 +197,27 @@ const UI = {
 
     if (showType === 'expense') {
       if (label) label.textContent = '本月支出';
-      if (budgetBlock) budgetBlock.style.display = '';
-      if (budgetBar) budgetBar.style.display = '';
+      if (budgetBlock) {
+        budgetBlock.style.display = '';
+        budgetBlock.style.visibility = 'visible';
+        budgetBlock.style.pointerEvents = 'auto';
+      }
+      if (budgetBar) {
+        budgetBar.style.display = '';
+        budgetBar.style.visibility = 'visible';
+      }
       this.renderOverview(month);
     } else {
-      if (budgetBlock) budgetBlock.style.display = 'none';
-      if (budgetBar) budgetBar.style.display = 'none';
+      // 使用 visibility: hidden 保留高度占位，防止页面上下跳动
+      if (budgetBlock) {
+        budgetBlock.style.display = '';
+        budgetBlock.style.visibility = 'hidden';
+        budgetBlock.style.pointerEvents = 'none'; // 防止点到透明区域弹出预算窗
+      }
+      if (budgetBar) {
+        budgetBar.style.display = '';
+        budgetBar.style.visibility = 'hidden';
+      }
 
       if (showType === 'income') {
         if (label) label.textContent = '本月收入';

@@ -45,14 +45,15 @@
     <section class="page is-active" id="page-home">
         <div class="checkin-card" id="checkinCard">
           <div class="checkin-left">
-            <h2 class="checkin-title">欢迎回来</h2>
+            <h2 class="checkin-title" id="checkinTitle">欢迎回来</h2>
             <div class="checkin-streak">
               已连续签到 <strong id="checkinStreak">0</strong> 天
             </div>
           </div>
-          <button class="checkin-btn" id="checkinBtn" type="button">
-            <span id="checkinBtnText">点击打卡</span>
-          </button>
+          <div class="checkin-pull" id="checkinPull">
+            <span class="checkin-pull__arrow">↓</span>
+            <span class="checkin-pull__text" id="checkinPullText">下拉抽取今日运势</span>
+          </div>
         </div>
 
       <div class="home-grid">
@@ -427,7 +428,7 @@
         </div>
         <div class="about-row">
           <span class="about-row__label">版本</span>
-          <span class="about-row__value">5.2.1</span>
+          <span class="about-row__value">5.2.2</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">定位</span>

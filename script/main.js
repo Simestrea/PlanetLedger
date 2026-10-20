@@ -4,81 +4,30 @@
 function getLuoguFortune() {
   const levelRoll = Math.random();
   let level = '中吉';
-  if (levelRoll < 0.15) level = '大凶';
-  else if (levelRoll < 0.35) level = '凶';
-  else if (levelRoll < 0.60) level = '小吉';
-  else if (levelRoll < 0.85) level = '中吉';
+  if (levelRoll < 0.02) level = '大凶';
+  else if (levelRoll < 0.07) level = '凶';
+  else if (levelRoll < 0.35) level = '小吉';
+  else if (levelRoll < 0.75) level = '中吉';
   else level = '大吉';
 
-  // 大凶特判：50% 概率“诸事不宜”
   if (level === '大凶' && Math.random() < 0.5) {
-    return {
-      level: '大凶',
-      yi: '诸事不宜',
-      yiDesc: '建议回宿舍躺平',
-      ji: '出门',
-      jiDesc: '外面风大，还可能下雨',
-      isSpecial: true
-    };
+    return { level: '大凶', yi: '诸事不宜', yiDesc: '建议回宿舍躺平', ji: '出门', jiDesc: '外面风大，还可能下雨' };
   }
-
-  // 大吉特判：30% 概率“诸事皆宜”
   if (level === '大吉' && Math.random() < 0.3) {
-    return {
-      level: '大吉',
-      yi: '诸事皆宜',
-      yiDesc: '欧气爆棚，顺风顺水',
-      ji: '无',
-      jiDesc: '',
-      isSpecial: true
-    };
+    return { level: '大吉', yi: '诸事皆宜', yiDesc: '欧气爆棚，顺风顺水', ji: '无', jiDesc: '' };
   }
 
-  // 日常向词库
   const pools = {
-    '大吉': {
-      yi: ['早睡早起', '吃顿好的', '清空购物车', '出门社交'],
-      yiDesc: ['一天都精神饱满', '食欲大满足', '剁手也快乐', '遇到神仙朋友'],
-      ji: ['熬夜', '宅在宿舍', '拖延症', '盲目脱单'],
-      jiDesc: ['容易掉头发', '容易发霉', 'Deadline 会教你做人', '容易遇到海王']
-    },
-    '中吉': {
-      yi: ['喝杯奶茶', '整理桌面', '出门散步', '记账'],
-      yiDesc: ['糖分让人快乐', '强迫症狂喜', '吹吹风心情好', '钱包感谢你'],
-      ji: ['点外卖', '水群', '做重要决定', '冲动消费'],
-      jiDesc: ['容易踩雷难吃', '容易被踢出群', '容易后悔', '月底吃土警告']
-    },
-    '小吉': {
-      yi: ['听歌', '看电影', '洗衣服', '洗头'],
-      yiDesc: ['身心愉悦', '沉浸式体验', '衣服香喷喷', '出门更自信'],
-      ji: ['熬夜看剧', '抢课', '早起', '修电脑'],
-      jiDesc: ['第二天起不来', '教务系统必崩', '床会封印你', '越修越坏']
-    },
-    '凶': {
-      yi: ['摸鱼', '发呆', '待在宿舍', '睡觉'],
-      yiDesc: ['带薪摸鱼最爽', '让大脑重启', '安全区最舒服', '梦里啥都有'],
-      ji: ['出门', '约会', '抢票', '网购'],
-      jiDesc: ['必忘带伞', '容易被放鸽子', '网速突然卡死', '快递容易丢']
-    },
-    '大凶': {
-      yi: ['断网', '装死', '吃泡面', '复盘账单'],
-      yiDesc: ['远离互联网烦恼', '没人能找到你', '填饱肚子要紧', '看看钱都花哪了'],
-      ji: ['看成绩单', '大扫除', '表白', '去食堂'],
-      jiDesc: ['容易怀疑人生', '越扫越乱', '必定被拒绝', '好吃的全卖光了']
-    }
+    '大吉': { yi: ['早睡早起', '吃顿好的', '清空购物车', '出门社交'], yiDesc: ['一天都精神饱满', '食欲大满足', '剁手也快乐', '遇到神仙朋友'], ji: ['熬夜', '宅在宿舍', '拖延症', '盲目脱单'], jiDesc: ['容易掉头发', '容易发霉', 'Deadline 会教你做人', '容易遇到海王'] },
+    '中吉': { yi: ['喝杯奶茶', '整理桌面', '出门散步', '记账'], yiDesc: ['糖分让人快乐', '强迫症狂喜', '吹吹风心情好', '钱包感谢你'], ji: ['点外卖', '水群', '做重要决定', '冲动消费'], jiDesc: ['容易踩雷难吃', '容易被踢出群', '容易后悔', '月底吃土警告'] },
+    '小吉': { yi: ['听歌', '看电影', '洗衣服', '洗头'], yiDesc: ['身心愉悦', '沉浸式体验', '衣服香喷喷', '出门更自信'], ji: ['熬夜看剧', '抢课', '早起', '修电脑'], jiDesc: ['第二天起不来', '教务系统必崩', '床会封印你', '越修越坏'] },
+    '凶': { yi: ['摸鱼', '发呆', '待在宿舍', '睡觉'], yiDesc: ['带薪摸鱼最爽', '让大脑重启', '安全区最舒服', '梦里啥都有'], ji: ['出门', '约会', '抢票', '网购'], jiDesc: ['必忘带伞', '容易被放鸽子', '网速突然卡死', '快递容易丢'] },
+    '大凶': { yi: ['断网', '装死', '吃泡面', '复盘账单'], yiDesc: ['远离互联网烦恼', '没人能找到你', '填饱肚子要紧', '看看钱都花哪了'], ji: ['看成绩单', '大扫除', '表白', '去食堂'], jiDesc: ['容易怀疑人生', '越扫越乱', '必定被拒绝', '好吃的全卖光了'] }
   };
 
   const pool = pools[level];
   const idx = Math.floor(Math.random() * pool.yi.length);
-
-  return {
-    level: level,
-    yi: pool.yi[idx],
-    yiDesc: pool.yiDesc[idx],
-    ji: pool.ji[idx],
-    jiDesc: pool.jiDesc[idx],
-    isSpecial: false
-  };
+  return { level: level, yi: pool.yi[idx], yiDesc: pool.yiDesc[idx], ji: pool.ji[idx], jiDesc: pool.jiDesc[idx] };
 }
 
 const App = {
@@ -114,10 +63,7 @@ const App = {
     if (!box) return;
     let html = this.quickTemplates.map(function (t) {
       const defaultAmt = t.amounts && t.amounts.length > 0 ? t.amounts[0] : (t.amount || 0);
-      return '<div class="quick-chip" data-qid="' + t.id + '">' +
-        '<span>' + UI.escapeHtml(t.name) + '</span>' +
-        '<span class="quick-chip__amount">￥' + defaultAmt + '</span>' +
-      '</div>';
+      return '<div class="quick-chip" data-qid="' + t.id + '"><span>' + UI.escapeHtml(t.name) + '</span><span class="quick-chip__amount">￥' + defaultAmt + '</span></div>';
     }).join('');
     html += '<button class="quick-chip quick-chip--add" id="quickAddBtn" type="button">+ 添加</button>';
     box.innerHTML = html;
@@ -138,110 +84,97 @@ const App = {
   },
 
   showQuickPanel: function (tpl) {
-            const self = this;
-            const amounts = tpl.amounts || [tpl.amount || 0];
+    const self = this;
+    const amounts = tpl.amounts || [tpl.amount || 0];
+    let amountsHtml = amounts.map(function(amt) {
+      return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
+               '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + amt + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + amt + '</button>' +
+               '<button class="cat__del quick-amt-del" data-amt="' + amt + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+             '</div>';
+    }).join('');
 
-            let amountsHtml = amounts.map(function(amt) {
-              return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
-                       '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + amt + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + amt + '</button>' +
-                       '<button class="cat__del quick-amt-del" data-amt="' + amt + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
-                     '</div>';
-            }).join('');
+    const html = 
+      '<div id="quickAmtList" style="display:flex; flex-wrap:wrap; justify-content:space-between; max-height: 40vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px; margin-bottom:4px;">' + amountsHtml + '</div>' +
+      '<div style="display:flex; gap:12px; margin-top:16px;">' +
+        '<button class="btn" id="quickEditBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-text-sub); background:var(--c-surface); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 编辑速记</button>' +
+        '<button class="btn" id="quickDelBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-danger); background:color-mix(in srgb, var(--c-danger) 8%, transparent); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> 删除速记</button>' +
+      '</div>';
 
-            const html = 
-              '<div id="quickAmtList" style="display:flex; flex-wrap:wrap; justify-content:space-between; max-height: 40vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px; margin-bottom:4px;">' + 
-                amountsHtml + 
-              '</div>' +
-              // 【精简】移除中间的自定义金额输入框和“记账”按钮
-              '<div style="display:flex; gap:12px; margin-top:16px;">' +
-                '<button class="btn" id="quickEditBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-text-sub); background:var(--c-surface); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg> 编辑速记</button>' +
-                '<button class="btn" id="quickDelBtn" type="button" style="flex:1; height:42px; padding:0; font-size:13px; color:var(--c-danger); background:color-mix(in srgb, var(--c-danger) 8%, transparent); border:none;"><svg class="icon-svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> 删除速记</button>' +
-              '</div>';
+    Modal.open({
+      type: 'none',
+      title: '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ' + UI.escapeHtml(tpl.name),
+      html: html,
+      actions: [{ text: '关闭', value: null }]
+    });
 
-            Modal.open({
-              type: 'none',
-              title: '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ' + UI.escapeHtml(tpl.name),
-              html: html,
-              actions: [{ text: '关闭', value: null }]
-            });
+    setTimeout(function() {
+      const bindQuickAmtEvents = function() {
+        document.querySelectorAll('.quick-amt-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { self.saveQuickRecord(tpl, Number(this.dataset.amt)); });
+        });
 
-            setTimeout(function() {
-              const bindQuickAmtEvents = function() {
-                document.querySelectorAll('.quick-amt-btn').forEach(function(btn) {
-                  btn.addEventListener('click', function() {
-                    self.saveQuickRecord(tpl, Number(this.dataset.amt));
-                  });
-                });
-
-                document.querySelectorAll('.quick-amt-del').forEach(function(btn) {
-                  btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const amtToDel = Number(this.dataset.amt);
-                    const parentDiv = this.closest('div');
-                    
-                    const doDelete = function() {
-                      tpl.amounts = tpl.amounts.filter(function(a) { return a !== amtToDel; });
-                      if (tpl.amounts.length === 0) tpl.amounts = [0];
-                      Storage.write('slh.quickTemplates.v1', self.quickTemplates);
-                      self.renderQuickActions();
-                      
-                      const amtList = document.getElementById('quickAmtList');
-                      if (amtList) {
-                        amtList.innerHTML = tpl.amounts.map(function(a) {
-                          return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
-                                   '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + a + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + a + '</button>' +
-                                   '<button class="cat__del quick-amt-del" data-amt="' + a + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
-                                 '</div>';
-                        }).join('');
-                        bindQuickAmtEvents(); 
-                      }
-                    };
-                    
-                    if (parentDiv && typeof Shatter !== 'undefined') {
-                      Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doDelete);
-                    } else {
-                      doDelete();
-                    }
-                  });
-                });
-              };
+        document.querySelectorAll('.quick-amt-del').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const amtToDel = Number(this.dataset.amt);
+            const parentDiv = this.closest('div');
+            
+            const doDelete = function() {
+              tpl.amounts = tpl.amounts.filter(function(a) { return a !== amtToDel; });
+              if (tpl.amounts.length === 0) tpl.amounts = [0];
+              Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+              self.renderQuickActions();
               
-              bindQuickAmtEvents();
-
-              const editBtn = document.getElementById('quickEditBtn');
-              if (editBtn) {
-                editBtn.addEventListener('click', function() {
-                  Modal._close(null);
-                  setTimeout(function() { self.openAddQuickTemplate(tpl); }, 300);
-                });
+              const amtList = document.getElementById('quickAmtList');
+              if (amtList) {
+                amtList.innerHTML = tpl.amounts.map(function(a) {
+                  return '<div style="position:relative; display:inline-block; width:calc(50% - 4px); margin-bottom:8px;">' +
+                           '<button class="quick-amt-btn btn glass-amt-btn" data-amt="' + a + '" type="button" style="width:100%; padding:12px 0; font-size:16px; font-weight:bold; border-radius:12px;">￥' + a + '</button>' +
+                           '<button class="cat__del quick-amt-del" data-amt="' + a + '" type="button" style="top:4px; right:4px; z-index:2; width:22px; height:22px; font-size:14px;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+                         '</div>';
+                }).join('');
+                bindQuickAmtEvents(); 
               }
+            };
+            
+            if (parentDiv && typeof Shatter !== 'undefined') {
+              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doDelete);
+            } else { doDelete(); }
+          });
+        });
+      };
+      
+      bindQuickAmtEvents();
 
-              const delBtn = document.getElementById('quickDelBtn');
-              if (delBtn) {
-                delBtn.addEventListener('click', function() {
-                  Modal.confirm({ type: 'warn', title: '删除速记', message: '确定要删除「' + tpl.name + '」吗？', danger: true }).then(function(ok) {
-                    if (ok) {
-                      const chip = document.querySelector('.quick-chip[data-qid="' + tpl.id + '"]');
-                      const doDeleteChip = function() {
-                        self.quickTemplates = self.quickTemplates.filter(function(t) { return t.id !== tpl.id; });
-                        Storage.write('slh.quickTemplates.v1', self.quickTemplates);
-                        self.renderQuickActions();
-                        UI.showToast('速记已删除');
-                      };
-                      
-                      if (chip && typeof Shatter !== 'undefined') {
-                        Shatter.play(chip, { windX: 220, windY: -150 }, doDeleteChip);
-                      } else {
-                        doDeleteChip();
-                      }
-                    } else {
-                      self.showQuickPanel(tpl);
-                    }
-                  });
-                });
-              }
-            }, 100);
-          },
+      const editBtn = document.getElementById('quickEditBtn');
+      if (editBtn) {
+        editBtn.addEventListener('click', function() {
+          Modal._close(null);
+          setTimeout(function() { self.openAddQuickTemplate(tpl); }, 300);
+        });
+      }
+
+      const delBtn = document.getElementById('quickDelBtn');
+      if (delBtn) {
+        delBtn.addEventListener('click', function() {
+          Modal.confirm({ type: 'warn', title: '删除速记', message: '确定要删除「' + tpl.name + '」吗？', danger: true }).then(function(ok) {
+            if (ok) {
+              const chip = document.querySelector('.quick-chip[data-qid="' + tpl.id + '"]');
+              const doDeleteChip = function() {
+                self.quickTemplates = self.quickTemplates.filter(function(t) { return t.id !== tpl.id; });
+                Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+                self.renderQuickActions();
+                UI.showToast('速记已删除');
+              };
+              if (chip && typeof Shatter !== 'undefined') {
+                Shatter.play(chip, { windX: 220, windY: -150 }, doDeleteChip);
+              } else { doDeleteChip(); }
+            } else { self.showQuickPanel(tpl); }
+          });
+        });
+      }
+    }, 100);
+  },
 
   saveQuickRecord: function(tpl, amt) {
     Ledger.add({ amount: amt, categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
@@ -251,167 +184,152 @@ const App = {
   },
 
   openAddQuickTemplate: function (editTpl) {
-            const self = this;
-            const isEdit = !!editTpl;
-            
-            let tempAmounts = isEdit && editTpl.amounts ? editTpl.amounts.slice() : [];
-            let tempName = isEdit ? editTpl.name : '';
-            let tempCatId = isEdit ? editTpl.categoryId : Categories.list[0].id;
-            let tempCatName = isEdit ? Categories.get(editTpl.categoryId).name : Categories.list[0].name;
+    const self = this;
+    const isEdit = !!editTpl;
+    let tempAmounts = isEdit && editTpl.amounts ? editTpl.amounts.slice() : [];
+    let tempName = isEdit ? editTpl.name : '';
+    let tempCatId = isEdit ? editTpl.categoryId : Categories.list[0].id;
+    let tempCatName = isEdit ? Categories.get(editTpl.categoryId).name : Categories.list[0].name;
 
-            const renderModal = function() {
-              const nameInput = document.getElementById('qtName');
-              if (nameInput) tempName = nameInput.value.trim();
-              
-              let tagsHtml = tempAmounts.map(function(amt, idx) {
-                return '<div style="position:relative; display:inline-block; margin:4px;">' +
-                         '<div class="btn" style="margin:4px 4px 4px 0; padding:4px 14px; font-size:14px; font-weight:bold; background:rgba(255,255,255,0.4); border-radius:8px; line-height:1.4; box-shadow:none;">￥' + amt + '</div>' +
-                         '<button class="del-temp-amt" data-idx="' + idx + '" type="button" style="position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--c-card); color:var(--c-text-sub); border:1px solid var(--c-border); font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
-                       '</div>';
-              }).join('');
+    const renderModal = function() {
+      const nameInput = document.getElementById('qtName');
+      if (nameInput) tempName = nameInput.value.trim();
+      
+      let tagsHtml = tempAmounts.map(function(amt, idx) {
+        return '<div style="position:relative; display:inline-block; margin:4px;">' +
+                 '<div class="btn" style="margin:4px 4px 4px 0; padding:4px 14px; font-size:14px; font-weight:bold; background:rgba(255,255,255,0.4); border-radius:8px; line-height:1.4; box-shadow:none;">￥' + amt + '</div>' +
+                 '<button class="del-temp-amt" data-idx="' + idx + '" type="button" style="position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--c-card); color:var(--c-text-sub); border:1px solid var(--c-border); font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2;"><svg class="icon-svg icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+               '</div>';
+      }).join('');
 
-              const html = 
-                '<div style="text-align:left; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">' +
-                  '<div style="margin-bottom:16px;">' +
-                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">名称</label>' +
-                    '<input id="qtName" type="text" class="modal__input" placeholder="消费原因" maxlength="6" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important;" value="' + UI.escapeHtml(tempName) + '">' +
-                  '</div>' +
-                  '<div style="margin-bottom:16px;">' +
-                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">常用金额</label>' +
-                    '<div class="modal__input" style="display:flex; flex-wrap:wrap; align-content: flex-start; height:auto !important; min-height:44px !important; padding:8px 14px !important; max-height: 130px; overflow-y: auto;">' +
-                      tagsHtml +
-                      '<button id="addTempAmtBtn" type="button" style="margin:4px 4px 4px 0; padding:4px 10px; font-size:13px; background:transparent; border:1px dashed var(--c-text-sub); color:var(--c-text-sub); border-radius:8px; line-height:1.4;">+ 添加</button>' +
-                    '</div>' +
-                  '</div>' +
-                  '<div style="margin-bottom:16px;">' +
-                    '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">选择分类</label>' +
-                    '<div id="qtCatBtn" class="modal__input" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none;">' +
-                      '<span id="qtCatLabel">' + UI.escapeHtml(tempCatName) + '</span>' +
-                      '<span style="font-size:10px; color:var(--c-text-light); opacity:0.8;">▼</span>' +
-                    '</div>' +
-                    '<input type="hidden" id="qtCat" value="' + tempCatId + '">' +
-                  '</div>' +
-                '</div>';
+      const html = 
+        '<div style="text-align:left; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">' +
+          '<div style="margin-bottom:16px;">' +
+            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">名称</label>' +
+            '<input id="qtName" type="text" class="modal__input" placeholder="消费原因" maxlength="6" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important;" value="' + UI.escapeHtml(tempName) + '">' +
+          '</div>' +
+          '<div style="margin-bottom:16px;">' +
+            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">常用金额</label>' +
+            '<div class="modal__input" style="display:flex; flex-wrap:wrap; align-content: flex-start; height:auto !important; min-height:44px !important; padding:8px 14px !important; max-height: 130px; overflow-y: auto;">' +
+              tagsHtml +
+              '<button id="addTempAmtBtn" type="button" style="margin:4px 4px 4px 0; padding:4px 10px; font-size:13px; background:transparent; border:1px dashed var(--c-text-sub); color:var(--c-text-sub); border-radius:8px; line-height:1.4;">+ 添加</button>' +
+            '</div>' +
+          '</div>' +
+          '<div style="margin-bottom:16px;">' +
+            '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">选择分类</label>' +
+            '<div id="qtCatBtn" class="modal__input" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none;">' +
+              '<span id="qtCatLabel">' + UI.escapeHtml(tempCatName) + '</span>' +
+              '<span style="font-size:10px; color:var(--c-text-light); opacity:0.8;">▼</span>' +
+            '</div>' +
+            '<input type="hidden" id="qtCat" value="' + tempCatId + '">' +
+          '</div>' +
+        '</div>';
 
-              Modal.open({
-                type: 'none',
-                title: isEdit ? '编辑快捷记账' : '添加快捷记账',
-                html: html,
-                actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
-              }).then(function (res) {
-                if (res === 'save') {
-                  const name = document.getElementById('qtName').value.trim();
-                  const catId = document.getElementById('qtCat').value;
-                  if (!name) { UI.showToast('请填写名称'); return; }
-                  if (tempAmounts.length === 0) { UI.showToast('请至少添加一个金额'); return; }
-                  if (isEdit) {
-                    editTpl.name = name; editTpl.note = name; editTpl.amounts = tempAmounts; editTpl.categoryId = catId;
-                  } else {
-                    self.quickTemplates.push({ id: 'q' + Date.now().toString(36), name: name, amounts: tempAmounts, categoryId: catId, note: name });
-                  }
-                  Storage.write('slh.quickTemplates.v1', self.quickTemplates);
-                  self.renderQuickActions();
-                  UI.showToast(isEdit ? '速记已更新' : '快捷按钮已添加');
-                }
-              });
+      Modal.open({
+        type: 'none',
+        title: isEdit ? '编辑快捷记账' : '添加快捷记账',
+        html: html,
+        actions: [{ text: '取消', value: null }, { text: '保存', value: 'save', primary: true }]
+      }).then(function (res) {
+        if (res === 'save') {
+          const name = document.getElementById('qtName').value.trim();
+          const catId = document.getElementById('qtCat').value;
+          if (!name) { UI.showToast('请填写名称'); return; }
+          if (tempAmounts.length === 0) { UI.showToast('请至少添加一个金额'); return; }
+          if (isEdit) {
+            editTpl.name = name; editTpl.note = name; editTpl.amounts = tempAmounts; editTpl.categoryId = catId;
+          } else {
+            self.quickTemplates.push({ id: 'q' + Date.now().toString(36), name: name, amounts: tempAmounts, categoryId: catId, note: name });
+          }
+          Storage.write('slh.quickTemplates.v1', self.quickTemplates);
+          self.renderQuickActions();
+          UI.showToast(isEdit ? '速记已更新' : '快捷按钮已添加');
+        }
+      });
 
-              setTimeout(function() {
-                document.querySelectorAll('.del-temp-amt').forEach(function(btn) {
-                  btn.addEventListener('click', function() {
-                    const parentDiv = this.closest('div');
-                    const idxToDel = Number(this.dataset.idx);
-                    
-                    const doRefresh = function() {
-                      tempAmounts.splice(idxToDel, 1);
-                      renderModal();
-                    };
-                    
-                    if (parentDiv && typeof Shatter !== 'undefined') {
-                      Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doRefresh);
-                    } else {
-                      doRefresh();
-                    }
-                  });
-                });
-
-                document.getElementById('addTempAmtBtn').addEventListener('click', function() {
-                  tempName = document.getElementById('qtName').value.trim();
-                  tempCatId = document.getElementById('qtCat').value;
-                  tempCatName = document.getElementById('qtCatLabel').textContent;
-
-                  Modal.open({
-                    type: 'info',
-                    title: '添加金额',
-                    html: '<input type="number" id="tempAddAmtInput" class="modal__input" placeholder="输入金额" min="0" step="0.01" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:16px !important; text-align:center;">',
-                    actions: [
-                      { text: '取消', value: null },
-                      { text: '确定', value: 'save', primary: true }
-                    ]
-                  }).then(function(res) {
-                    if (res === 'save') {
-                      const val = document.getElementById('tempAddAmtInput').value;
-                      const newAmt = Number(val);
-                      if (newAmt > 0 && tempAmounts.indexOf(newAmt) === -1) {
-                        tempAmounts.push(newAmt);
-                      }
-                    }
-                    renderModal();
-                  });
-                  setTimeout(function() {
-                    const i = document.getElementById('tempAddAmtInput');
-                    if (i) i.focus();
-                  }, 100);
-                });
-
-                const qtCatBtn = document.getElementById('qtCatBtn');
-                if (qtCatBtn) {
-                  qtCatBtn.addEventListener('click', function() {
-                    tempName = document.getElementById('qtName').value.trim();
-                    
-                    // 【核心统一】将这里替换为与统计页完全一致的 cat-modal 组件
-                    let overlay = document.createElement('div');
-                    overlay.className = 'cat-modal-overlay';
-                    let listHtml = Categories.list.map(function(c) {
-                      const active = tempCatId === c.id ? ' is-active' : '';
-                      return '<button class="cat-modal__item' + active + '" data-id="' + c.id + '" type="button">' +
-                             '<span class="cat-modal__dot" style="background:' + c.color + '"></span>' +
-                             '<span>' + UI.escapeHtml(c.name) + '</span></button>';
-                    }).join('');
-                    overlay.innerHTML = '<div class="cat-modal"><div class="cat-modal__header">选择分类</div><div class="cat-modal__list">' + listHtml + '</div></div>';
-                    document.body.appendChild(overlay);
-                    void overlay.offsetWidth;
-                    overlay.classList.add('is-show');
-                    document.body.style.overflow = 'hidden';
-                    
-                    const closeCatModal = function() {
-                      overlay.classList.remove('is-show');
-                      document.body.style.overflow = '';
-                      setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 250);
-                    };
-                    
-                    overlay.addEventListener('click', function(evt) {
-                      if (evt.target === overlay) { closeCatModal(); return; }
-                      const btn = evt.target.closest('.cat-modal__item');
-                      if (btn) {
-                        tempCatId = btn.dataset.id;
-                        tempCatName = btn.querySelector('span:last-child').textContent;
-                        closeCatModal();
-                        renderModal(); 
-                      }
-                    });
-                  });
-                }
-              }, 100);
+      setTimeout(function() {
+        document.querySelectorAll('.del-temp-amt').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const parentDiv = this.closest('div');
+            const idxToDel = Number(this.dataset.idx);
+            const doRefresh = function() {
+              tempAmounts.splice(idxToDel, 1);
+              renderModal();
             };
+            if (parentDiv && typeof Shatter !== 'undefined') {
+              Shatter.play(parentDiv, { windX: 200, windY: -100, duration: 600, maxPieces: 40 }, doRefresh);
+            } else { doRefresh(); }
+          });
+        });
+
+        document.getElementById('addTempAmtBtn').addEventListener('click', function() {
+          tempName = document.getElementById('qtName').value.trim();
+          tempCatId = document.getElementById('qtCat').value;
+          tempCatName = document.getElementById('qtCatLabel').textContent;
+
+          Modal.open({
+            type: 'info',
+            title: '添加金额',
+            html: '<input type="number" id="tempAddAmtInput" class="modal__input" placeholder="输入金额" min="0" step="0.01" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:16px !important; text-align:center;">',
+            actions: [{ text: '取消', value: null }, { text: '确定', value: 'save', primary: true }]
+          }).then(function(res) {
+            if (res === 'save') {
+              const val = document.getElementById('tempAddAmtInput').value;
+              const newAmt = Number(val);
+              if (newAmt > 0 && tempAmounts.indexOf(newAmt) === -1) { tempAmounts.push(newAmt); }
+            }
             renderModal();
-          },
+          });
+          setTimeout(function() {
+            const i = document.getElementById('tempAddAmtInput');
+            if (i) i.focus();
+          }, 100);
+        });
+
+        const qtCatBtn = document.getElementById('qtCatBtn');
+        if (qtCatBtn) {
+          qtCatBtn.addEventListener('click', function() {
+            tempName = document.getElementById('qtName').value.trim();
+            let overlay = document.createElement('div');
+            overlay.className = 'cat-modal-overlay';
+            let listHtml = Categories.list.map(function(c) {
+              const active = tempCatId === c.id ? ' is-active' : '';
+              return '<button class="cat-modal__item' + active + '" data-id="' + c.id + '" type="button">' +
+                     '<span class="cat-modal__dot" style="background:' + c.color + '"></span>' +
+                     '<span>' + UI.escapeHtml(c.name) + '</span></button>';
+            }).join('');
+            overlay.innerHTML = '<div class="cat-modal"><div class="cat-modal__header">选择分类</div><div class="cat-modal__list">' + listHtml + '</div></div>';
+            document.body.appendChild(overlay);
+            void overlay.offsetWidth;
+            overlay.classList.add('is-show');
+            document.body.style.overflow = 'hidden';
+            
+            const closeCatModal = function() {
+              overlay.classList.remove('is-show');
+              document.body.style.overflow = '';
+              setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 250);
+            };
+            
+            overlay.addEventListener('click', function(evt) {
+              if (evt.target === overlay) { closeCatModal(); return; }
+              const btn = evt.target.closest('.cat-modal__item');
+              if (btn) {
+                tempCatId = btn.dataset.id;
+                tempCatName = btn.querySelector('span:last-child').textContent;
+                closeCatModal();
+                renderModal(); 
+              }
+            });
+          });
+        }
+      }, 100);
+    };
+    renderModal();
+  },
 
   initTheme: function () {
     let name = 'greenery';
-    try {
-      name = localStorage.getItem('slh.theme.v1') || 'greenery';
-    } catch (e) {}
-
+    try { name = localStorage.getItem('slh.theme.v1') || 'greenery'; } catch (e) {}
     if (name === 'custom') {
       this.applyCustomTheme(false);
     } else {
@@ -857,7 +775,6 @@ const App = {
     splitInput.value = '';
     noteInput.value = '';
     this.updateIncomeAmountPreview();
-    // 移除 amountInput.focus() 防止键盘弹起
     if (document.activeElement) document.activeElement.blur();
 
     if (month !== this.currentMonth) {
@@ -1083,116 +1000,227 @@ const App = {
       let tapTimer = null;
       const DOUBLE_PRESS_DELAY = 250;
 
-      // 暴力清理之前可能残留的所有事件
       const newQuickActions = quickActions.cloneNode(true);
       quickActions.parentNode.replaceChild(newQuickActions, quickActions);
 
       newQuickActions.addEventListener('click', function (e) {
         const chip = e.target.closest('.quick-chip');
         if (!chip) return;
-        
-        // 点击“+ 添加”
-        if (chip.id === 'quickAddBtn') {
-          self.openAddQuickTemplate();
-          return;
-        }
-
+        if (chip.id === 'quickAddBtn') { self.openAddQuickTemplate(); return; }
         const id = chip.dataset.qid;
         const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
         if (!tpl) return;
-
         const now = Date.now();
-        
-        // 判断双击 (250ms内点击两次)
         if (now - lastTap < DOUBLE_PRESS_DELAY) {
-          clearTimeout(tapTimer); // 取消单击的定时器
-          
-          // 双击：直接记账
+          clearTimeout(tapTimer);
           const defaultAmt = tpl.amounts && tpl.amounts.length > 0 ? tpl.amounts[0] : (tpl.amount || 0);
           Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
           UI.renderAll(self.currentMonth);
-          
           if (navigator.vibrate) navigator.vibrate(30);
           UI.showToast('已快捷记账 ￥' + defaultAmt);
         } else {
-          // 单击：延迟 250ms 弹出编辑面板
-          tapTimer = setTimeout(function () {
-            self.showQuickPanel(tpl);
-          }, DOUBLE_PRESS_DELAY);
+          tapTimer = setTimeout(function () { self.showQuickPanel(tpl); }, DOUBLE_PRESS_DELAY);
         }
-        
         lastTap = now;
       });
     }
 
     const generatePosterBtn = document.getElementById('generatePosterBtn');
     if (generatePosterBtn) {
-      generatePosterBtn.addEventListener('click', function () {
+      generatePosterBtn.addEventListener('click', async function () {
         const month = self.currentMonth;
         const list = Ledger.byMonth(month, 'expense');
         if (list.length === 0) { UI.showToast('本月还没有记账哦'); return; }
+        
         generatePosterBtn.innerHTML = '生成中...';
         generatePosterBtn.disabled = true;
-        setTimeout(function() {
+        
+        try {
+          // 1. 获取背景图
+          let bgImg = null;
+          const isCustomBgOn = document.documentElement.getAttribute('data-custom-bg') === 'on';
+          const bgData = isCustomBgOn ? localStorage.getItem('slh.customBg.v1') : null;
+          if (bgData) {
+            bgImg = new Image();
+            bgImg.src = bgData;
+            await new Promise((resolve) => {
+              bgImg.onload = resolve;
+              bgImg.onerror = resolve;
+            });
+          }
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const W = 750, H = 1150;
+          canvas.width = W; canvas.height = H;
+          
+          const style = getComputedStyle(document.documentElement);
+          const primary = style.getPropertyValue('--c-primary').trim() || '#6667AB';
+          let primaryRgb = style.getPropertyValue('--c-primary-rgb').trim();
+          
+          // 如果是内置主题，没有定义 rgb 变量，就实时把 Hex 转成 RGB
+          if (!primaryRgb && primary.startsWith('#')) {
+            const hex = primary.replace('#', '');
+            const r = parseInt(hex.length === 3 ? hex[0]+hex[0] : hex.substring(0, 2), 16);
+            const g = parseInt(hex.length === 3 ? hex[1]+hex[1] : hex.substring(2, 4), 16);
+            const b = parseInt(hex.length === 3 ? hex[2]+hex[2] : hex.substring(4, 6), 16);
+            primaryRgb = r + ', ' + g + ', ' + b;
+          } else if (!primaryRgb) {
+            primaryRgb = '110, 92, 150'; // 终极兜底
+          }
+          
+          // 固定文字色，不随主题瞎变
+          const colorDark = '#1A1720';
+          const colorSub = '#55505C';
+
+          // 离屏底图
+          const bgCanvas = document.createElement('canvas');
+          bgCanvas.width = W; bgCanvas.height = H;
+          const bgCtx = bgCanvas.getContext('2d');
+
+          if (bgImg) {
+            const scale = Math.max(W / bgImg.width, H / bgImg.height);
+            const dw = bgImg.width * scale;
+            const dh = bgImg.height * scale;
+            bgCtx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+            // 全局压暗
+            bgCtx.fillStyle = 'rgba(0,0,0,0.25)';
+            bgCtx.fillRect(0, 0, W, H);
+          } else {
+            // 提取当前主题的背景色和卡片色
+            const themeBg = style.getPropertyValue('--c-bg').trim() || '#F2F2F7';
+            const themeCard = style.getPropertyValue('--c-card').trim() || '#FDFDFF';
+            
+            // 1. 基础渐变
+            const grad = bgCtx.createLinearGradient(0, 0, W, H);
+            grad.addColorStop(0, themeBg);
+            grad.addColorStop(1, themeCard);
+            bgCtx.fillStyle = grad;
+            bgCtx.fillRect(0, 0, W, H);
+
+            // 2. 主题色光晕（让纯色背景看起来像高级的极光/磨砂渐变）
+            const radial = bgCtx.createRadialGradient(W * 0.5, 0, 0, W * 0.5, 0, W);
+            radial.addColorStop(0, `rgba(${primaryRgb}, 0.22)`);
+            radial.addColorStop(1, `rgba(${primaryRgb}, 0)`);
+            bgCtx.fillStyle = radial;
+            bgCtx.fillRect(0, 0, W, H);
+          }
+
+          // 降采样模拟模糊（兼容性最强）
+          const blurCanvas = document.createElement('canvas');
+          const bW = 80, bH = 122;
+          blurCanvas.width = bW; blurCanvas.height = bH;
+          const blurCtx = blurCanvas.getContext('2d');
+          blurCtx.drawImage(bgCanvas, 0, 0, bW, bH);
+
+          // 主画布绘制清晰底图
+          ctx.drawImage(bgCanvas, 0, 0);
+
+          const expenseTotal = Ledger.sum(list);
+          const incomeList = Ledger.byMonth(month, 'income');
+          const incomeTotal = Ledger.sum(incomeList);
+          const netTotal = incomeTotal - expenseTotal;
+          const budget = Ledger.getBudget(month);
+          let budgetPercent = 0;
+          if (budget > 0) budgetPercent = Math.min(100, (expenseTotal / budget) * 100);
+          
+          let streak = 0;
           try {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const W = 750, H = 1200;
-            canvas.width = W; canvas.height = H;
-            const style = getComputedStyle(document.documentElement);
-            const primary = style.getPropertyValue('--c-primary').trim() || '#6667AB';
-            const bg = style.getPropertyValue('--c-bg').trim() || '#F2F2F7';
-            const textSub = style.getPropertyValue('--c-text-sub').trim() || '#6E6878';
-            ctx.fillStyle = '#F5F6F8'; ctx.fillRect(0, 0, W, H);
-            const expenseTotal = Ledger.sum(list);
-            const incomeList = Ledger.byMonth(month, 'income');
-            const incomeTotal = Ledger.sum(incomeList);
-            const netTotal = incomeTotal - expenseTotal;
-            const budget = Ledger.getBudget(month);
-            let budgetPercent = 0;
-            if (budget > 0) budgetPercent = Math.min(100, (expenseTotal / budget) * 100);
-            const catTotals = {};
-            list.forEach(r => { catTotals[r.categoryId] = (catTotals[r.categoryId] || 0) + r.amount; });
+            const checkinData = JSON.parse(localStorage.getItem('slh.checkin.v1'));
+            if (checkinData && checkinData.streak) streak = checkinData.streak;
+          } catch(e) {}
 
-            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.06)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 10;
-            ctx.fillStyle = primary; ctx.beginPath(); ctx.roundRect(40, 40, W - 80, 360, 32); ctx.fill(); ctx.restore();
-            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 32px sans-serif'; ctx.fillText('有序星球', 80, 110);
-            ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillText(month.replace('-', ' 年 ') + ' 月财务报告', 80, 150);
-            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 72px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(2), 80, 260);
-            ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillText('本月总支出', 80, 300);
+          const catTotals = {};
+          list.forEach(r => { catTotals[r.categoryId] = (catTotals[r.categoryId] || 0) + r.amount; });
 
-            if (budget > 0) {
-              ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(80, 330, W - 160, 12, 6); ctx.fill();
-              ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(80, 330, (W - 160) * (budgetPercent / 100), 12, 6); ctx.fill();
-              ctx.font = '16px sans-serif'; ctx.fillText('预算已使用 ' + budgetPercent.toFixed(1) + '%', 80, 375);
-            } else { ctx.font = '16px sans-serif'; ctx.fillText('本月未设置预算', 80, 345); }
+          // 玻璃卡片渲染器
+          const drawGlassCard = (x, y, w, h, r, bgTint) => {
+            ctx.save();
+            
+            // 阴影
+            ctx.shadowColor = 'rgba(0,0,0,0.15)';
+            ctx.shadowBlur = 30;
+            ctx.shadowOffsetY = 15;
+            ctx.fillStyle = 'rgba(255,255,255,0.01)'; // 占位
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill();
+            ctx.restore();
 
-            const cardW = (W - 80 - 16) / 2;
-            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40, 430, cardW, 160, 24); ctx.fill(); ctx.restore();
-            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif'; ctx.fillText('本月总收入', 70, 480);
-            ctx.fillStyle = '#5C7A6A'; ctx.font = 'bold 40px sans-serif'; ctx.fillText('+￥' + incomeTotal.toFixed(2), 70, 540);
+            ctx.save();
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.clip();
 
-            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40 + cardW + 16, 430, cardW, 160, 24); ctx.fill(); ctx.restore();
-            ctx.fillStyle = '#888888'; ctx.font = '20px sans-serif'; ctx.fillText('本月净结余', 70 + cardW + 16, 480);
-            ctx.fillStyle = netTotal >= 0 ? primary : '#A85E52'; ctx.font = 'bold 40px sans-serif';
-            const netSign = netTotal >= 0 ? '+' : '-'; ctx.fillText(netSign + '￥' + Math.abs(netTotal).toFixed(2), 70 + cardW + 16, 540);
+            // 铺满模糊背景（放大回来）
+            ctx.drawImage(blurCanvas, 0, 0, bW, bH, 0, 0, W, H);
 
-            ctx.save(); ctx.shadowColor = 'rgba(0, 0, 0, 0.04)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
-            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(40, 630, W - 80, 420, 24); ctx.fill(); ctx.restore();
-            ctx.fillStyle = textSub; ctx.font = 'bold 22px sans-serif'; ctx.fillText('支出分类占比', 70, 690);
+            // 叠加玻璃底色
+            ctx.fillStyle = bgTint;
+            ctx.fillRect(x, y, w, h);
 
-            const sortedCats = Object.keys(catTotals || {}).map(id => ({id, amt: catTotals[id]})).sort((a,b) => b.amt - a.amt);
-            let chartData = [];
-            if (sortedCats.length > 5) {
-              chartData = sortedCats.slice(0, 5);
-              const othersAmt = sortedCats.slice(5).reduce((sum, item) => sum + item.amt, 0);
-              chartData.push({ id: 'other_merged', amt: othersAmt, name: '其他' });
-            } else { chartData = sortedCats; }
+            // 内边框高光（只留一圈细白边，模拟玻璃切边）
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.stroke();
+            ctx.restore();
+          };
 
-            const cx = 230, cy = 860, radius = 110;
-            let startAngle = -Math.PI / 2;
+          // 1. 顶部主卡（带主色的玻璃）
+                    // 1. 顶部主卡（带主色的玻璃）
+          // 使用 0.8 的主色，并额外叠加 0.15 的黑色，防止浅色主题（如沙色、柔和桃）下白字看不清
+          drawGlassCard(40, 40, W - 80, 360, 32, `rgba(${primaryRgb}, 0.8)`);
+          ctx.save(); 
+          ctx.beginPath(); ctx.roundRect(40, 40, W - 80, 360, 32); ctx.clip();
+          ctx.fillStyle = 'rgba(0,0,0,0.15)'; 
+          ctx.fillRect(40, 40, W - 80, 360); 
+          ctx.restore();
+          
+          ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 32px sans-serif'; ctx.fillText('有序星球', 80, 110);
+          ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillText(month.replace('-', ' 年 ') + ' 月财务报告', 80, 150);
+          
+          ctx.textAlign = 'right';
+          ctx.font = '18px sans-serif'; 
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.fillText('连续打卡 ' + streak + ' 天', W - 80, 110);
+          ctx.textAlign = 'left';
+
+          ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 76px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(2), 80, 260);
+          ctx.font = '20px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillText('本月总支出', 80, 300);
+
+          if (budget > 0) {
+            ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(80, 330, W - 160, 12, 6); ctx.fill();
+            ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.roundRect(80, 330, (W - 160) * (budgetPercent / 100), 12, 6); ctx.fill();
+            ctx.font = '16px sans-serif'; ctx.fillText('月预算 ￥' + budget + ' (已用 ' + budgetPercent.toFixed(1) + '%)', 80, 375);
+          } else { 
+            ctx.font = '16px sans-serif'; ctx.fillText('本月未设置预算', 80, 375); 
+          }
+
+          // 2. 数据卡片（两宫格纯白玻璃）
+          const cardW = (W - 80 - 20) / 2;
+          
+          // 卡片1：总收入
+          drawGlassCard(40, 430, cardW, 160, 24, 'rgba(255,255,255,0.85)');
+          ctx.fillStyle = colorSub; ctx.font = '20px sans-serif'; ctx.fillText('本月总收入', 70, 480);
+          ctx.fillStyle = '#5C7A6A'; ctx.font = 'bold 40px sans-serif'; ctx.fillText('+￥' + incomeTotal.toFixed(2), 70, 540);
+
+          // 卡片2：净结余
+          drawGlassCard(40 + cardW + 20, 430, cardW, 160, 24, 'rgba(255,255,255,0.85)');
+          ctx.fillStyle = colorSub; ctx.font = '20px sans-serif'; ctx.fillText('本月净结余', 70 + cardW + 20, 480);
+          ctx.fillStyle = netTotal >= 0 ? '#5C7A6A' : '#A85E52'; ctx.font = 'bold 40px sans-serif';
+          const netSign = netTotal >= 0 ? '+' : '-'; ctx.fillText(netSign + '￥' + Math.abs(netTotal).toFixed(2), 70 + cardW + 20, 540);
+
+          // 3. 底部：支出分类饼图（纯白玻璃）
+          drawGlassCard(40, 620, W - 80, 420, 24, 'rgba(255,255,255,0.85)');
+          ctx.fillStyle = colorDark; ctx.font = 'bold 22px sans-serif'; ctx.fillText('支出分类占比', 70, 680);
+
+          const sortedCats = Object.keys(catTotals || {}).map(id => ({id, amt: catTotals[id]})).sort((a,b) => b.amt - a.amt);
+          let chartData = [];
+          if (sortedCats.length > 5) {
+            chartData = sortedCats.slice(0, 5);
+            const othersAmt = sortedCats.slice(5).reduce((sum, item) => sum + item.amt, 0);
+            chartData.push({ id: 'other_merged', amt: othersAmt, name: '其他' });
+          } else { chartData = sortedCats; }
+
+          const cx = 230, cy = 850, radius = 110;
+          let startAngle = -Math.PI / 2;
+          if (expenseTotal > 0) {
             chartData.forEach(item => {
               const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
               const sliceAngle = (item.amt / expenseTotal) * Math.PI * 2;
@@ -1202,36 +1230,47 @@ const App = {
             });
 
             ctx.beginPath(); ctx.arc(cx, cy, 60, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
-            ctx.fillStyle = textSub; ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('总支出', cx, cy - 10);
-            ctx.fillStyle = primary; ctx.font = 'bold 24px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(0), cx, cy + 22);
+            ctx.fillStyle = colorSub; ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('总支出', cx, cy - 10);
+            ctx.fillStyle = colorDark; ctx.font = 'bold 24px sans-serif'; ctx.fillText('￥' + expenseTotal.toFixed(0), cx, cy + 22);
             ctx.textAlign = 'left';
+          } else {
+            ctx.fillStyle = '#D1D5DB'; ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 24px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('无支出', cx, cy + 8);
+            ctx.textAlign = 'left';
+          }
 
-            let legendY = 730;
-            chartData.forEach(item => {
-              const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
-              const percent = (item.amt / expenseTotal * 100).toFixed(1);
-              ctx.fillStyle = cat.color; ctx.beginPath(); ctx.roundRect(W - 250, legendY - 14, 14, 14, 4); ctx.fill();
-              ctx.fillStyle = textSub; ctx.font = '18px sans-serif'; ctx.fillText(cat.name, W - 220, legendY);
-              ctx.fillStyle = textSub; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'right'; ctx.fillText(percent + '%', W - 80, legendY);
-              ctx.textAlign = 'left'; legendY += 50;
-            });
+          let legendY = 720;
+          chartData.forEach(item => {
+            const cat = item.name === '其他' ? { name: '其他', color: '#D1D5DB' } : Categories.get(item.id);
+            const percent = expenseTotal > 0 ? (item.amt / expenseTotal * 100).toFixed(1) : '0.0';
+            ctx.fillStyle = cat.color; ctx.beginPath(); ctx.roundRect(W - 250, legendY - 14, 14, 14, 4); ctx.fill();
+            ctx.fillStyle = colorDark; ctx.font = '18px sans-serif'; ctx.fillText(cat.name, W - 220, legendY);
+            ctx.fillStyle = colorDark; ctx.font = 'bold 18px sans-serif'; ctx.textAlign = 'right'; ctx.fillText(percent + '%', W - 80, legendY);
+            ctx.textAlign = 'left'; legendY += 50;
+          });
 
-            ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.font = '18px sans-serif'; ctx.textAlign = 'center';
-            ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1140); ctx.textAlign = 'left';
+          ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = '18px sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('—— 有序星球 · 记录每一笔 ——', W / 2, 1090); ctx.textAlign = 'left';
+          
+          const base64 = canvas.toDataURL('image/jpeg', 0.9);
+          generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; generatePosterBtn.disabled = false;
+          
+          Modal.open({
+            type: 'none', title: '月度账单已生成', html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
+            actions: [{ text: '关闭', value: null }, { text: '保存到相册', value: 'save', primary: true }]
+          }).then(function (res) {
+            if (res === 'save') {
+              if (window.Android && typeof window.Android.saveImage === 'function') window.Android.saveImage(base64);
+              else { const a = document.createElement('a'); a.href = base64; a.download = '有序星球_海报_' + month + '.jpg'; a.click(); UI.showToast('图片已下载'); }
+            }
+          });
 
-            const base64 = canvas.toDataURL('image/jpeg', 0.9);
-            generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; generatePosterBtn.disabled = false;
-            Modal.open({
-              type: 'none', title: '月度账单已生成', html: '<img src="' + base64 + '" style="width:100%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">',
-              actions: [{ text: '关闭', value: null }, { text: '保存到相册', value: 'save', primary: true }]
-            }).then(function (res) {
-              if (res === 'save') {
-                if (window.Android && typeof window.Android.saveImage === 'function') window.Android.saveImage(base64);
-                else { const a = document.createElement('a'); a.href = base64; a.download = '有序星球_海报_' + month + '.jpg'; a.click(); UI.showToast('图片已下载'); }
-              }
-            });
-          } catch (err) { console.error(err); UI.showToast('海报生成失败'); generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; generatePosterBtn.disabled = false; }
-        }, 100);
+        } catch(err) { 
+          console.error(err); 
+          UI.showToast('海报生成失败'); 
+          generatePosterBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> 生成海报'; 
+          generatePosterBtn.disabled = false; 
+        }
       });
     }
 
@@ -1486,7 +1525,6 @@ const App = {
     splitInput.value = '';
     noteInput.value = '';
     this.updateAmountPreview();
-    // 移除 amountInput.focus() 防止键盘弹起
     if (document.activeElement) document.activeElement.blur();
     if (month !== this.currentMonth) { this.currentMonth = month; this.setMonthButton(month); }
     UI.renderAll(this.currentMonth);
@@ -1562,63 +1600,302 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 (function () {
-  function getTodayStr() {
+  const THRESHOLD = 90;
+  const MAX_PULL = 150;
+  const DAMP = 0.5;
+
+  function todayStr() {
     const d = new Date();
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')
+         + '-' + String(d.getDate()).padStart(2, '0');
   }
-  function getYesterdayStr() {
+  function yesterdayStr() {
     const d = new Date(); d.setDate(d.getDate() - 1);
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')
+         + '-' + String(d.getDate()).padStart(2, '0');
   }
-  function initCheckin() {
+
+  function readCheckin() {
+    let data = { lastDate: '', streak: 0 };
+    try { const s = JSON.parse(localStorage.getItem('slh.checkin.v1')); if (s) data = s; } catch (e) {}
+    return data;
+  }
+  function writeCheckin(data) {
+    try { localStorage.setItem('slh.checkin.v1', JSON.stringify(data)); } catch (e) {}
+  }
+  function isCheckedToday() { return readCheckin().lastDate === todayStr(); }
+  function currentStreak() {
+    const data = readCheckin();
+    if (data.lastDate === todayStr() || data.lastDate === yesterdayStr()) return data.streak || 0;
+    return 0;
+  }
+
+  function getTodayFortune() {
+    const today = todayStr();
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem('slh.fortune.v1') || 'null'); } catch (e) {}
+    if (stored && stored.date === today && stored.fortune) return stored.fortune;
+
+    const f = (typeof getLuoguFortune === 'function')
+      ? getLuoguFortune()
+      : { level: '中吉', yi: '记账', yiDesc: '', ji: '乱花', jiDesc: '' };
+    try { localStorage.setItem('slh.fortune.v1', JSON.stringify({ date: today, fortune: f })); } catch (e) {}
+    return f;
+  }
+
+  let pageEl, cardEl, hintEl, hintTextEl;
+  let startY = 0, pulling = false, pullDist = 0, usingMouse = false;
+
+  function init() {
+    pageEl = document.getElementById('page-home');
+    cardEl = document.getElementById('checkinCard');
+    if (!pageEl || !cardEl) return;
+
+    hintEl = document.getElementById('pullHint');
+    if (!hintEl) {
+      hintEl = document.createElement('div');
+      hintEl.id = 'pullHint';
+      hintEl.className = 'pull-hint';
+      hintEl.innerHTML = '<span class="pull-hint__arrow">↓</span><span id="pullHintText">下拉抽取今日运势</span>';
+      document.body.appendChild(hintEl);
+    }
+    hintTextEl = document.getElementById('pullHintText');
+
+    cardEl.style.transition = 'none';
+    refreshCard();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { cardEl.style.transition = ''; });
+    });
+
+    document.addEventListener('touchstart', onStart, { passive: true });
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+    document.addEventListener('touchcancel', onEnd);
+
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }
+
+  function refreshCard() {
+    const checked = isCheckedToday();
     const streakEl = document.getElementById('checkinStreak');
-    const btn = document.getElementById('checkinBtn');
-    const btnText = document.getElementById('checkinBtnText');
-    if (!streakEl || !btn || !btnText) return;
-    let data = { lastDate: '', streak: 0 };
-    try { const saved = JSON.parse(localStorage.getItem('slh.checkin.v1')); if (saved) data = saved; } catch (e) {}
-    const today = getTodayStr(), yest = getYesterdayStr();
-    let currentStreak = data.streak || 0;
-    if (data.lastDate && data.lastDate !== today && data.lastDate !== yest) currentStreak = 0;
-    streakEl.textContent = currentStreak;
-    if (data.lastDate === today) { btn.classList.add('is-checked'); btnText.textContent = '今日已打卡'; }
-    else { btn.classList.remove('is-checked'); btnText.textContent = '点击打卡'; }
+    if (streakEl) streakEl.textContent = currentStreak();
+    const titleEl = document.getElementById('checkinTitle');
+    if (titleEl) titleEl.textContent = '欢迎回来';
+    const pullText = document.getElementById('checkinPullText');
+    if (pullText) pullText.textContent = '下拉抽取今日运势';
+    cardEl.classList.toggle('is-hidden', checked);
   }
-  function handleCheckin() {
-    const btn = document.getElementById('checkinBtn');
-    if (!btn || btn.classList.contains('is-checked')) return;
-    let data = { lastDate: '', streak: 0 };
-    try { const saved = JSON.parse(localStorage.getItem('slh.checkin.v1')); if (saved) data = saved; } catch (e) {}
-    const today = getTodayStr(), yest = getYesterdayStr();
+
+  function activeHome() { return pageEl && pageEl.classList.contains('is-active'); }
+  function atTop() {
+    return (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+  }
+
+  function onStart(e) {
+    if (!activeHome() || !atTop() || e.touches.length !== 1) return;
+    startY = e.touches[0].clientY;
+    pulling = true; pullDist = 0; usingMouse = false;
+  }
+  function onMove(e) {
+    if (!pulling || usingMouse) return;
+    if (!atTop()) { finishPull(false); return; }
+    const dist = e.touches[0].clientY - startY;
+    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
+    if (e.cancelable) e.preventDefault();
+    pullDist = dist;
+    updateVisual(dist);
+  }
+  function onEnd() {
+    if (!pulling || usingMouse) return;
+    finishPull(true);
+  }
+
+  function onMouseDown(e) {
+    if (e.button !== 0) return;
+    if (!activeHome() || !atTop()) return;
+    if (e.target.closest('button, a, input, select, textarea, .tabbar')) return;
+    startY = e.clientY;
+    pulling = true; pullDist = 0; usingMouse = true;
+  }
+  function onMouseMove(e) {
+    if (!pulling || !usingMouse) return;
+    if (!atTop()) { finishPull(false); return; }
+    const dist = e.clientY - startY;
+    if (dist <= 0) { pullDist = 0; resetVisual(); return; }
+    e.preventDefault();
+    pullDist = dist;
+    updateVisual(dist);
+  }
+  function onMouseUp() {
+    if (!pulling || !usingMouse) return;
+    finishPull(true);
+  }
+
+  function updateVisual(dist) {
+    pageEl.style.transform = 'translateY(' + Math.min(dist * DAMP, MAX_PULL) + 'px)';
+    pageEl.classList.add('is-pulling');
+    
+    if (dist > 8) {
+      hintEl.classList.add('is-show');
+      if (dist >= THRESHOLD) {
+        hintTextEl.textContent = isCheckedToday() ? '松开查看今日运势' : '松开抽取';
+        hintEl.classList.add('is-ready');
+      } else {
+        hintTextEl.textContent = '继续下拉…';
+        hintEl.classList.remove('is-ready');
+      }
+    }
+  }
+
+  function resetVisual() {
+    pageEl.classList.remove('is-pulling');
+    pageEl.style.transform = '';
+    hintEl.classList.remove('is-show', 'is-ready');
+  }
+
+  function finishPull(canTrigger) {
+    pulling = false;
+    const dist = pullDist;
+    pullDist = 0;
+
+    pageEl.classList.remove('is-pulling');
+    void pageEl.offsetHeight;
+    pageEl.style.transform = '';
+    hintEl.classList.remove('is-show', 'is-ready');
+
+    if (!canTrigger || dist < THRESHOLD) {
+      if (isCheckedToday()) cardEl.classList.add('is-hidden');
+      return;
+    }
+    if (navigator.vibrate) navigator.vibrate(30);
+
+    if (!isCheckedToday()) doCheckin();
+    else showFortune();
+  }
+
+  function doCheckin() {
+    const data = readCheckin();
+    const today = todayStr(), yest = yesterdayStr();
+    if (data.lastDate === today) return;
     if (data.lastDate === yest) data.streak = (data.streak || 0) + 1;
-    else if (data.lastDate === today) return;
     else data.streak = 1;
     data.lastDate = today;
-    try { localStorage.setItem('slh.checkin.v1', JSON.stringify(data)); } catch (e) {}
-    document.getElementById('checkinStreak').textContent = data.streak;
-    btn.classList.add('is-checked');
-    document.getElementById('checkinBtnText').textContent = '今日已打卡';
-    showPopup(data.streak);
+    writeCheckin(data);
+
+    const fortune = getTodayFortune();
+    refreshCard();
+    showPopup(data.streak, fortune, true);
   }
-  function showPopup(streak) {
+
+  function showFortune() {
+    const data = readCheckin();
+    const streak = (data.lastDate === todayStr()) ? (data.streak || 0) : currentStreak();
+    const fortune = getTodayFortune();
+    
+    cardEl.classList.add('is-hidden');
+    showPopup(streak, fortune, false);
+  }
+
+  function showPopup(streak, fortune, isNew) {
     let popup = document.getElementById('checkinPopup');
-    if (!popup) { popup = document.createElement('div'); popup.id = 'checkinPopup'; popup.className = 'checkin-popup'; document.body.appendChild(popup); }
-    const fortune = getLuoguFortune();
-    popup.innerHTML = 
+    if (!popup) {
+      popup = document.createElement('div');
+      popup.id = 'checkinPopup';
+      popup.className = 'checkin-popup';
+      document.body.appendChild(popup);
+    }
+    popup.innerHTML =
       '<div class="checkin-popup__content">' +
-        '<div class="checkin-popup__title">今日运势</div>' +
-        '<div class=\"checkin-popup__fortune\">§ ' + fortune.level + ' §</div>' +
-        '<div class=\"checkin-popup__row yi\"><span>宜：</span><strong>' + fortune.yi + '</strong>' + (fortune.yiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + fortune.yiDesc + '</span>' : '') + '</div>' +
-        '<div class=\"checkin-popup__row ji\"><span>忌：</span><strong>' + fortune.ji + '</strong>' + (fortune.jiDesc ? '<br><span style=\"font-size:12px;font-weight:normal;opacity:.8;margin-left:28px\">' + fortune.jiDesc + '</span>' : '') + '</div>' +
-        '<div class="checkin-popup__footer">你已经在有序星球连续打卡了 ' + streak + ' 天</div>' +
+        '<div class="checkin-popup__title">' + (isNew ? '今日运势已抽取' : '今日运势') + '</div>' +
+        '<div class="checkin-popup__fortune">§ ' + fortune.level + ' §</div>' +
+        '<div class="checkin-popup__row yi"><span>宜：</span><strong>' + fortune.yi + '</strong>' +
+          (fortune.yiDesc ? '<br><span style="font-size:12px;font-weight:normal;opacity:.8;margin-left:28px">' + fortune.yiDesc + '</span>' : '') + '</div>' +
+        '<div class="checkin-popup__row ji"><span>忌：</span><strong>' + fortune.ji + '</strong>' +
+          (fortune.jiDesc ? '<br><span style="font-size:12px;font-weight:normal;opacity:.8;margin-left:28px">' + fortune.jiDesc + '</span>' : '') + '</div>' +
+        '<div class="checkin-popup__footer">已连续签到 ' + streak + ' 天' +
+          (isNew ? '<br><span style="font-size:12px;font-weight:normal;opacity:.75;">以后下拉页面可再次查看今日运势</span>' : '') +
+        '</div>' +
         '<button class="checkin-popup__close" type="button" id="checkinPopupClose">收下好运</button>' +
       '</div>';
+
     void popup.offsetWidth;
     popup.classList.add('is-show');
-    popup.querySelector('#checkinPopupClose').addEventListener('click', function () { popup.classList.remove('is-show'); });
-    popup.addEventListener('click', function (e) { if (e.target === popup) popup.classList.remove('is-show'); });
+
+    popup.querySelector('#checkinPopupClose').addEventListener('click', function () {
+      popup.classList.remove('is-show');
+    });
+    popup.onclick = function (e) {
+      if (e.target === popup) popup.classList.remove('is-show');
+    };
   }
-  document.addEventListener('click', function (e) { if (e.target.closest('#checkinBtn')) handleCheckin(); });
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(initCheckin, 200); }); }
-  else { setTimeout(initCheckin, 200); }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 100); });
+  } else {
+    setTimeout(init, 100);
+  }
+})();
+
+
+/* ==========================================================
+   分段选择器 / 图表 Tab：支持苹果式滑动切换
+   ========================================================== */
+(function () {
+  function initSegDrag() {
+    const containers = document.querySelectorAll('.seg, .chart-tabs');
+    
+    containers.forEach(function(container) {
+      let isTouching = false;
+      let lastTargetBtn = null;
+
+      const handleMove = function (e) {
+        if (!isTouching) return;
+        const touch = e.touches ? e.touches[0] : e;
+        const clientX = touch.clientX;
+        const clientY = touch.clientY;
+        
+        const target = document.elementFromPoint(clientX, clientY);
+        if (!target) return;
+        
+        if (container.contains(target)) {
+          const btn = target.closest('.seg__btn, .chart-tab');
+          if (btn && btn !== lastTargetBtn && !btn.hidden && !btn.classList.contains('is-active')) {
+            lastTargetBtn = btn;
+            btn.click();
+            if (navigator.vibrate) navigator.vibrate(10);
+          }
+        }
+      };
+
+      const startTouch = function (e) {
+        isTouching = true;
+        const target = e.target.closest('.seg__btn, .chart-tab');
+        if (target) lastTargetBtn = target;
+      };
+
+      const endTouch = function () {
+        isTouching = false;
+        lastTargetBtn = null;
+      };
+
+      container.addEventListener('touchstart', startTouch, { passive: true });
+      container.addEventListener('touchmove', handleMove, { passive: true });
+      container.addEventListener('touchend', endTouch);
+      container.addEventListener('touchcancel', endTouch);
+
+      container.addEventListener('mousedown', startTouch);
+      container.addEventListener('mousemove', function (e) {
+        if (e.buttons === 1) handleMove(e);
+      });
+      window.addEventListener('mouseup', endTouch);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(initSegDrag, 500); });
+  } else {
+    setTimeout(initSegDrag, 500);
+  }
 })();
