@@ -891,40 +891,32 @@ const App = {
         const data = JSON.parse(content);
         if (typeof data !== 'object' || data === null) throw new Error('格式错误');
 
-        // ---- 支出分类合并（按 id 优先，同名次之） ----
+        // ---- 支出分类合并：只按 id 判断，不存在就创建 ----
         const catIdMap = new Map();
         let newCatsCount = 0;
         const importedCatsStr = data['slh.categories.v1'];
         const importedCats = importedCatsStr ? JSON.parse(importedCatsStr) : [];
-        const localCatByName = new Map(Categories.list.map(c => [c.name, c.id]));
         importedCats.forEach(c => {
           if (Categories.list.some(lc => lc.id === c.id)) {
             catIdMap.set(c.id, c.id);
-          } else if (localCatByName.has(c.name)) {
-            catIdMap.set(c.id, localCatByName.get(c.name));
           } else {
             Categories.list.push(c);
-            localCatByName.set(c.name, c.id);
             catIdMap.set(c.id, c.id);
             newCatsCount++;
           }
         });
         if (newCatsCount > 0) { Categories.reorder(); Categories.save(); }
 
-        // ---- 收入分类合并（同上） ----
+        // ---- 收入分类合并：只按 id 判断，不存在就创建（和支出一模一样） ----
         const incomeCatIdMap = new Map();
         let newIncomeCatsCount = 0;
         const importedIncomeCatsStr = data['slh.incomeCategories.v1'];
         const importedIncomeCats = importedIncomeCatsStr ? JSON.parse(importedIncomeCatsStr) : [];
-        const localIncomeCatByName = new Map(IncomeCategories.list.map(c => [c.name, c.id]));
         importedIncomeCats.forEach(c => {
           if (IncomeCategories.list.some(lc => lc.id === c.id)) {
             incomeCatIdMap.set(c.id, c.id);
-          } else if (localIncomeCatByName.has(c.name)) {
-            incomeCatIdMap.set(c.id, localIncomeCatByName.get(c.name));
           } else {
             IncomeCategories.list.push(c);
-            localIncomeCatByName.set(c.name, c.id);
             incomeCatIdMap.set(c.id, c.id);
             newIncomeCatsCount++;
           }
@@ -974,16 +966,24 @@ const App = {
               if (incomeCatIdMap.has(r.categoryId)) {
                 r.categoryId = incomeCatIdMap.get(r.categoryId);
               } else if (!IncomeCategories.list.some(c => c.id === r.categoryId)) {
-                const fallback = IncomeCategories.list.find(c => c.id === 'other-in');
-                r.categoryId = fallback ? fallback.id : IncomeCategories.list[0].id;
+                IncomeCategories.list.push({
+                  id: r.categoryId,
+                  name: '未知收入',
+                  color: '#A8A2B0'
+                });
+                incomeCatIdMap.set(r.categoryId, r.categoryId);
                 remappedIncome++;
               }
             } else {
               if (catIdMap.has(r.categoryId)) {
                 r.categoryId = catIdMap.get(r.categoryId);
               } else if (!Categories.list.some(c => c.id === r.categoryId)) {
-                const fallback = Categories.list.find(c => c.id === 'other');
-                r.categoryId = fallback ? fallback.id : Categories.list[0].id;
+                Categories.list.push({
+                  id: r.categoryId,
+                  name: '未知分类',
+                  color: '#A8A2B0'
+                });
+                catIdMap.set(r.categoryId, r.categoryId);
                 remappedExpense++;
               }
             }
@@ -992,16 +992,23 @@ const App = {
             if (existingSignatures.has(sig)) duplicateList.push(r);
             else { Ledger.records.push(r); existingSignatures.add(sig); addedCount++; }
           });
+
+          // 循环结束后保存补建的分类
+          if (remappedExpense > 0) { Categories.reorder(); Categories.save(); }
+          if (remappedIncome > 0) { IncomeCategories.reorder(); IncomeCategories.save(); }
           if (addedCount > 0) Ledger.saveRecords();
         }
 
         let msgHtml = `<div style="text-align:center;">`;
         msgHtml += `<p style="margin-bottom:12px;font-size:15px;">成功导入 <strong>${addedCount}</strong> 笔新记录。</p>`;
-        if (newCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newCatsCount}</strong> 个分类。</p>`;
+        if (newCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newCatsCount}</strong> 个支出分类。</p>`;
         if (newIncomeCatsCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newIncomeCatsCount}</strong> 个收入分类。</p>`;
         if (newQuickCount > 0) msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);">新增了 <strong>${newQuickCount}</strong> 个快捷记账按钮。</p>`;
-        if (remappedExpense > 0 || remappedIncome > 0) {
-          msgHtml += `<p style="font-size:13px;color:var(--c-warning);margin-top:8px;">有 ${remappedExpense + remappedIncome} 笔记录的原始分类不存在，已自动归入「其他」。</p>`;
+        if (remappedExpense > 0) {
+          msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);margin-top:8px;">补建了 <strong>${remappedExpense}</strong> 个缺失的支出分类。</p>`;
+        }
+        if (remappedIncome > 0) {
+          msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);margin-top:8px;">补建了 <strong>${remappedIncome}</strong> 个缺失的收入分类。</p>`;
         }
         if (duplicateList.length > 0) {
           msgHtml += `<p style="font-size:13px;color:var(--c-text-sub);margin-top:8px;">已自动跳过 <strong>${duplicateList.length}</strong> 笔重复记录。</p>`;
@@ -1491,8 +1498,10 @@ const App = {
   },
 
   removeIncomeCategory: async function (id) {
-    const cat = IncomeCategories.get(id);
-    const count = Ledger.countByCategory(id);
+    const realCat = IncomeCategories.list.find(function (c) { return c.id === id; });
+    if (!realCat) { Modal.alert({ type: 'warn', title: '分类不存在', message: '该分类可能已被删除或数据异常。' }); return; }
+    const cat = realCat;
+    const count = Ledger.countByCategory(id, 'income');
     if (count > 0) { Modal.alert({ type: 'warn', title: '无法删除', html: '「' + UI.escapeHtml(cat.name) + '」下还有 <strong>' + count + '</strong> 笔收入记录。<br><br>请先删除这些记录。' }); return; }
     const ok = await Modal.confirm({ type: 'warn', title: '删除「' + UI.escapeHtml(cat.name) + '」？', message: '删除后无法恢复。', okText: '删除', danger: true });
     if (!ok) return;
