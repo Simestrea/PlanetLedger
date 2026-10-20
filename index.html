@@ -8,6 +8,63 @@
 <link rel="stylesheet" href="style/reset.css">
 <link rel="stylesheet" href="style/main.css">
 <link rel="stylesheet" href="style/components.css">
+
+  <!-- Ultra Fast Theme Init -->
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('slh.theme.v1') || 'greenery';
+        const html = document.documentElement;
+        
+        if (theme === 'custom') {
+          html.setAttribute('data-theme', 'custom');
+          const customThemeStr = localStorage.getItem('slh.customTheme.v1');
+          if (customThemeStr) {
+            const vars = JSON.parse(customThemeStr);
+            if (vars.primary) html.style.setProperty('--c-primary', vars.primary);
+            if (vars.light) html.style.setProperty('--c-primary-light', vars.light);
+            if (vars.dark) html.style.setProperty('--c-primary-dark', vars.dark);
+            if (vars.bg) html.style.setProperty('--c-bg', vars.bg);
+            if (vars.card) html.style.setProperty('--c-card', vars.card);
+            if (vars.surface) html.style.setProperty('--c-surface', vars.surface);
+            if (vars.border) html.style.setProperty('--c-border', vars.border);
+            
+            if (vars.primary && vars.primary.startsWith('#')) {
+              const hex = vars.primary.replace('#', '');
+              const r = parseInt(hex.substring(0, 2), 16);
+              const g = parseInt(hex.substring(2, 4), 16);
+              const b = parseInt(hex.substring(4, 6), 16);
+              html.style.setProperty('--c-primary-rgb', r + ', ' + g + ', ' + b);
+              
+              const toHex = (n) => { const s = Math.max(0, Math.min(255, Math.round(n))).toString(16); return s.length === 1 ? '0' + s : s; };
+              html.style.setProperty('--c-text', '#' + toHex(r*0.45) + toHex(g*0.45) + toHex(b*0.45));
+              html.style.setProperty('--c-text-sub', '#' + toHex(r*0.62) + toHex(g*0.62) + toHex(b*0.62));
+              html.style.setProperty('--c-text-light', '#' + toHex(r*0.78) + toHex(g*0.78) + toHex(b*0.78));
+            }
+          }
+          
+          const bg = localStorage.getItem('slh.customBg.v1');
+          if (bg) {
+            html.setAttribute('data-custom-bg', 'on');
+            html.style.setProperty('--custom-bg-url', 'url(' + bg + ')');
+          }
+        } else {
+          html.setAttribute('data-theme', theme);
+          const lightThemes = ['peach', 'quartz', 'serenity', 'mimosa', 'sand'];
+          if (lightThemes.includes(theme)) {
+            html.classList.add('light-theme-active');
+          }
+        }
+        
+        const glassMode = localStorage.getItem('slh.glassMode.v1') || 'frosted';
+        if (glassMode === 'clear') {
+          html.setAttribute('data-glass-mode', 'clear');
+        }
+      } catch (e) {
+        console.error('Theme init error', e);
+      }
+    })();
+  </script>
 </head>
 <body>
 
