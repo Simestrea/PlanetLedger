@@ -211,7 +211,7 @@ const App = {
         '<div style="text-align:left; max-height: 55vh; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">' +
           '<div style="margin-bottom:16px;">' +
             '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">名称</label>' +
-            '<input id="qtName" type="text" class="modal__input" placeholder="消费原因" maxlength="6" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important;" value="' + UI.escapeHtml(tempName) + '">' +
+            '<input id="qtName" type="text" class="modal__input" placeholder="消费原因" maxlength="100" style="width:100%; height:44px !important; padding:0 14px !important; margin-bottom:0 !important; font-size:15px !important;" value="' + UI.escapeHtml(tempName) + '">' +
           '</div>' +
           '<div style="margin-bottom:16px;">' +
             '<label style="font-size:13px;color:var(--c-text-sub);display:block;margin-bottom:6px;">常用金额</label>' +
@@ -1489,7 +1489,7 @@ const App = {
   },
 
   promptAddIncomeCategory: async function () {
-    const name = await Modal.prompt({ type: 'info', title: '新收入来源', message: '名字最多 6 个字', input: { placeholder: '输入来源名称', maxLength: 6 } });
+    const name = await Modal.prompt({ type: 'info', title: '新收入来源', message: '名字最多 6 个字', input: { placeholder: '输入来源名称', maxLength: 100 } });
     if (name === null) return;
     const res = IncomeCategories.add(name);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
@@ -1530,7 +1530,7 @@ const App = {
   },
 
   promptAddCategory: async function () {
-    const name = await Modal.prompt({ type: 'info', title: '新分类', message: '名字最多 6 个字', input: { placeholder: '输入分类名称', maxLength: 6 } });
+    const name = await Modal.prompt({ type: 'info', title: '新分类', message: '名字最多 6 个字', input: { placeholder: '输入分类名称', maxLength: 100 } });
     if (name === null) return;
     const res = Categories.add(name);
     if (!res.ok) { Modal.alert({ type: 'warn', message: res.msg }); return; }
@@ -2113,4 +2113,319 @@ document.addEventListener('DOMContentLoaded', function () {
   } else {
     setTimeout(initSegDrag, 500);
   }
+})();
+
+
+/* ==========================================================
+   🌴 动物岛风格 V10 - 自定义主题防呆提示 (由 fix.py 注入)
+   ========================================================== */
+(function() {
+  // 拦截“自定义”主题按钮的点击
+  document.addEventListener('click', function(e) {
+    const customBtn = e.target.closest('.theme-item[data-theme="custom"]');
+    if (!customBtn) return;
+
+    // 检查本地是否存有背景图
+    try {
+      const bg = localStorage.getItem('slh.customBg.v1');
+      const customTheme = localStorage.getItem('slh.customTheme.v1');
+      
+      // 如果没有背景图或主题数据，拦截操作并提示
+      if (!bg || !customTheme) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 使用你项目自带的 UI Toast 组件弹出提示
+        if (typeof UI !== 'undefined' && typeof UI.showToast === 'function') {
+          UI.showToast('请先在下方上传背景图片哦～');
+        } else {
+          alert('请先在下方上传背景图片哦～');
+        }
+        return false;
+      }
+    } catch (err) {
+      console.warn('读取自定义主题失败', err);
+    }
+  }, true); // 使用捕获阶段，确保在原本的点击事件之前执行
+
+  // 拦截“清除背景”按钮
+  document.addEventListener('click', function(e) {
+    const clearBtn = e.target.closest('#customBgClear');
+    if (!clearBtn) return;
+
+    // 延迟一点，等系统自带的清除逻辑跑完，然后再强制切回默认主题
+    setTimeout(() => {
+      if (typeof App !== 'undefined' && typeof App.applyTheme === 'function') {
+        App.applyTheme('greenery', false);
+        if (typeof UI !== 'undefined' && typeof UI.showToast === 'function') {
+          UI.showToast('背景已清除，已切回默认主题');
+        }
+      }
+    }, 100);
+  }, false);
+})();
+
+
+/* ==========================================================
+   🌴 动物岛风格 - 明细记录长按弹出详情 (注入于 main.js 末尾)
+   ========================================================== */
+(function() {
+  let pressTimer = null;
+  let isLongPressTriggered = false;
+  const LONG_PRESS_DURATION = 500; // 长按 0.5 秒触发
+
+  // 1. 全局拦截右键/长按菜单，防止干扰
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('.record')) {
+      e.preventDefault();
+    }
+  });
+
+  // 2. 开始触摸
+  document.addEventListener('touchstart', function(e) {
+    const recordEl = e.target.closest('.record');
+    if (!recordEl) return;
+
+    // 如果点的是删除按钮（叉号），直接退出，不触发长按
+    if (e.target.closest('.record__del')) return;
+
+    isLongPressTriggered = false;
+    
+    // 添加按压缩放反馈 (果冻感)
+    recordEl.style.transform = 'scale(0.96)';
+    recordEl.style.transition = 'transform 0.2s';
+    
+    // 震动反馈（如果手机支持）
+    if (navigator.vibrate) navigator.vibrate(20);
+
+    pressTimer = setTimeout(() => {
+      // 长按成功
+      isLongPressTriggered = true;
+      recordEl.style.transform = '';
+      showRecordDetail(recordEl);
+      
+      // 阻止长按后抬手触发的 click 事件（防止误触删除等）
+      const stopClick = (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        document.removeEventListener('click', stopClick, true);
+      };
+      document.addEventListener('click', stopClick, true);
+      setTimeout(() => document.removeEventListener('click', stopClick, true), 300);
+      
+    }, LONG_PRESS_DURATION);
+  }, { passive: true });
+
+  // 3. 手指移动或抬起时取消长按
+  document.addEventListener('touchmove', function(e) {
+    const recordEl = e.target.closest('.record');
+    if (recordEl) recordEl.style.transform = '';
+    
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    const recordEl = e.target.closest('.record');
+    if (recordEl) recordEl.style.transform = '';
+    
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  });
+
+  // 4. 提取数据并渲染漂亮的海岛风弹窗
+  function showRecordDetail(el) {
+    const id = el.dataset.id;
+    if (!id || typeof Ledger === 'undefined') return;
+
+    const record = Ledger.records.find(r => r.id === id);
+    if (!record) return;
+
+    // 判断是收入还是支出
+    const isIncome = record.type === 'income';
+    const store = isIncome ? IncomeCategories : Categories;
+    const cat = store.get(record.categoryId) || { name: '未分类', color: '#A8A2B0' };
+    
+    // 格式化时间
+    const d = new Date(record.createdAt);
+    const pad = (n) => String(n).padStart(2, '0');
+    const timeStr = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+
+    const amountStr = (isIncome ? '+' : '-') + '￥' + record.amount.toFixed(2);
+    const amountColor = isIncome ? 'var(--c-success)' : 'var(--c-danger)';
+
+    // 使用内联样式构建弹窗的 HTML（保持海岛风的大圆角和排版）
+    const html = `
+      <div style="text-align: left; padding: 10px 4px;">
+        <!-- 头部：分类和金额 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px dashed var(--c-border); padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: ${cat.color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
+            <span style="font-size: 18px; font-weight: 800; color: var(--c-text);">${cat.name}</span>
+          </div>
+          <span style="font-size: 24px; font-weight: 900; color: ${amountColor};">${amountStr}</span>
+        </div>
+
+        <!-- 详情列表 -->
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--c-text-sub);">
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">备注说明</span>
+            <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; flex: 1;">${record.note || '无'}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">记账日期</span>
+            <span style="color: var(--c-text); font-weight: 700;">${record.date}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">精确时间</span>
+            <span style="color: var(--c-text); font-weight: 700;">${timeStr}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">流水号</span>
+            <span style="color: var(--c-text-light); font-size: 12px; user-select: text;">${record.id}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // 调用你原有的 Modal 组件
+    if (typeof Modal !== 'undefined') {
+      Modal.alert({
+        type: 'info',
+        title: '交易详情',
+        html: html,
+        buttonText: '关闭'
+      });
+    }
+  }
+})();
+
+
+/* ==========================================================
+   🌴 终极修复：彻底禁止长按选中文本和呼出系统菜单
+   ========================================================== */
+(function() {
+  // 1. 用 CSS 给记录卡片上物理锁定
+  const style = document.createElement('style');
+  style.textContent = `
+    .record {
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      -khtml-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 2. 用 JS 强制拦截 touchstart 时的默认行为（双保险）
+  document.addEventListener('touchstart', function(e) {
+    const recordEl = e.target.closest('.record');
+    // 如果长按的是记录卡片，且不是删除按钮，直接掐断默认行为
+    if (recordEl && !e.target.closest('.record__del')) {
+      // 注意：不能在这里直接 preventDefault，否则会导致页面无法滚动
+      // 所以我们在长按计时器触发的那一刻去清除选区
+    }
+  }, { passive: true });
+
+  // 3. 长按触发时，清除可能已经产生的选区，并阻止后续选择
+  document.addEventListener('selectstart', function(e) {
+    if (e.target.closest('.record')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+})();
+
+
+(function() {
+  // 移除旧的点击展开逻辑，防止冲突
+  if (window._clickExpandInitialized) return;
+  window._clickExpandInitialized = true;
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.record__del')) return;
+    const recordEl = e.target.closest('.record');
+    if (!recordEl) return;
+    if (e.target.closest('.custom-expand-area')) return;
+
+    let expandArea = recordEl.querySelector('.custom-expand-area');
+    
+    if (expandArea) {
+      expandArea.style.height = expandArea.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        expandArea.style.height = '0px';
+        expandArea.style.opacity = '0';
+        setTimeout(() => expandArea.remove(), 300);
+      });
+      return;
+    }
+
+    document.querySelectorAll('.custom-expand-area').forEach(area => {
+      area.style.height = area.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        area.style.height = '0px';
+        area.style.opacity = '0';
+        setTimeout(() => area.remove(), 300);
+      });
+    });
+
+    const id = recordEl.dataset.id;
+    if (!id || typeof Ledger === 'undefined') return;
+    const record = Ledger.records.find(r => r.id === id);
+    if (!record) return;
+
+    const d = new Date(record.createdAt);
+    const pad = (n) => String(n).padStart(2, '0');
+    const timeStr = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+
+    const area = document.createElement('div');
+    area.className = 'custom-expand-area';
+    area.style.cssText = `
+      width: 100%;
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      border-top: 1.5px dashed var(--c-border);
+      margin-top: 12px;
+      padding-top: 12px;
+      font-size: 13px;
+      color: var(--c-text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    `;
+
+    // 修复的核心点：左侧加 white-space: nowrap; 右侧加 word-break
+    area.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+        <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">完整备注</span>
+        <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; line-height: 1.4;">${record.note || '无'}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+        <span style="font-weight: 600; white-space: nowrap; flex: none;">精确时间</span>
+        <span style="color: var(--c-text); font-weight: 700;">${timeStr}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+        <span style="font-weight: 600; white-space: nowrap; flex: none;">流水号</span>
+        <span style="color: var(--c-text-light); font-size: 11px; word-break: break-all; text-align: right;">${record.id}</span>
+      </div>
+    `;
+
+    recordEl.style.flexWrap = 'wrap';
+    recordEl.appendChild(area);
+
+    requestAnimationFrame(() => {
+      area.style.height = area.scrollHeight + 'px';
+      area.style.opacity = '1';
+    });
+
+    e.stopPropagation();
+  });
 })();
