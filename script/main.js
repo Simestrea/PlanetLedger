@@ -1692,7 +1692,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let startY = 0, pulling = false, pullDist = 0, usingMouse = false;
 
   /* 弹窗/面板打开时禁止触发下拉签到 */
-  var PULL_BLOCK_SELECTOR = '.tabbar, input, textarea, .quick-actions, .modal-overlay, .cat-modal-overlay, .sub-modal-overlay, .calendar-panel, .checkin-popup, .toast, .shatter-container';
+  var PULL_BLOCK_SELECTOR = '.tabbar, input, textarea, .quick-actions, .cat-grid, .modal-overlay, .cat-modal-overlay, .sub-modal-overlay, .calendar-panel, .checkin-popup, .toast, .shatter-container';
 
   function init() {
     pageEl = document.getElementById('page-home');

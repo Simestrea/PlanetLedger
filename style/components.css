@@ -6996,3 +6996,10 @@ html:not([data-custom-bg="on"]) .tab.is-active {
   color: var(--c-primary) !important;
   font-weight: 800 !important;
 }
+
+
+/* === drag-sort touch optimization === */
+.cat-grid,
+.quick-actions {
+    touch-action: manipulation;
+}
