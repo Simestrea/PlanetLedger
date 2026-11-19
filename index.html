@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <title>有序星球</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%2388B04B'/%3E%3Cstop offset='1' stop-color='%234F7F45'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23F4F8EC'/%3E%3Ccircle cx='32' cy='32' r='14' fill='url(%23p)'/%3E%3Cellipse cx='32' cy='36' rx='25' ry='7' fill='none' stroke='%236A8F32' stroke-width='3' transform='rotate(-18 32 36)'/%3E%3Ccircle cx='50' cy='19' r='3' fill='%23B8823F'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style/reset.css">
 <link rel="stylesheet" href="style/main.css">
 <link rel="stylesheet" href="style/components.css">
@@ -273,11 +274,12 @@
 
         <div class="field">
           <label class="field__label" for="incomeAmountInput">金额</label>
-          <div class="amount">
+          <div class="amount amount--saving">
             <span class="amount__symbol">￥</span>
             <input class="amount__input" id="incomeAmountInput" type="number"
                    inputmode="decimal" step="0.01" min="0" placeholder="0.00">
 
+                <span class="amount__planet" aria-hidden="true"><i></i><b></b></span>
             <span class="amount__sep"></span>
             <span class="amount__div">÷</span>
             <input class="amount__split" id="incomeSplitInput" type="number"
@@ -489,7 +491,7 @@
         </div>
         <div class="about-row">
           <span class="about-row__label">版本</span>
-          <span class="about-row__value">5.2.6</span>
+          <span class="about-row__value">5.2.7</span>
         </div>
         <div class="about-row">
           <span class="about-row__label">定位</span>
@@ -507,23 +509,23 @@
 
   <nav class="tabbar">
     <button class="tab is-active" data-page="page-home" type="button">
-      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></span>
+      <span class="tab__icon"><svg class="icon-svg planet-tab" viewBox="0 0 24 24" aria-hidden="true"><g class="planet-tab__orbit-group"><ellipse class="planet-tab__orbit" cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)" pathLength="100" stroke-dasharray="20 10 37 10"></ellipse></g><g class="planet-tab__core"><circle cx="12" cy="12" r="5.1"></circle><path d="M12.9 8.5L15.8 8.1L15.4 11L10 16.4L7.1 16.8L7.5 13.9 12.9 8.5Z"></path></g></svg></span>
       <span class="tab__text">记一笔</span>
     </button>
     <button class="tab" data-page="page-savings" type="button">
-      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg></span>
+      <span class="tab__icon"><svg class="icon-svg planet-tab" viewBox="0 0 24 24" aria-hidden="true"><g class="planet-tab__orbit-group"><ellipse class="planet-tab__orbit" cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)" pathLength="100" stroke-dasharray="20 10 37 10"></ellipse></g><g class="planet-tab__core"><circle cx="12" cy="12" r="5.1"></circle><path d="M14.2 9.2h-3.6a1.2 1.2 0 0 0 0 2.4h2.5a1.2 1.2 0 0 1 0 2.4H9.5"></path><path d="M12 8.5v6.5"></path></g></svg></span>
       <span class="tab__text">收入</span>
     </button>
     <button class="tab" data-page="page-chart" type="button">
-      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+      <span class="tab__icon"><svg class="icon-svg planet-tab" viewBox="0 0 24 24" aria-hidden="true"><g class="planet-tab__orbit-group"><ellipse class="planet-tab__orbit" cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)" pathLength="100" stroke-dasharray="20 10 37 10"></ellipse></g><g class="planet-tab__core"><circle cx="12" cy="12" r="5.1"></circle><path d="M9.8 14.2v-1.7M12 14.2V10M14.2 14.2v-2.8"></path></g></svg></span>
       <span class="tab__text">统计</span>
     </button>
     <button class="tab" data-page="page-list" type="button">
-      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></span>
+      <span class="tab__icon"><svg class="icon-svg planet-tab" viewBox="0 0 24 24" aria-hidden="true"><g class="planet-tab__orbit-group"><ellipse class="planet-tab__orbit" cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)" pathLength="100" stroke-dasharray="20 10 37 10"></ellipse></g><g class="planet-tab__core"><circle cx="12" cy="12" r="5.1"></circle><path d="M9.8 10.1h4.4M9.8 12h4.4M9.8 13.9h2.8"></path></g></svg></span>
       <span class="tab__text">明细</span>
     </button>
     <button class="tab" data-page="page-settings" type="button">
-      <span class="tab__icon"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+      <span class="tab__icon"><svg class="icon-svg planet-tab" viewBox="0 0 24 24" aria-hidden="true"><g class="planet-tab__orbit-group"><ellipse class="planet-tab__orbit" cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)" pathLength="100" stroke-dasharray="20 10 37 10"></ellipse></g><g class="planet-tab__core"><circle cx="12" cy="12" r="5.1"></circle><circle cx="12" cy="12" r="1.6"></circle><path d="M12 8.9v.9M12 14.2v.9M15.1 12h-.9M9.8 12h-.9M14.2 9.8l-.6.6M10.4 13.6l-.6.6M14.2 14.2l-.6-.6M10.4 10.4l-.6-.6"></path></g></svg></span>
       <span class="tab__text">设置</span>
     </button>
   </nav>

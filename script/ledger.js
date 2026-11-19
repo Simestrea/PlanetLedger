@@ -13,6 +13,17 @@ const Ledger = {
       if (!r.type) r.type = 'expense';
     });
 
+    // 恢复备份或旧版本可能留下字符串金额，统一转成数字，避免统计时拼接字符串。
+    let repairedNumbers = false;
+    this.records.forEach(function (r) {
+      const amount = Number(r.amount);
+      if (Number.isFinite(amount) && amount !== r.amount) {
+        r.amount = amount;
+        repairedNumbers = true;
+      }
+    });
+    if (repairedNumbers) this.saveRecords();
+
     // V3.4.1 脏数据修复：
     // 早期版本 IncomeCategories 未初始化时保存的收入记录 categoryId 可能为空，
     // 重新分配到一个有效分类，避免渲染时读到 undefined。

@@ -162,7 +162,7 @@ const App = {
       const delBtn = document.getElementById('quickDelBtn');
       if (delBtn) {
         delBtn.addEventListener('click', function() {
-          Modal.confirm({ type: 'warn', title: '删除速记', message: '确定要删除「' + tpl.name + '」吗？', danger: true }).then(function(ok) {
+          Modal.confirm({ type: 'warn', title: '删除速记', message: '确定要删除「' + UI.escapeHtml(tpl.name) + '」吗？', danger: true }).then(function(ok) {
             if (ok) {
               const chip = document.querySelector('.quick-chip[data-qid="' + tpl.id + '"]');
               const doDeleteChip = function() {
@@ -182,7 +182,13 @@ const App = {
   },
 
   saveQuickRecord: function(tpl, amt) {
-    Ledger.add({ amount: amt, categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
+    const today = Ledger.today();
+    const month = today.slice(0, 7);
+    Ledger.add({ amount: amt, categoryId: tpl.categoryId, note: tpl.note, date: today });
+    if (month !== this.currentMonth) {
+      this.currentMonth = month;
+      this.setMonthButton(month);
+    }
     UI.renderAll(this.currentMonth);
     UI.showToast('已记账 ￥' + amt);
     Modal._close(null);
@@ -195,6 +201,14 @@ const App = {
     let tempName = isEdit ? editTpl.name : '';
     let tempCatId = isEdit ? editTpl.categoryId : Categories.list[0].id;
     let tempCatName = isEdit ? Categories.get(editTpl.categoryId).name : Categories.list[0].name;
+    const catExists = Categories.list.some(function (c) { return c.id === tempCatId; });
+    if (!catExists) {
+      tempCatId = Categories.list[0].id;
+      tempCatName = Categories.list[0].name;
+    }
+    if (isEdit) {
+      editTpl.categoryId = tempCatId;
+    }
 
     const renderModal = function() {
       const nameInput = document.getElementById('qtName');
@@ -739,6 +753,8 @@ const App = {
 
   updateIncomeAmountPreview: function () {
     this.updateAmountPreview(UI.els.incomeAmountInput, UI.els.incomeSplitInput, UI.els.incomeAmountPreview);
+    const box = UI.els.incomeAmountInput && UI.els.incomeAmountInput.closest('.amount--saving');
+    if (box) box.classList.toggle('has-value', Number(UI.els.incomeAmountInput.value) > 0);
   },
 
   setIncomeDateButton: function (date) {
@@ -783,6 +799,7 @@ const App = {
     }
 
     Ledger.add({ type: 'income', amount: amount, categoryId: categoryId, note: noteInput.value || '', date: date });
+    this.playIncomeSaved(amount);
     amountInput.value = '';
     splitInput.value = '';
     noteInput.value = '';
@@ -796,6 +813,17 @@ const App = {
     UI.renderAll(this.currentMonth);
     const tip = split > 1 ? ('已记收入 ￥' + amount.toFixed(2) + '（' + rawAmount.toFixed(2) + ' ÷ ' + split + '人）') : '收入记好啦 ✓';
     UI.showToast(tip);
+  },
+
+  playIncomeSaved: function (amount) {
+    const planet = document.querySelector('#page-savings .amount__planet');
+    if (planet) {
+      planet.classList.remove('is-receiving');
+      // Force the same short animation to replay when two incomes are saved in a row.
+      void planet.offsetWidth;
+      planet.classList.add('is-receiving');
+      setTimeout(function () { planet.classList.remove('is-receiving'); }, 700);
+    }
   },
 
   openBudgetModal: function () {
@@ -950,6 +978,20 @@ const App = {
           Storage.write(CONFIG.budgetKey, Ledger.budgets);
         }
 
+        const importedCheckinStr = data['slh.checkin.v1'];
+        if (importedCheckinStr) {
+          try {
+            const importedCheckin = JSON.parse(importedCheckinStr);
+            const localCheckin = Storage.read('slh.checkin.v1', { lastDate: '', streak: 0 });
+            if (importedCheckin && typeof importedCheckin === 'object' &&
+                (importedCheckin.lastDate || '').localeCompare(localCheckin.lastDate || '') > 0) {
+              Storage.write('slh.checkin.v1', importedCheckin);
+            }
+          } catch (e) {
+            console.warn('签到数据导入失败', e);
+          }
+        }
+
         // ---- 记录导入（含 categoryId 校验与映射） ----
         const importedRecordsStr = data['slh.records.v1'];
         let addedCount = 0;
@@ -958,10 +1000,23 @@ const App = {
         let remappedIncome = 0;
         if (importedRecordsStr) {
           const importedRecords = JSON.parse(importedRecordsStr);
-          const existingSignatures = new Set();
-          Ledger.records.forEach(r => existingSignatures.add(`${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`));
+          const existingIds = new Set(Ledger.records.map(r => r.id));
 
           importedRecords.forEach(r => {
+            if (!r || typeof r !== 'object') return;
+            if (!r.id) r.id = Date.now() + '-' + Math.random().toString(16).slice(2, 8);
+            if (existingIds.has(r.id)) {
+              duplicateList.push(r);
+              return;
+            }
+
+            if (!r.type) r.type = 'expense';
+            r.amount = Number(r.amount);
+            if (!Number.isFinite(r.amount) || r.amount <= 0) return;
+            r.note = r.note || '';
+            r.createdAt = Number(r.createdAt) || Date.now();
+            r.date = typeof r.date === 'string' ? r.date : '';
+
             if (r.type === 'income') {
               if (incomeCatIdMap.has(r.categoryId)) {
                 r.categoryId = incomeCatIdMap.get(r.categoryId);
@@ -988,9 +1043,9 @@ const App = {
               }
             }
 
-            const sig = `${r.createdAt}|${r.amount}|${r.categoryId}|${r.note}`;
-            if (existingSignatures.has(sig)) duplicateList.push(r);
-            else { Ledger.records.push(r); existingSignatures.add(sig); addedCount++; }
+            Ledger.records.push(r);
+            existingIds.add(r.id);
+            addedCount++;
           });
 
           // 循环结束后保存补建的分类
@@ -1078,6 +1133,7 @@ const App = {
     const quickActions = document.getElementById('quickActions');
     if (quickActions) {
       let lastTap = 0;
+      let lastTapChipId = '';
       let tapTimer = null;
       const DOUBLE_PRESS_DELAY = 250;
 
@@ -1092,17 +1148,25 @@ const App = {
         const tpl = self.quickTemplates.find(function (t) { return t.id === id; });
         if (!tpl) return;
         const now = Date.now();
-        if (now - lastTap < DOUBLE_PRESS_DELAY) {
+        if (now - lastTap < DOUBLE_PRESS_DELAY && lastTapChipId === id) {
           clearTimeout(tapTimer);
           const defaultAmt = tpl.amounts && tpl.amounts.length > 0 ? tpl.amounts[0] : (tpl.amount || 0);
-          Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: Ledger.today() });
+          const today = Ledger.today();
+          const month = today.slice(0, 7);
+          Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: today });
+          if (month !== self.currentMonth) {
+            self.currentMonth = month;
+            self.setMonthButton(month);
+          }
           UI.renderAll(self.currentMonth);
           if (navigator.vibrate) navigator.vibrate(30);
           UI.showToast('已快捷记账 ￥' + defaultAmt);
         } else {
+          clearTimeout(tapTimer);
           tapTimer = setTimeout(function () { self.showQuickPanel(tpl); }, DOUBLE_PRESS_DELAY);
         }
         lastTap = now;
+        lastTapChipId = id;
       });
     }
 
@@ -1574,7 +1638,7 @@ const App = {
   editCategoryLimit: async function (id) {
     const cat = Categories.get(id);
     const current = (cat.limit && cat.limit > 0) ? String(cat.limit) : '';
-    const value = await Modal.prompt({ type: 'info', title: '「' + cat.name + '」月度额度', message: '输入每月上限，留空或填 0 表示取消', input: { placeholder: '输入限额', value: current, type: 'number' } });
+    const value = await Modal.prompt({ type: 'info', title: '「' + UI.escapeHtml(cat.name) + '」月度额度', message: '输入每月上限，留空或填 0 表示取消', input: { placeholder: '输入限额', value: current, type: 'number' } });
     if (value === null) return;
     const num = Number(value);
     if (value === '' || num === 0) { Categories.setLimit(id, 0); UI.renderCatManage(this.currentMonth); UI.showToast('已取消额度'); return; }
@@ -1619,11 +1683,11 @@ const App = {
     const beforeRatio = beforeSpent / limit;
     const afterRatio = afterSpent / limit;
     if (afterRatio >= 1) {
-      Modal.alert({ type: 'danger', title: '「' + cat.name + '」已超支', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，超出 <strong>￥' + (afterSpent - limit).toFixed(2) + '</strong>', buttonText: '知道了' });
+      Modal.alert({ type: 'danger', title: '「' + UI.escapeHtml(cat.name) + '」已超支', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，超出 <strong>￥' + (afterSpent - limit).toFixed(2) + '</strong>', buttonText: '知道了' });
       return;
     }
     if (afterRatio >= 0.5 && beforeRatio < 0.5) {
-      Modal.alert({ type: 'warn', title: '「' + cat.name + '」已用一半', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，剩 <strong>￥' + (limit - afterSpent).toFixed(2) + '</strong>', buttonText: '知道了' });
+      Modal.alert({ type: 'warn', title: '「' + UI.escapeHtml(cat.name) + '」已用一半', html: '本月已花 <strong>￥' + afterSpent.toFixed(2) + '</strong><br>额度 ￥' + limit.toFixed(2) + '，剩 <strong>￥' + (limit - afterSpent).toFixed(2) + '</strong>', buttonText: '知道了' });
     }
   },
 };
@@ -1787,7 +1851,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateVisual(dist);
   }
   function onMouseUp() {
-    if (!pulling || usingMouse) return;
+    if (!pulling || !usingMouse) return;
     finishPull(true);
   }
 
@@ -2255,7 +2319,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const pad = (n) => String(n).padStart(2, '0');
     const timeStr = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 
-    const amountStr = (isIncome ? '+' : '-') + '￥' + record.amount.toFixed(2);
+    const amount = Number(record.amount) || 0;
+    const amountStr = (isIncome ? '+' : '-') + '￥' + amount.toFixed(2);
     const amountColor = isIncome ? 'var(--c-success)' : 'var(--c-danger)';
 
     // 使用内联样式构建弹窗的 HTML（保持海岛风的大圆角和排版）
@@ -2265,7 +2330,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px dashed var(--c-border); padding-bottom: 16px; margin-bottom: 16px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: ${cat.color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></span>
-            <span style="font-size: 18px; font-weight: 800; color: var(--c-text);">${cat.name}</span>
+            <span style="font-size: 18px; font-weight: 800; color: var(--c-text);">${UI.escapeHtml(cat.name)}</span>
           </div>
           <span style="font-size: 24px; font-weight: 900; color: ${amountColor};">${amountStr}</span>
         </div>
@@ -2274,7 +2339,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--c-text-sub);">
           <div style="display: flex; justify-content: space-between;">
             <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">备注说明</span>
-            <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; flex: 1;">${record.note || '无'}</span>
+            <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; flex: 1;">${UI.escapeHtml(record.note || '无')}</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">记账日期</span>
@@ -2358,21 +2423,42 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (expandArea) {
       expandArea.style.height = expandArea.scrollHeight + 'px';
-      requestAnimationFrame(() => {
-        expandArea.style.height = '0px';
-        expandArea.style.opacity = '0';
-        setTimeout(() => expandArea.remove(), 300);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          expandArea.style.height = '0px';
+          expandArea.style.opacity = '0';
+          expandArea.style.paddingTop = '0px';
+          expandArea.style.marginTop = '0px';
+          expandArea.style.borderTopWidth = '0px';
+        });
       });
+      setTimeout(function () {
+        if (expandArea.parentNode) expandArea.parentNode.removeChild(expandArea);
+        recordEl.style.flexWrap = '';
+        recordEl.style.gap = '';
+      }, 400);
       return;
     }
 
     document.querySelectorAll('.custom-expand-area').forEach(area => {
+      const owner = area.closest('.record');
       area.style.height = area.scrollHeight + 'px';
-      requestAnimationFrame(() => {
-        area.style.height = '0px';
-        area.style.opacity = '0';
-        setTimeout(() => area.remove(), 300);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          area.style.height = '0px';
+          area.style.opacity = '0';
+          area.style.paddingTop = '0px';
+          area.style.marginTop = '0px';
+          area.style.borderTopWidth = '0px';
+        });
       });
+      setTimeout(function () {
+        if (area.parentNode) area.parentNode.removeChild(area);
+        if (owner) {
+          owner.style.flexWrap = '';
+          owner.style.gap = '';
+        }
+      }, 400);
     });
 
     const id = recordEl.dataset.id;
@@ -2387,6 +2473,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const area = document.createElement('div');
     area.className = 'custom-expand-area';
     area.style.cssText = `
+      flex-basis: 100%;
       width: 100%;
       height: 0;
       opacity: 0;
@@ -2406,7 +2493,7 @@ document.addEventListener('DOMContentLoaded', function () {
     area.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
         <span style="font-weight: 600; white-space: nowrap; flex: none; width: 70px;">完整备注</span>
-        <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; line-height: 1.4;">${record.note || '无'}</span>
+        <span style="color: var(--c-text); font-weight: 700; text-align: right; word-break: break-all; line-height: 1.4;">${UI.escapeHtml(record.note || '无')}</span>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
         <span style="font-weight: 600; white-space: nowrap; flex: none;">精确时间</span>

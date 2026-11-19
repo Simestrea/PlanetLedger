@@ -77,6 +77,24 @@ body {
   letter-spacing: .5px;
 }
 
+.header__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header__title::before {
+  content: '';
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, .16),
+    0 0 12px rgba(255, 255, 255, .32);
+}
+
 /* 顶部的月份按钮 */
 .header__month {
   position: relative;
@@ -227,6 +245,13 @@ body {
 .tab__icon {
   font-size: 20px;
   line-height: 1;
+}
+
+:root[data-custom-bg="on"] .header__title::before {
+  background: rgba(255, 255, 255, .92);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, .2),
+    0 0 12px rgba(0, 0, 0, .16);
 }
 
 /* 单栏布局，所有设备一致 */
