@@ -185,6 +185,7 @@ const App = {
     const today = Ledger.today();
     const month = today.slice(0, 7);
     Ledger.add({ amount: amt, categoryId: tpl.categoryId, note: tpl.note, date: today });
+    this.playHeaderPlanet();
     if (month !== this.currentMonth) {
       this.currentMonth = month;
       this.setMonthButton(month);
@@ -799,6 +800,7 @@ const App = {
     }
 
     Ledger.add({ type: 'income', amount: amount, categoryId: categoryId, note: noteInput.value || '', date: date });
+    this.playHeaderPlanet();
     this.playIncomeSaved(amount);
     amountInput.value = '';
     splitInput.value = '';
@@ -824,6 +826,21 @@ const App = {
       planet.classList.add('is-receiving');
       setTimeout(function () { planet.classList.remove('is-receiving'); }, 700);
     }
+  },
+
+  playHeaderPlanet: function () {
+    const planet = document.querySelector('.header__planet');
+    if (!planet) return;
+
+    planet.classList.remove('is-recording');
+    // Force a smooth restart when several records are saved in quick succession.
+    void planet.offsetWidth;
+    planet.classList.add('is-recording');
+
+    clearTimeout(this.headerPlanetTimer);
+    this.headerPlanetTimer = setTimeout(function () {
+      planet.classList.remove('is-recording');
+    }, 1500);
   },
 
   openBudgetModal: function () {
@@ -1154,6 +1171,7 @@ const App = {
           const today = Ledger.today();
           const month = today.slice(0, 7);
           Ledger.add({ amount: Number(defaultAmt), categoryId: tpl.categoryId, note: tpl.note, date: today });
+          self.playHeaderPlanet();
           if (month !== self.currentMonth) {
             self.currentMonth = month;
             self.setMonthButton(month);
@@ -1664,6 +1682,7 @@ const App = {
     const beforeSpent = Ledger.byMonth(month).filter(function (r) { return r.categoryId === categoryId; }).reduce(function (s, r) { return s + r.amount; }, 0);
     const note = noteInput.value || '';
     Ledger.add({ amount: amount, categoryId: categoryId, note: note, date: date });
+    this.playHeaderPlanet();
     amountInput.value = '';
     splitInput.value = '';
     noteInput.value = '';

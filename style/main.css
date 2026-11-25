@@ -83,16 +83,113 @@ body {
   gap: 8px;
 }
 
-.header__title::before {
-  content: '';
+.header__planet {
+  position: relative;
   flex: none;
   width: 9px;
   height: 9px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.header__planet i {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background: #fff;
   box-shadow:
     0 0 0 3px rgba(255, 255, 255, .16),
     0 0 12px rgba(255, 255, 255, .32);
+  transition:
+    opacity .28s ease,
+    transform .38s cubic-bezier(.32, .72, 0, 1);
+}
+
+.header__planet b {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 7px;
+  margin: -3.5px 0 0 -9px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform: rotate(-18deg);
+  will-change: opacity, transform;
+}
+
+.header__planet.is-recording i {
+  opacity: 0;
+  transform: scale(.3);
+}
+
+.header__planet.is-recording b {
+  animation: headerPlanetReveal 1.45s cubic-bezier(.32, .72, 0, 1) both;
+}
+
+.header__planet.is-recording b::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 5px;
+  height: 5px;
+  margin: auto;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .18),
+    0 0 8px rgba(255, 255, 255, .38);
+  offset-path: ellipse(7px 3px at 50% 50%);
+  offset-rotate: 0deg;
+  offset-distance: 0%;
+  animation: headerPlanetTravel 1.45s cubic-bezier(.32, .72, 0, 1) both;
+  will-change: offset-distance, transform;
+}
+
+.header__planet b::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, .45);
+  border-width: 1.5px;
+  border-radius: 50%;
+}
+
+@keyframes headerPlanetReveal {
+  0% {
+    opacity: 0;
+    transform: rotate(-18deg) scale(.72);
+  }
+
+  16%,
+  84% {
+    opacity: 1;
+    transform: rotate(-18deg) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(-18deg) scale(.72);
+  }
+}
+
+@keyframes headerPlanetTravel {
+  from {
+    offset-distance: 0%;
+  }
+
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header__planet i,
+  .header__planet b,
+  .header__planet.is-recording b::after {
+    animation: none;
+  }
 }
 
 /* 顶部的月份按钮 */
@@ -247,7 +344,7 @@ body {
   line-height: 1;
 }
 
-:root[data-custom-bg="on"] .header__title::before {
+:root[data-custom-bg="on"] .header__planet i {
   background: rgba(255, 255, 255, .92);
   box-shadow:
     0 0 0 3px rgba(255, 255, 255, .2),
