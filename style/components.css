@@ -1,3 +1,8 @@
+/*
+ * Component base styles only.
+ * Wallpaper, glass, and light-theme context lives in theme-overrides.css.
+ */
+
 .field {
   margin-bottom: 16px;
 }
@@ -68,17 +73,6 @@
   text-overflow: clip;
 }
 
-.cat::before {
-  content: '';
-  flex: none;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--cat-color, #A8A2B0);
-  transition: transform .18s var(--ease);
-  pointer-events: none;
-}
-
 .cat.is-active {
   color: var(--cat-color);
   border-color: var(--cat-color);
@@ -87,8 +81,50 @@
   box-shadow: 0 4px 12px color-mix(in srgb, var(--cat-color) 15%, transparent);
 }
 
-.cat.is-active::before {
-  transform: scale(1.35);
+/* Category planets share one component for expense and income grids. */
+.cat__planet {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+  pointer-events: none;
+}
+
+.cat__planet::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cat-color, #A8A2B0);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--cat-color, #A8A2B0) 14%, transparent);
+  transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+
+.cat__planet::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 6px;
+  width: 18px;
+  height: 7px;
+  border: 1px solid color-mix(in srgb, var(--cat-color, #A8A2B0) 38%, transparent);
+  border-radius: 50%;
+  transform: rotate(-22deg);
+  transition: transform .22s var(--ease), opacity .22s var(--ease), border-color .22s var(--ease);
+  opacity: .8;
+}
+
+.cat.is-active .cat__planet::before {
+  transform: scale(1.18);
+  box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--cat-color, #A8A2B0) 18%, transparent);
+}
+
+.cat.is-active .cat__planet::after {
+  opacity: 1;
+  transform: rotate(-22deg) scale(1.06);
 }
 
 .cat__del {
@@ -121,10 +157,6 @@
   color: var(--c-text-light);
   background: transparent;
   font-weight: 500;
-}
-
-.cat--add::before {
-  display: none;
 }
 
 .cat--add:hover {
@@ -845,8 +877,11 @@
 }
 
 .modal__icon--info    { background: linear-gradient(135deg, #6E7E92, #4A6078); }
+
 .modal__icon--warn    { background: linear-gradient(135deg, #C29A4A, #B8823F); }
+
 .modal__icon--danger  { background: linear-gradient(135deg, #A85E52, #A85E52); }
+
 .modal__icon--success { background: linear-gradient(135deg, #5C7A6A, #4E7B6A); }
 
 .modal__title {
@@ -1112,7 +1147,6 @@
    响应式
    ========================================================== */
 
-
 @media (min-width: 769px) {
   .daily-col {
     flex-basis: 22px;
@@ -1125,7 +1159,6 @@
     max-width: 280px;
   }
 }
-
 
 /* ==========================================================
    统计筛选栏
@@ -1459,7 +1492,6 @@
   box-shadow: 0 4px 10px rgba(60, 50, 80, .35);
 }
 
-
 /* ==========================================================
    分类格子响应式（追加在最末，优先级最高）
    ========================================================== */
@@ -1471,7 +1503,6 @@
 /* 平板 / 桌面：5 列 */
 @media (min-width: 600px) {
 }
-
 
 /* ==========================================================
    分类格子最终版：固定列数 + 完整文字
@@ -1489,9 +1520,6 @@
     font-size: 12px;
   }
 }
-
-
-
 
 /* ==========================================================
    固定布局：覆盖所有断点，所有设备一致
@@ -1536,7 +1564,6 @@
 .field {
   margin-bottom: 16px;
 }
-
 
 /* ==========================================================
    滑块效果：分段选择器 / 图表切换 / 底部导航
@@ -1629,11 +1656,9 @@
   z-index: 1;
 }
 
-
 /* ==========================================================
    主题系统：20 个 Pantone 流行色 + 自定义
    ========================================================== */
-
 
 /* --- 洋红万岁 Viva Magenta --- */
 :root[data-theme="magenta"] {
@@ -2181,17 +2206,16 @@
   line-height: 1.7;
 }
 
-
 /* ==========================================================
    修复：滑块首次加载不播放动画
    ========================================================== */
 .seg:not(.is-ready)::before,
 .chart-tabs:not(.is-ready)::before,
 .tabbar:not(.is-ready)::before {
-  transition: none !important;
+  transition: none;
 }
-/* 允许纵向滚动，横向拖动交给 JS */
 
+/* 允许纵向滚动，横向拖动交给 JS */
 
 /* 拖动过程中：禁止选中 / 滚动 */
 
@@ -2217,7 +2241,6 @@
   padding-top: calc(20px + env(safe-area-inset-top, 0px));
 }
 
-
 /* ==========================================================
    滑块首次渲染：不播放动画
    ========================================================== */
@@ -2231,7 +2254,7 @@
 html:not(.app-ready) .seg::before,
 html:not(.app-ready) .chart-tabs::before,
 html:not(.app-ready) .tabbar::before {
-  transition: none !important;
+  transition: none;
 }
 
    ========================================================== */
@@ -2335,7 +2358,6 @@ html:not(.app-ready) .tabbar::before {
       150% 150%;
   }
 }
-
 
 /* ==========================================================
    高级玻璃质感
@@ -2465,7 +2487,6 @@ html:not(.app-ready) .tabbar::before {
   -webkit-backface-visibility: hidden;
 }
 
-
 /* ==========================================================
    沉浸式顶栏：header 顶到状态栏
    ========================================================== */
@@ -2478,582 +2499,27 @@ html:not(.app-ready) .tabbar::before {
   padding-bottom: calc(var(--tabbar-h) + 24px + env(safe-area-inset-bottom, 0px));
 }
 
-
-/* ==========================================================
-   毛玻璃（唯一版本，覆盖所有旧的）
-   ========================================================== */
-
-/* ---------- 背景图 ---------- */
-:root[data-custom-bg="on"] body {
-  background-image: var(--custom-bg-url) !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-/* 去掉所有遮罩 */
-:root[data-custom-bg="on"] body::before {
-  display: none !important;
-}
-
-:root[data-custom-bg="on"] .app {
-  position: relative;
-  background: transparent !important;
-}
-
-/* ---------- ① 顶栏：毛玻璃 ---------- */
-:root[data-custom-bg="on"] .header {
-  position: relative !important;
-  isolation: isolate !important;
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.32) !important;
-  backdrop-filter: blur(14px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-  
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.12),
-    0 2px 6px rgba(0, 0, 0, 0.05) !important;
-}
-
-:root[data-custom-bg="on"] .header::before,
-:root[data-custom-bg="on"] .header::after {
-  display: none !important;
-}
-
-:root[data-custom-bg="on"] .header__inner {
-  position: relative;
-  z-index: 2;
-}
-
-/* ---------- ② dock：毛玻璃 ---------- */
-:root[data-custom-bg="on"] .tabbar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin: 0 auto !important;
-  transform: none !important;
-  width: 100% !important;
-  max-width: var(--app-max-w) !important;
-  height: auto !important;
-  min-height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 4px) !important;
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px) !important;
-
-  background: rgba(250, 248, 245, 0.48) !important;
-  backdrop-filter: blur(16px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
-  
-  border-top: none !important;
-  box-shadow:
-    0 -6px 18px rgba(0, 0, 0, 0.08),
-    0 -1px 4px rgba(0, 0, 0, 0.04) !important;
-}
-
-:root[data-custom-bg="on"] .tabbar::before,
-:root[data-custom-bg="on"] .tabbar::after {
-  display: none !important;
-}
-
-:root[data-custom-bg="on"] .tabbar .tab {
-  position: relative;
-  z-index: 2;
-  min-height: 56px;
-}
-
-/* ---------- ③ 卡片：毛玻璃 ---------- */
-:root[data-custom-bg="on"] .card {
-  position: relative !important;
-  isolation: isolate !important;
-  background: rgba(253, 252, 251, 0.45) !important;
-  backdrop-filter: blur(10px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
-  
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.06),
-    0 2px 6px rgba(0, 0, 0, 0.03) !important;
-}
-
-:root[data-custom-bg="on"] .card::before,
-:root[data-custom-bg="on"] .card::after {
-  display: none !important;
-}
-
-:root[data-custom-bg="on"] .card > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* ---------- ④ 弹窗 / 日历：毛玻璃 ---------- */
-:root[data-custom-bg="on"] .modal {
-  background: rgba(253, 252, 251, 0.72) !important;
-  backdrop-filter: blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.24),
-    0 8px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-:root[data-custom-bg="on"] .calendar-panel {
-  background: rgba(253, 252, 251, 0.72) !important;
-  backdrop-filter: blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  
-  border: none !important;
-  box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.2),
-    0 6px 16px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* ---------- 子组件：无 backdrop-filter，纯半透明 ---------- */
-:root[data-custom-bg="on"] .cat,
-:root[data-custom-bg="on"] .cat-manage__item,
-:root[data-custom-bg="on"] .record,
-:root[data-custom-bg="on"] .legend-item,
-:root[data-custom-bg="on"] .stat-mini {
-  background: rgba(245, 242, 238, 0.55) !important;
-  border: none !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-}
-
-:root[data-custom-bg="on"] .cat.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.32) !important;
-  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
-  box-shadow: 0 3px 10px rgba(var(--c-primary-rgb, 110, 92, 150), 0.22) !important;
-}
-
-:root[data-custom-bg="on"] .cat--add {
-  background: transparent !important;
-  border: 1.5px dashed rgba(255, 255, 255, 0.45) !important;
-  box-shadow: none !important;
-}
-
-/* ---------- 输入框 ---------- */
-:root[data-custom-bg="on"] .input,
-:root[data-custom-bg="on"] .amount,
-:root[data-custom-bg="on"] .stat-period,
-:root[data-custom-bg="on"] .stat-cat,
-:root[data-custom-bg="on"] .modal__input {
-  background: rgba(250, 248, 245, 0.6) !important;
-  border: none !important;
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.03),
-    0 1px 2px rgba(0, 0, 0, 0.02) !important;
-}
-
-/* ---------- 按钮 ---------- */
-:root[data-custom-bg="on"] .btn {
-  background: rgba(248, 246, 243, 0.65) !important;
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.02) !important;
-}
-
-:root[data-custom-bg="on"] .btn--primary {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.88) !important;
-  color: #fff !important;
-  box-shadow:
-    0 6px 18px rgba(var(--c-primary-rgb, 110, 92, 150), 0.35),
-    0 2px 6px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 主题卡片 ---------- */
-:root[data-custom-bg="on"] .theme-item {
-  background: rgba(245, 242, 238, 0.5) !important;
-  border: 1px solid transparent !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-}
-
-:root[data-custom-bg="on"] .theme-item.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.26) !important;
-  border-color: rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
-  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.22) !important;
-}
-
-/* ---------- 上传按钮 ---------- */
-:root[data-custom-bg="on"] .custom-upload__label {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
-  border: 1.5px dashed rgba(var(--c-primary-rgb, 110, 92, 150), 0.5) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
-}
-
-/* ---------- 图表 tab / 分段选择器 ---------- */
-:root[data-custom-bg="on"] .chart-tabs,
-:root[data-custom-bg="on"] .seg {
-  background: rgba(245, 242, 238, 0.5) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
-}
-
-/* ---------- 进度条底槽 ---------- */
-:root[data-custom-bg="on"] .bar__track,
-:root[data-custom-bg="on"] .stat-compare-row__bar {
-  background: rgba(240, 237, 232, 0.45) !important;
-}
-
-:root[data-custom-bg="on"] .daily-bar.is-empty,
-:root[data-custom-bg="on"] .monthly-bar.is-empty {
-  background: rgba(240, 237, 232, 0.45) !important;
-}
-
-/* ---------- Toast ---------- */
-:root[data-custom-bg="on"] .toast {
-  background: rgba(30, 26, 40, 0.82) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-}
-
-/* ---------- 分隔线 ---------- */
-:root[data-custom-bg="on"] .about-row,
-:root[data-custom-bg="on"] .about-hint,
-:root[data-custom-bg="on"] .stat-main,
-:root[data-custom-bg="on"] .calendar-foot {
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-   ========================================================== */
-
-/* ==========================================================
-   自定义背景：灰色文字加深（提升对比度）
-   ========================================================== */
-:root[data-custom-bg="on"] {
-  --c-text:       #0F0C15;   /* 主文字：近黑 */
-  --c-text-sub:   #2C2735;   /* 副文字：深灰（标签） */
-  --c-text-light: #4A4453;   /* 浅文字：中灰（占位符） */
-}
-
-   ========================================================== */
-
-/* 透玻璃：去掉所有 backdrop-filter，只留半透明色 */
-
-
-/* 透玻璃：背景色更淡一点（因为不模糊了，背景会很清晰） */
-
-
-
-
-
-/* ---------- 设置页 UI ---------- */
-
-/* 毛玻璃预览：上面盖一层模糊块 */
-
-/* 透玻璃预览：只盖半透明色，无模糊 */
-
-
-
-   选择器带 [data-glass-mode="clear"] 高于之前的规则
-   ========================================================== */
-
-/* ---------- 卡片：亚克力 ---------- */
-
-
-/* ---------- 顶栏 ---------- */
-
-
-/* ---------- dock ---------- */
-
-
-/* ---------- 弹窗 ---------- */
-
-
-/* ---------- 日历 ---------- */
-
-
-/* ---------- 子组件：亚克力化 ---------- */
-
-
-/* ---------- 输入框 ---------- */
-
-
-/* ---------- 主按钮 ---------- */
-
-
-/* ---------- 普通按钮 ---------- */
-
-
-/* ---------- 主题卡片 ---------- */
-
-
-
-
-/* ---------- 图表 tab / 分段选择器 ---------- */
-
-
-/* ---------- 上传按钮 ---------- */
-
-
-/* ---------- 进度条 ---------- */
-
-
-
-
-   ========================================================== */
-
-/* ---------- 预览块 ---------- */
-
-/* 毛玻璃预览：加模糊 + 半透明白 */
-
-/* 透玻璃预览：只加半透明白（不模糊） */
-
-/* ---------- 勾选图标（右上角，仅选中时显示） ---------- */
-
-/* ---------- 文字信息 ---------- */
-
-/* ---------- 自定义背景 + 玻璃模式下的协调 ---------- */
-:root[data-custom-bg="on"] 
-
-:root[data-custom-bg="on"] 
-
-/* 窄屏时单列 */
-@media (max-width: 360px) {
-  
-  
-}
-
-
-/* ==========================================================
-   透玻璃 = 亚克力质感（最终版）
-   ========================================================== */
-
-/* ---------- 通用：卡片类元素 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .card,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-
-  /* 不模糊 */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-
-  /* 亚克力奶白底 —— 比"透玻璃"更实 */
-  background: rgba(248, 245, 242, 0.72) !important;
-
-  /* 1.5px 切边 */
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  border-radius: var(--radius) !important;
-
-  /* 立体感 + 厚度 */
-  box-shadow:
-    /* 顶边强高光（受光） */
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
-    /* 底边弱高光（反光） */
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
-    /* 左右内白 */
-    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
-    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
-    /* 内部极淡阴影，增加实心感 */
-    inset 0 0 40px rgba(255, 255, 255, 0.2),
-    /* 实心投影：像一块板浮在桌面上 */
-    0 10px 28px rgba(0, 0, 0, 0.16),
-    0 4px 10px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 表面磨砂颗粒（用伪元素叠加） ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .card {
-  position: relative;
-  isolation: isolate;
-}
-
-:root[data-custom-bg="on"][data-glass-mode="clear"] .card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  z-index: 0;
-  pointer-events: none;
-
-  /* 磨砂颗粒：3px 间距的微小白点 + 斜向细纹 */
-  background-image:
-    radial-gradient(circle at 1px 1px,
-      rgba(255, 255, 255, 0.12) 1px,
-      transparent 1px),
-    radial-gradient(circle at 2px 3px,
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px),
-    repeating-linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.03) 0px,
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px,
-      transparent 4px
-    );
-  background-size: 3px 4px, 5px 5px, 100% 100%;
-  mix-blend-mode: overlay;
-}
-
-:root[data-custom-bg="on"][data-glass-mode="clear"] .card > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* ---------- 顶栏 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .header {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.8) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-  border-top: none !important;
-  border-left: none !important;
-  border-right: none !important;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.2),
-    0 10px 28px rgba(0, 0, 0, 0.18),
-    0 4px 10px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* ---------- dock ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .tabbar {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(248, 245, 242, 0.85) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  border-bottom: none !important;
-  border-left: none !important;
-  border-right: none !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 8px -6px rgba(255, 255, 255, 0.6),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.4),
-    0 -8px 24px rgba(0, 0, 0, 0.12),
-    0 -2px 8px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 子组件：亚克力化 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-manage__item,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .record,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .legend-item,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-mini {
-  background: rgba(248, 245, 242, 0.7) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    inset 1px 0 0 rgba(255, 255, 255, 0.5),
-    inset -1px 0 0 rgba(255, 255, 255, 0.5),
-    0 3px 8px rgba(0, 0, 0, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* 选中的分类 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat.is-active {
-  background: color-mix(in srgb, var(--cat-color) 35%, rgba(255, 255, 255, 0.5)) !important;
-  border: 1.5px solid var(--cat-color) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-    0 4px 12px color-mix(in srgb, var(--cat-color) 35%, transparent),
-    0 1px 3px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 输入框 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .input,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .amount,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__input {
-  background: rgba(255, 255, 255, 0.78) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
-    0 1px 3px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* ---------- 按钮 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .btn {
-  background: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    inset 1px 0 0 rgba(255, 255, 255, 0.6),
-    inset -1px 0 0 rgba(255, 255, 255, 0.6),
-    0 3px 8px rgba(0, 0, 0, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.04) !important;
-}
-
-:root[data-custom-bg="on"][data-glass-mode="clear"] .btn--primary {
-  background: color-mix(in srgb, var(--c-primary) 92%, white) !important;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1.5px 0 rgba(0, 0, 0, 0.15),
-    inset 1px 0 0 rgba(255, 255, 255, 0.25),
-    inset -1px 0 0 rgba(255, 255, 255, 0.25),
-    0 8px 20px color-mix(in srgb, var(--c-primary) 42%, transparent),
-    0 2px 6px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* ---------- 主题卡片 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item {
-  background: rgba(248, 245, 242, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    0 2px 6px rgba(0, 0, 0, 0.05) !important;
-}
-
-:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 32%, rgba(255, 255, 255, 0.5)) !important;
-  border: 1.5px solid var(--c-primary) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
-    0 4px 12px color-mix(in srgb, var(--c-primary) 35%, transparent),
-    0 1px 3px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 图表 tab / 分段选择器 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .chart-tabs,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .seg {
-  background: rgba(248, 245, 242, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-    0 2px 6px rgba(0, 0, 0, 0.05) !important;
-}
-
-/* ---------- 上传按钮 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .custom-upload__label {
-  background: color-mix(in srgb, var(--c-primary) 22%, rgba(255, 255, 255, 0.6)) !important;
-  border: 1.5px dashed color-mix(in srgb, var(--c-primary) 55%, transparent) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.8),
-    0 2px 6px rgba(0, 0, 0, 0.04) !important;
-}
-
-
 /* ==========================================================
    玻璃样式卡片（重建）
    ========================================================== */
 
 .glass-mode {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   width: 100%;
 }
 
 .glass-mode__btn {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 8px !important;
-  padding: 10px !important;
-  margin: 0 !important;
-  background: var(--c-surface) !important;
-  border: 2px solid transparent !important;
-  border-radius: 14px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 10px;
+  margin: 0;
+  background: var(--c-surface);
+  border: 2px solid transparent;
+  border-radius: 14px;
   cursor: pointer;
   transition:
     border-color .2s ease,
@@ -3073,11 +2539,11 @@ html:not(.app-ready) .tabbar::before {
 }
 
 .glass-mode__btn.is-active {
-  border-color: var(--c-primary) !important;
-  background: color-mix(in srgb, var(--c-primary) 10%, var(--c-card)) !important;
+  border-color: var(--c-primary);
+  background: color-mix(in srgb, var(--c-primary) 10%, var(--c-card));
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--c-primary) 18%, transparent),
-    0 4px 14px color-mix(in srgb, var(--c-primary) 22%, transparent) !important;
+    0 4px 14px color-mix(in srgb, var(--c-primary) 22%, transparent);
 }
 
 /* 预览块 */
@@ -3156,34 +2622,15 @@ html:not(.app-ready) .tabbar::before {
   color: var(--c-primary);
 }
 
-/* 自定义背景下协调 */
-:root[data-custom-bg="on"] .glass-mode__btn {
-  background: rgba(253, 252, 251, 0.6) !important;
-  border-color: rgba(255, 255, 255, 0.55) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 2px 6px rgba(0, 0, 0, 0.05) !important;
-}
-
-:root[data-custom-bg="on"] .glass-mode__btn.is-active {
-  background: color-mix(in srgb, var(--c-primary) 22%, rgba(255, 255, 255, 0.55)) !important;
-  border-color: var(--c-primary) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 0 0 3px color-mix(in srgb, var(--c-primary) 20%, transparent),
-    0 4px 14px color-mix(in srgb, var(--c-primary) 28%, transparent) !important;
-}
-
 /* 窄屏 */
 @media (max-width: 340px) {
   .glass-mode {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
   .glass-mode__preview {
     height: 50px;
   }
 }
-
 
 /* ==========================================================
    玻璃样式预览（真实感）
@@ -3295,287 +2742,15 @@ html:not(.app-ready) .tabbar::before {
   }
 }
 
-
-/* ==========================================================
-   没有壁纸时隐藏玻璃样式卡片
-   ========================================================== */
-:root:not([data-custom-bg="on"]) .card--glass-mode {
-  display: none !important;
-}
-
-
-/* ==========================================================
-   毛玻璃下：分类/记录 可读性增强
-   只针对背景加实，不影响整体质感
-   ========================================================== */
-
-/* 1. 分类格子：从 0.45 左右拉高到 0.75 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat {
-  background: rgba(253, 252, 251, 0.92) !important;
-  backdrop-filter: blur(12px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-}
-
-/* 选中的分类：底子稍微透一点主色，但保持高不透度 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat.is-active {
-  background: color-mix(in srgb, var(--cat-color) 20%, rgba(253, 252, 251, 0.95)) !important;
-  border: 1.5px solid var(--cat-color) !important;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--cat-color) 20%, transparent) !important;
-}
-
-/* 2. 分类管理列表（设置页） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item {
-  background: rgba(253, 252, 251, 0.92) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 3. 记录行 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record {
-  background: rgba(253, 252, 251, 0.92) !important;
-}
-
-/* 如果文字还是看不清，给文字加一点点非常轻微的阴影 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat__name,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record__name {
-}
-
-
-/* ==========================================================
-   分类格子：真·毛玻璃（极淡白 + 模糊）
-   只在毛玻璃模式下生效
-   ========================================================== */
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat {
-  /* 极淡的白色，几乎透明 */
-  background: rgba(255, 255, 255, 0.15) !important;
-  
-  /* 给它自己的模糊，让它和卡片融为一体 */
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  
-  /* 极淡的玻璃白边和阴影 */
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 选中状态：用主色微微染一下 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
-  backdrop-filter: blur(12px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
-  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
-  box-shadow: 
-    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-}
-
-/* "+ 添加" 按钮 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat--add {
-  background: transparent !important;
-  border: 1.5px dashed rgba(255, 255, 255, 0.5) !important;
-  box-shadow: none !important;
-}
-
-
-/* ==========================================================
-   全局小组件：真·毛玻璃统一质感
-   只在毛玻璃模式（非透玻璃）下生效
-   ========================================================== */
-
-/* ---------- 1. 输入框 / 选择框 / 金额框 ---------- */
-/* 为了防止输入框太透看不清字，背景稍微给到 0.25 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input {
-  background: rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 
-    inset 0 1px 2px rgba(0, 0, 0, 0.03),
-    0 1px 3px rgba(0, 0, 0, 0.03) !important;
-}
-
-/* ---------- 2. 普通按钮 / 上传按钮 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .btn,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .custom-upload__label {
-  background: rgba(255, 255, 255, 0.18) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 主按钮：使用主色玻璃，保持视觉层级 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .btn--primary {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.75) !important;
-  backdrop-filter: blur(10px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 4px 14px rgba(var(--c-primary-rgb, 110, 92, 150), 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-  color: #fff !important;
-}
-
-/* ---------- 3. 记录行 / 分类管理 / 图例 / 小卡片 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 1px 4px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* ---------- 4. 主题卡片 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
-  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
-  box-shadow: 
-    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-}
-
-/* ---------- 5. 图表 Tab / 分段选择器 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .chart-tabs,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .seg {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 激活态的 Tab 圆角滑块保持原色，或者用微透明主色 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .chart-tabs::before,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .seg::before {
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-}
-
-/* ---------- 6. 进度条底槽 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .bar__track,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-compare-row__bar,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .daily-bar.is-empty,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .monthly-bar.is-empty {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* ---------- 7. 弹窗和日历面板（稍微实一点，保证可读） ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  background: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(20px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-
-/* ==========================================================
-   补充：对比差值提示条 / 其他状态块
-   ========================================================== */
-
-/* 持平状态 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--same {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 1px 4px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 上涨状态（红色底） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--up {
-  background: rgba(168, 94, 82, 0.15) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(168, 94, 82, 0.3) !important;
-  box-shadow: 
-    0 1px 4px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 下跌状态（绿色底） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-diff--down {
-  background: rgba(92, 122, 106, 0.15) !important;
-  backdrop-filter: blur(8px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
-  border: 1px solid rgba(92, 122, 106, 0.3) !important;
-  box-shadow: 
-    0 1px 4px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* 分类管理里的额度胶囊按钮（小圆角那种） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.has-limit {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
-  border-color: rgba(var(--c-primary-rgb, 110, 92, 150), 0.4) !important;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.is-warn {
-  background: rgba(194, 154, 74, 0.15) !important;
-  border-color: rgba(194, 154, 74, 0.4) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__limit.is-over {
-  background: rgba(168, 94, 82, 0.15) !important;
-  border-color: rgba(168, 94, 82, 0.4) !important;
-}
-
-/* 统计详情里的小卡片（有支出 / 月均 / 最高月） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-main {
-  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-
 /* ==========================================================
    沉浸式顶栏安全区
    ========================================================== */
 .header {
-  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
 }
 
 /* 没有自定义壁纸时，深色顶栏需要状态栏图标为白色 */
 /* 有壁纸时，通过 JS 动态控制 */
-
 
 /* ==========================================================
    修复顶栏顶部割裂
@@ -3583,25 +2758,12 @@ html:not(.app-ready) .tabbar::before {
 
 /* 1. 把 header 强行往上提，延伸到屏幕外面一点点 */
 .header {
-  margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
   /* 确保顶部没有圆角 */
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
-
-/* 2. 如果是毛玻璃，把背景层向上多延伸 50px，避免 WebView 在最边缘漏算模糊 */
-:root[data-custom-bg="on"] .header::before {
-  top: -50px !important;
-  padding-top: 50px !important;
-  box-sizing: content-box !important;
-}
-
-/* 3. 对于非自定义背景（比如长春花蓝），去掉那条阴影线 */
-:root:not([data-custom-bg="on"]) .header {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-}
-
 
 /* ==========================================================
    签到卡片
@@ -3617,14 +2779,6 @@ html:not(.app-ready) .tabbar::before {
   box-shadow: var(--c-shadow);
   overflow: hidden;
   position: relative;
-}
-
-/* 自定义背景下的玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
-  background: rgba(255, 255, 255, 0.55) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .checkin-left {
@@ -3749,6 +2903,7 @@ html:not(.app-ready) .tabbar::before {
 .checkin-popup__row.yi {
   color: #D94F70;
 }
+
 .checkin-popup__row.ji {
   color: #5C7A6A;
 }
@@ -3776,45 +2931,13 @@ html:not(.app-ready) .tabbar::before {
   width: 100%;
 }
 
-    
+
 /* 签到按钮点击区域防遮挡 */
 .checkin-btn {
   position: relative;
   z-index: 10;
   cursor: pointer;
 }
-
-
-/* ==========================================================
-   修复原生 Select 下拉框样式
-   ========================================================== */
-
-/* 1. 把被覆盖掉的小箭头找回来 */
-:root[data-custom-bg="on"] .stat-cat {
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--c-text-sub) 50%),
-    linear-gradient(135deg, var(--c-text-sub) 50%, transparent 50%) !important;
-  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50% !important;
-  background-size: 5px 5px, 5px 5px !important;
-  background-repeat: no-repeat !important;
-  padding-right: 36px !important; /* 给箭头留出空间 */
-}
-
-/* 2. 确保展开后的列表在系统层面不难看（尽量统一颜色） */
-:root[data-custom-bg="on"] .stat-cat option,
-:root[data-custom-bg="on"] select option {
-  background-color: #FDFCFB !important;
-  color: #2E2A36 !important;
-  font-size: 14px;
-}
-
-/* 3. 深色模式（如果有的话）适配 */
-:root[data-custom-bg="on"][data-theme="night"] .stat-cat option,
-:root[data-custom-bg="on"][data-theme="night"] select option {
-  background-color: #252232 !important;
-  color: #E8E4F0 !important;
-}
-
 
 /* ==========================================================
    非侵入式分类选择弹窗
@@ -3827,10 +2950,10 @@ html:not(.app-ready) .tabbar::before {
 
 /* 隐藏原生 select，但保留它的占位和逻辑 */
 .custom-select-wrap .stat-cat {
-  position: absolute !important;
-  inset: 0 !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
   z-index: -1;
 }
 
@@ -3954,37 +3077,6 @@ html:not(.app-ready) .tabbar::before {
   flex: none;
 }
 
-/* 毛玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake {
-  background: rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal {
-  background: rgba(255, 255, 255, 0.75) !important;
-  backdrop-filter: blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item:active {
-  background: rgba(255, 255, 255, 0.3) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
-}
-
-/* 亚克力适配 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal {
-  background: rgba(248, 245, 242, 0.95) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-}
-
-
 /* ==========================================================
    只修复签到按钮的层级和防挤压
    ========================================================== */
@@ -3994,32 +3086,30 @@ html:not(.app-ready) .tabbar::before {
   flex-shrink: 0;
 }
 
-
 /* ==========================================================
    纯 CSS 强制锁死签到卡片布局
    ========================================================== */
 .checkin-card {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .checkin-card .checkin-left {
-  flex: 1 !important;
-  min-width: 0 !important;
+  flex: 1;
+  min-width: 0;
 }
 
 /* 强制按钮不换行、不占满全宽 */
 .checkin-card .checkin-btn {
-  flex: none !important;
-  width: auto !important;
-  display: inline-flex !important;
-  position: relative !important;
-  margin: 0 !important;
-  white-space: nowrap !important;
+  flex: none;
+  width: auto;
+  display: inline-flex;
+  position: relative;
+  margin: 0;
+  white-space: nowrap;
 }
-
 
 /* ==========================================================
    强制修复顶部 Header 被下层内容覆盖的问题
@@ -4027,27 +3117,27 @@ html:not(.app-ready) .tabbar::before {
 
 /* 1. 把顶部 Header 的层级提到最高（确保它在所有普通内容之上） */
 .header {
-  z-index: 300 !important;
+  z-index: 300;
 }
 
 /* 2. 签到按钮的层级调回普通值（只要盖住它所在的卡片内部元素即可，不用抢全局） */
 .checkin-btn {
-  z-index: 1 !important;
+  z-index: 1;
 }
 
 /* 3. 确保 tabbar 的层级也正常，不被内容盖住（保持它原有的较高层级） */
 .tabbar {
-  z-index: 90 !important;
+  z-index: 90;
 }
 
 /* 4. 确保弹窗/日历等全局组件层级依然在最顶层 */
 .modal-overlay {
-  z-index: 1000 !important;
-}
-.calendar-panel {
-  z-index: 200 !important;
+  z-index: 1000;
 }
 
+.calendar-panel {
+  z-index: 200;
+}
 
 /* ==========================================================
    强制修复顶栏吸附问题
@@ -4055,152 +3145,16 @@ html:not(.app-ready) .tabbar::before {
 
 /* 无论是普通主题还是自定义主题，顶栏都必须固定在顶部 */
 .header {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 300 !important;
+  position: sticky;
+  top: 0;
+  z-index: 300;
 }
 
 /* 之前为了防割裂加了负 margin，这不会影响 sticky，
    但为了防止某些安卓 WebView 渲染引擎的 BUG，重新确认一下 */
 .header {
-  margin-top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-  padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
-}
-
-/* 确保玻璃伪元素不会把 sticky 布局弄坏 */
-:root[data-custom-bg="on"] .header {
-  position: sticky !important;
-}
-
-
-/* ==========================================================
-   签到卡片：补齐玻璃质感
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(12px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-card {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(248, 245, 242, 0.72) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow:
-    /* 顶边强高光 */
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
-    /* 底边弱高光 */
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
-    /* 左右内白 */
-    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
-    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
-    /* 外投影 */
-    0 10px 28px rgba(0, 0, 0, 0.16),
-    0 4px 10px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.06) !important;
-}
-
-
-/* ==========================================================
-   统一卡片玻璃质感（对齐签到卡片的透度）
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card {
-  /* 统一改用 20% 的极淡白，让背景颜色透出来 */
-  background: rgba(255, 255, 255, 0.20) !important;
-  
-  /* 稍微增加一点模糊，让背景更柔和 */
-  backdrop-filter: blur(16px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
-  
-  /* 统一的极细白边和内阴影 */
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .card,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-card {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(248, 245, 242, 0.72) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 8px -6px rgba(255, 255, 255, 0.7),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -5px 8px -5px rgba(255, 255, 255, 0.3),
-    inset 1.5px 0 0 rgba(255, 255, 255, 0.6),
-    inset -1.5px 0 0 rgba(255, 255, 255, 0.6),
-    0 10px 28px rgba(0, 0, 0, 0.12),
-    0 4px 10px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ---------- 3. 确保内部文字清晰 ---------- */
-/* 因为卡片变透了，给里面的标题加一点点微光，防止在深色背景下看不清 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card__title,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-title,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .field__label {
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-
-/* ==========================================================
-   全局统一弹窗/浮层质感
-   包含：普通弹窗(.modal)、分类选择(.cat-modal)、签到(.checkin-popup__content)、日历(.calendar-panel)
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式（高可读性 + 极度通透） ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  /* 背景稍微给到 65%，保证在深色背景下文字绝对清晰 */
-  background: rgba(250, 248, 245, 0.65) !important;
-  
-  /* 强模糊 + 饱和度提升，透出底色 */
-  backdrop-filter: blur(28px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
-  
-  /* 统一的细白边和高光阴影 */
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.18),
-    0 4px 16px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  /* 亚克力奶白底，非常实，不模糊 */
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  
-  /* 亚克力的招牌白边和高低光 */
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.2),
-    0 8px 20px rgba(0, 0, 0, 0.1),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
 }
 
 /* ---------- 3. 细节清理 ---------- */
@@ -4210,64 +3164,6 @@ html:not(.app-ready) .tabbar::before {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* 确保分类弹窗的头部和列表分割线颜色协调 */
-:root[data-custom-bg="on"] .cat-modal__header {
-  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-
-/* ==========================================================
-   统一弹窗/浮层背景质感（极致通透版，对齐日历）
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  
-  /* 大幅降低白度，让背景颜色尽情透出来 */
-  background: rgba(255, 255, 255, 0.25) !important;
-  
-  /* 极强的模糊 + 稍微降低饱和度，让透出的颜色更柔和 */
-  backdrop-filter: blur(32px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(140%) !important;
-  
-  /* 干净纤细的白边 + 极其干净的投影 */
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-/* 亚克力模式下不能模糊，用实色奶白代替 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* ---------- 3. 内部元素的微调 ---------- */
-/* 确保内部的选中项在透明背景下依然清晰 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-month.is-selected,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal__item.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-}
-
-
 /* ==========================================================
    终极统一：弹窗与日历完全同步
    ========================================================== */
@@ -4275,57 +3171,24 @@ html:not(.app-ready) .tabbar::before {
 /* ---------- 1. 打薄所有全屏遮罩（解决发灰发暗的问题） ---------- */
 /* 普通弹窗遮罩 */
 .modal-overlay {
-  background: rgba(0, 0, 0, 0.15) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
+
 /* 分类选择遮罩 */
 .cat-modal-overlay {
-  background: rgba(0, 0, 0, 0.15) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
+
 /* 签到运势遮罩 */
 .checkin-popup {
-  background: rgba(0, 0, 0, 0.15) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
-
-/* ---------- 2. 弹窗面板完全统一（对齐图1的日历） ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  /* 纯净的乳白半透明 */
-  background: rgba(255, 255, 255, 0.45) !important;
-  
-  /* 统一的强模糊和饱和增强 */
-  backdrop-filter: blur(32px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
-  
-  /* 干净的白边和内高光 */
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* ---------- 3. 透玻璃（亚克力）模式同步 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
 
 /* ==========================================================
    预算设置弹窗专用样式（对齐选择分类）
@@ -4409,13 +3272,6 @@ html:not(.app-ready) .tabbar::before {
   color: var(--c-text-light);
 }
 
-/* 针对不同的玻璃模式微调透明度 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .budget-cat-item {
-  background: rgba(248, 245, 242, 0.6);
-  border-color: rgba(255, 255, 255, 0.8);
-}
-
-
 /* ==========================================================
    预算列表：纯文本版（去掉胶囊背景）
    ========================================================== */
@@ -4432,8 +3288,8 @@ html:not(.app-ready) .tabbar::before {
   align-items: center;
   justify-content: space-between;
   padding: 12px 4px; /* 左右内边距极小，和“选择分类”对齐 */
-  background: transparent !important; /* 去掉背景 */
-  border: none !important;            /* 去掉边框 */
+  background: transparent; /* 去掉背景 */
+  border: none;            /* 去掉边框 */
   transition: none;
 }
 
@@ -4492,35 +3348,28 @@ html:not(.app-ready) .tabbar::before {
   color: var(--c-text-light);
 }
 
-/* 深色背景下下划线的颜色适配 */
-:root[data-custom-bg="on"] .budget-cat-right {
-  border-bottom-color: rgba(255, 255, 255, 0.3);
-}
-
-
 /* ==========================================================
    强制隐藏弹窗横向滚动条
    ========================================================== */
 .modal__message {
-  overflow-x: hidden !important;
+  overflow-x: hidden;
 }
 
 /* 确保内部的任何 flex 子项都不会撑破宽度 */
 .budget-cat-item,
 .budget-cat-left,
 .budget-cat-right {
-  box-sizing: border-box !important;
-  max-width: 100% !important;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .budget-cat-right {
-  width: 110px !important; /* 稍微收窄一点，给左侧留空间 */
+  width: 110px; /* 稍微收窄一点，给左侧留空间 */
 }
 
 .budget-cat-input {
-  min-width: 0 !important; /* 防止输入框撑破容器 */
+  min-width: 0; /* 防止输入框撑破容器 */
 }
-
 
 /* ==========================================================
    终极修复：去掉描边 + 毛玻璃调白
@@ -4528,60 +3377,8 @@ html:not(.app-ready) .tabbar::before {
 
 /* 1. 暴力移除所有文字描边（光晕） */
 * {
-  text-shadow: none !important;
+  text-shadow: none;
 }
-
-/* 2. 重新设定毛玻璃的底色（调白） */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .header {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .tabbar {
-  background: rgba(250, 248, 245, 0.75) !important;
-}
-
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .card,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-card,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  /* 背景改为 55% 的白，既能透出颜色，又非常清晰 */
-  background: rgba(255, 255, 255, 0.55) !important;
-}
-
-/* 3. 卡片内的小组件（记录、分类格子）进一步调白 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini {
-  background: rgba(255, 255, 255, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 4. 输入框调白 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input {
-  background: rgba(255, 255, 255, 0.65) !important;
-  border: 1px solid rgba(255, 255, 255, 0.7) !important;
-}
-
-/* 5. 底部导航调白 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .dropdown-menu {
-  background: rgba(255, 255, 255, 0.85) !important;
-}
-
-/* 6. 确保文字颜色够深 */
-:root[data-custom-bg="on"] {
-  --c-text: #1A1720 !important; /* 近黑 */
-  --c-text-sub: #4A4453 !important; /* 深灰 */
-  --c-text-light: #6E6878 !important;
-}
-
 
 /* ==========================================================
    数据备份按钮布局
@@ -4596,17 +3393,6 @@ html:not(.app-ready) .tabbar::before {
   padding: 12px;
   font-size: 14px;
 }
-
-/* 毛玻璃模式适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .backup-actions .btn {
-  background: rgba(255, 255, 255, 0.55) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-:root[data-custom-bg="on"][data-glass-mode="clear"] .backup-actions .btn {
-  background: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-}
-
 
 /* ==========================================================
    存钱罐卡片样式
@@ -4650,20 +3436,6 @@ html:not(.app-ready) .tabbar::before {
   font-size: 14px;
 }
 
-/* 毛玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-balance {
-  background: rgba(255, 255, 255, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 亚克力适配 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .savings-balance {
-  background: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-
-
    ========================================================== */
 .savings-header {
   display: flex;
@@ -4702,26 +3474,21 @@ html:not(.app-ready) .tabbar::before {
 
 /* 存钱记录的增减颜色 */
 .savings-in {
-  color: var(--c-primary) !important;
+  color: var(--c-primary);
 }
+
 .savings-out {
-  color: var(--c-danger) !important;
+  color: var(--c-danger);
 }
 
 /* 适配底部 5 个 Tab 的紧凑布局 */
 .tabbar .tab {
   font-size: 10px; /* 稍微缩小文字 */
 }
+
 .tab__icon {
   font-size: 18px; /* 稍微缩小图标 */
 }
-
-/* 毛玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-header {
-  background: rgba(255, 255, 255, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
 
 /* ==========================================================
    存钱页面专属样式（重构版）
@@ -4765,60 +3532,48 @@ html:not(.app-ready) .tabbar::before {
 
 /* 强制覆盖主按钮的样式，防止被毛玻璃样式弄成浅色 */
 .savings-btn-row .btn--primary {
-  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 12px rgba(60, 50, 80, 0.2) !important;
-  border: none !important;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(60, 50, 80, 0.2);
+  border: none;
 }
 
 .savings-btn-row .btn:not(.btn--primary) {
-  background: var(--c-surface) !important;
-  color: var(--c-text) !important;
-  border: 1px solid var(--c-border) !important;
+  background: var(--c-surface);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
 }
 
 /* 存钱记录的增减颜色 */
 .savings-in {
-  color: var(--c-primary) !important;
+  color: var(--c-primary);
 }
+
 .savings-out {
-  color: var(--c-danger) !important;
+  color: var(--c-danger);
 }
 
 /* 适配底部 5 个 Tab 的紧凑布局 */
 .tabbar .tab {
   font-size: 10px;
 }
+
 .tab__icon {
   font-size: 18px;
 }
-
-/* 毛玻璃/亚克力 适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-header {
-  background: rgba(255, 255, 255, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-:root[data-custom-bg="on"][data-glass-mode="clear"] .savings-header {
-  background: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-}
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .savings-btn-row .btn:not(.btn--primary) {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
 
 /* ==========================================================
    V3.3 收入模块样式
    ========================================================== */
 .record__amount--income {
-  color: var(--c-success, #5C7A6A) !important;
+  color: var(--c-success, #5C7A6A);
 }
 
 /* 统计页：按年/按月分段占满行宽 */
 #statModeSeg {
   width: 100%;
 }
+
 #statModeSeg .seg__btn {
   flex: 1;
   text-align: center;
@@ -4829,7 +3584,6 @@ html:not(.app-ready) .tabbar::before {
   flex: none;
 }
 
-
 /* ==========================================================
    V3.4 净收入
    ========================================================== */
@@ -4838,6 +3592,7 @@ html:not(.app-ready) .tabbar::before {
 .stat-main__value.is-positive {
   color: #5C7A6A;
 }
+
 .stat-main__value.is-negative {
   color: #A85E52;
 }
@@ -4868,7 +3623,9 @@ html:not(.app-ready) .tabbar::before {
   height: 70px;
   display: flex;
 }
+
 .net-daily-top { align-items: flex-end; }
+
 .net-daily-bottom { align-items: flex-start; }
 
 .net-daily-bar {
@@ -4876,10 +3633,12 @@ html:not(.app-ready) .tabbar::before {
   min-height: 1px;
   transition: height .4s var(--ease);
 }
+
 .net-daily-bar--pos {
   background: linear-gradient(180deg, #7A8F7E, #5C7A6A);
   border-radius: 3px 3px 0 0;
 }
+
 .net-daily-bar--neg {
   background: linear-gradient(180deg, #A85E52, #B8776E);
   border-radius: 0 0 3px 3px;
@@ -4914,7 +3673,9 @@ html:not(.app-ready) .tabbar::before {
   height: 70px;
   display: flex;
 }
+
 .net-monthly-top { align-items: flex-end; }
+
 .net-monthly-bottom { align-items: flex-start; }
 
 .net-monthly-bar {
@@ -4922,10 +3683,12 @@ html:not(.app-ready) .tabbar::before {
   min-height: 1px;
   transition: height .4s var(--ease);
 }
+
 .net-monthly-bar--pos {
   background: linear-gradient(180deg, #7A8F7E, #5C7A6A);
   border-radius: 3px 3px 0 0;
 }
+
 .net-monthly-bar--neg {
   background: linear-gradient(180deg, #A85E52, #B8776E);
   border-radius: 0 0 3px 3px;
@@ -4937,7 +3700,6 @@ html:not(.app-ready) .tabbar::before {
   line-height: 1;
 }
 
-
 /* ==========================================================
    统计页：时间与分类筛选器样式彻底统一
    ========================================================== */
@@ -4945,61 +3707,42 @@ html:not(.app-ready) .tabbar::before {
 /* 1. 基础形态统一：圆角、边框、内边距、字体 */
 .stat-period,
 .stat-cat-fake {
-  flex: 1 !important;
-  height: 46px !important;
-  padding: 0 14px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  border-radius: var(--radius-sm) !important; /* 统一为 10px，不再是圆角胶囊 */
-  border: 1.5px solid var(--c-border) !important;
-  background-color: var(--c-surface) !important;
-  box-sizing: border-box !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  transition: border-color .18s var(--ease) !important;
+  flex: 1;
+  height: 46px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-sm); /* 统一为 10px，不再是圆角胶囊 */
+  border: 1.5px solid var(--c-border);
+  background-color: var(--c-surface);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color .18s var(--ease);
 }
 
 .stat-period:hover,
 .stat-cat-fake:hover,
 .stat-period:active,
 .stat-cat-fake:active {
-  opacity: 1 !important;
-  border-color: var(--c-primary-light) !important;
-}
-
-/* 2. 毛玻璃模式：完全对齐背景 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake {
-  background-color: rgba(255, 255, 255, 0.55) !important;
-  border: 1px solid rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-}
-
-/* 3. 透玻璃（亚克力）模式：完全对齐背景（解决发虚的问题） */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat-fake {
-  background-color: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  opacity: 1;
+  border-color: var(--c-primary-light);
 }
 
 /* 修复图标对齐 */
 .stat-period__caret,
 .stat-cat__caret {
-  margin: 0 !important;
-  flex: none !important;
-  position: static !important;
+  margin: 0;
+  flex: none;
+  position: static;
 }
 
 .stat-period {
-  text-align: left !important;
-  justify-content: space-between !important;
-  padding-right: 14px !important;
+  text-align: left;
+  justify-content: space-between;
+  padding-right: 14px;
 }
-
 
 /* ==========================================================
    统计筛选栏：顶部单行排版优化
@@ -5007,30 +3750,26 @@ html:not(.app-ready) .tabbar::before {
 
 /* 顶部行：均匀分布，两端对齐 */
 .stat-filter__top {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 /* 因为右边还有对比开关，为了防止拥挤，让左边两组自适应且不换行 */
 .stat-filter__top .seg {
-  flex-shrink: 1 !important;
-  min-width: 0 !important;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
-/* #statModeSeg { width: auto !important; } */
+/* #statModeSeg { width: auto; } */
 
 #statModeSeg .seg__btn {
-  padding: 6px 12px !important; /* 稍微收窄一点内边距 */
-  font-size: 13px !important;
+  padding: 6px 12px; /* 稍微收窄一点内边距 */
+  font-size: 13px;
 }
 
-
-
 /* 如果屏幕太小，适当隐藏文字或缩小尺寸 */
-
-
 
 /* ==========================================================
    图表切换 Tab：方形圆角化（覆盖原有胶囊样式）
@@ -5038,36 +3777,32 @@ html:not(.app-ready) .tabbar::before {
 
 /* 1. 外层容器：减小圆角，调整内边距 */
 .chart-tabs {
-  border-radius: 10px !important;
-  padding: 4px !important;
-  gap: 0 !important; /* 取消间距，依靠滑块定位 */
+  border-radius: 10px;
+  padding: 4px;
+  gap: 0; /* 取消间距，依靠滑块定位 */
 }
 
 /* 2. 滑动背景块（那个绿色的滑块）：减小圆角，贴紧边缘 */
 .chart-tabs::before {
-  border-radius: 8px !important;
-  top: 4px !important;
-  bottom: 4px !important;
+  border-radius: 8px;
+  top: 4px;
+  bottom: 4px;
   /* 左侧初始化位置微调，确保滑块和文字居中贴合 */
-  transform: translateX(var(--tabs-thumb-x, 4px)) !important; 
+  transform: translateX(var(--tabs-thumb-x, 4px));
 }
 
 /* 3. 文字按钮：去除圆角，让点击区域更规整 */
 .chart-tabs .chart-tab {
-  border-radius: 8px !important; 
-  padding: 8px 0 !important; /* 左右内边距归零，靠 flex 均匀分布 */
-  margin: 0 !important;
+  border-radius: 8px;
+  padding: 8px 0; /* 左右内边距归零，靠 flex 均匀分布 */
+  margin: 0;
 }
 
 /* 4. 防止文字被挤压，保持居中 */
 .chart-tabs .chart-tab.is-active {
-  background: transparent !important; /* 背景交给 ::before */
-  box-shadow: none !important;
+  background: transparent; /* 背景交给 ::before */
+  box-shadow: none;
 }
-
-
-
-
 
 /* ==========================================================
    顶部：支出/收入切换按钮
@@ -5079,7 +3814,7 @@ html:not(.app-ready) .tabbar::before {
   border-radius: 999px;
   backdrop-filter: blur(4px);
   position: relative;
-  z-index: 9999 !important;
+  z-index: 9999;
 }
 
 .header-mode-btn {
@@ -5090,7 +3825,7 @@ html:not(.app-ready) .tabbar::before {
   border-radius: 999px;
   transition: all .2s var(--ease);
   cursor: pointer;
-  pointer-events: auto !important;
+  pointer-events: auto;
 }
 
 .header-mode-btn.is-active {
@@ -5100,91 +3835,86 @@ html:not(.app-ready) .tabbar::before {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-
 /* ==========================================================
    彻底修复统计页筛选栏挤压、文字竖排问题
    ========================================================== */
 
 /* 1. 强制第一行两端对齐，且绝不换行 */
 .stat-filter__top {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  flex-wrap: nowrap !important;
-  gap: 8px !important;
-  width: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: 100%;
 }
 
 /* 2. 左侧分段选择器：防止被挤压，文字绝不换行 */
 #statTypeSeg {
-  flex: 0 0 auto !important;
-  display: inline-flex !important;
+  flex: 0 0 auto;
+  display: inline-flex;
 }
 
 #statTypeSeg .seg__btn {
-  padding: 6px 10px !important; /* 稍微缩小左右内边距 */
-  font-size: 13px !important;
-  white-space: nowrap !important; /* 核心：禁止文字换行 */
+  padding: 6px 10px; /* 稍微缩小左右内边距 */
+  font-size: 13px;
+  white-space: nowrap; /* 核心：禁止文字换行 */
 }
 
 /* 3. 右侧对比开关：不收缩，文字不换行 */
 .stat-compare {
-  flex: 0 0 auto !important;
-  display: flex !important;
-  align-items: center !important;
-  white-space: nowrap !important;
-  font-size: 13px !important;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 13px;
 }
 
 /* 4. 限制复选框大小，防止它变成巨型方块 */
 .stat-compare input[type="checkbox"] {
-  width: 16px !important;
-  height: 16px !important;
-  margin: 0 !important;
-  flex: none !important;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex: none;
 }
 
 .stat-compare label {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* 5. 确保按月/按年依然保持独占一行并撑满宽度 */
 .stat-filter__row {
-  width: 100% !important;
-  display: flex !important;
-  gap: 8px !important;
+  width: 100%;
+  display: flex;
+  gap: 8px;
 }
 
 #statModeSeg {
-  width: 100% !important;
-  display: flex !important;
+  width: 100%;
+  display: flex;
 }
 
 #statModeSeg .seg__btn {
-  flex: 1 !important;
-  white-space: nowrap !important;
+  flex: 1;
+  white-space: nowrap;
 }
-
-
-
 
 /* ==========================================================
    最终层级保证：日历悬浮在所有内容之上
    ========================================================== */
 .header {
-  z-index: 100 !important;
+  z-index: 100;
 }
+
 .calendar-panel {
-  z-index: 200 !important; /* 必须大于 Header，保证顶栏的日历能弹出来 */
+  z-index: 200; /* 必须大于 Header，保证顶栏的日历能弹出来 */
 }
+
 .modal-overlay {
-  z-index: 1000 !important;
+  z-index: 1000;
 }
-
-
-
 
 /* --- 红1主题 (OnePlus Red) --- */
 :root[data-theme="red1"] {
@@ -5206,43 +3936,6 @@ html:not(.app-ready) .tabbar::before {
   --c-warning: #B5822E;
 }
 
-/* ==========================================================
-   浅色主题专属修复：顶栏变深色
-   ========================================================== */
-html.light-theme-active .header {
-  color: var(--c-text) !important;
-}
-
-html.light-theme-active .header__title,
-html.light-theme-active .overview__label,
-html.light-theme-active .overview__value {
-  color: var(--c-text) !important;
-}
-
-/* 月份按钮：浅色下变成淡淡的黑底黑字 */
-html.light-theme-active .header__month {
-  color: var(--c-text) !important;
-  background: rgba(0, 0, 0, 0.08) !important;
-}
-
-/* 月份按钮的小箭头改成深色 */
-html.light-theme-active .header__month::after {
-  border-color: var(--c-text-sub) !important;
-}
-
-/* 进度条：底槽和填充条都加深 */
-html.light-theme-active .budget-bar {
-  background: rgba(0, 0, 0, 0.1) !important;
-}
-html.light-theme-active .budget-bar__fill {
-  background: var(--c-text) !important;
-}
-
-/* 修改按钮的文字颜色 */
-html.light-theme-active .overview__label span {
-  color: var(--c-text-sub) !important;
-}
-
 /* --- 长春花蓝（补齐 data-theme 变量） --- */
 :root[data-theme="periwinkle"] {
   --c-primary: #6667AB;
@@ -5262,7 +3955,6 @@ html.light-theme-active .overview__label span {
   --c-success: #5C7A6A;
   --c-warning: #B5822E;
 }
-
 
 /* ==========================================================
    快捷记账胶囊
@@ -5314,30 +4006,6 @@ html.light-theme-active .overview__label span {
   background: transparent;
   padding: 6px 10px;
 }
-
-/* 毛玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .quick-chip {
-  background: rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-}
-
-/* 透玻璃适配 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip {
-  background: rgba(248, 245, 242, 0.82) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-
-
-
-
-
-
-
-
-
 
 /* ==========================================================
    分类子弹窗（覆盖在主弹窗之上）
@@ -5422,328 +4090,22 @@ html.light-theme-active .overview__label span {
   flex: none;
 }
 
-
-/* ==========================================================
-   子弹窗：玻璃质感适配（补齐）
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式 ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal {
-  background: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(32px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 头部和列表的边框线条也微调一下，防止在透明下太突兀 */
-:root[data-custom-bg="on"] .sub-modal__header {
-  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-/* 子弹窗里的每一项：加一点悬浮反馈，更像玻璃 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal-item:active {
-  background: rgba(255, 255, 255, 0.5) !important;
-}
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal-item:active {
-  background: rgba(0, 0, 0, 0.05) !important;
-}
-
-
-
-
-
-/* ==========================================================
-   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
-   ========================================================== */
-
-/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  background: rgba(255, 255, 255, 0.75) !important;
-  backdrop-filter: blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* 2. 透玻璃（亚克力）模式：同样保持统一 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
-:root[data-custom-bg="on"] .cat-modal__item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
-  color: var(--c-primary) !important;
-  font-weight: 600 !important;
-}
-
-
-/* ==========================================================
-   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
-   ========================================================== */
-
-/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  background: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* 2. 透玻璃（亚克力）模式：同样保持统一 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
-:root[data-custom-bg="on"] .cat-modal__item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
-  color: var(--c-primary) !important;
-  font-weight: 600 !important;
-}
-
-
-/* ==========================================================
-   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
-   ========================================================== */
-
-/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  background: rgba(255, 255, 255, 0.75) !important;
-  backdrop-filter: blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* 2. 透玻璃（亚克力）模式：同样保持统一 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
-:root[data-custom-bg="on"] .cat-modal__item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
-  color: var(--c-primary) !important;
-  font-weight: 600 !important;
-}
-
-
-/* ==========================================================
-   终极统一：所有弹窗完美对齐“选择分类”的质感 (由 fix.py 注入)
-   ========================================================== */
-
-/* 1. 毛玻璃模式：统一调整为截图中这种极透亮、高饱和的柔和玻璃 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .sub-modal,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-popup__content,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .calendar-panel {
-  background: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-}
-
-/* 2. 透玻璃（亚克力）模式：同样保持统一 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .sub-modal,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-popup__content,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .calendar-panel {
-  background: rgba(248, 245, 242, 0.88) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 
-    0 24px 60px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1.5px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-/* 3. 统一选中项的淡黄色/浅色高亮，使其更加明显 */
-:root[data-custom-bg="on"] .cat-modal__item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 15%, rgba(255, 255, 255, 0.8)) !important;
-  color: var(--c-primary) !important;
-  font-weight: 600 !important;
-}
-
-
-
-/* ==========================================================
-   终极统一：所有框框组件（更透、更干净）
-   ========================================================== */
-
-/* ---------- 1. 毛玻璃模式（极度通透） ---------- */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .input,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .amount,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .modal__input,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-period,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-cat-fake,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .record,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .cat-manage__item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .legend-item,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .stat-mini,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .quick-chip,
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .theme-item {
-  /* 更透的背景：降到 15% 的白，让背景图完全透出来 */
-  background: rgba(255, 255, 255, 0.15) !important;
-  /* 极细的白色半透明边框，代替硬朗的黑色/灰色 */
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  /* 顶部微弱高光 + 外部极淡投影 */
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.2),
-    0 2px 8px rgba(0, 0, 0, 0.02) !important;
-  /* 去除历史遗留的奇怪阴影 */
-  color: var(--c-text) !important;
-}
-
-/* ---------- 2. 透玻璃（亚克力）模式 ---------- */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .input,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .amount,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__input,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-period,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-cat-fake,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .record,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-manage__item,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .legend-item,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .stat-mini,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .theme-item {
-  background: rgba(255, 255, 255, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-radius: 12px !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
-/* ---------- 3. 细节修复 ---------- */
-
-/* 金额框里的分隔线 */
-:root[data-custom-bg="on"] .amount__sep {
-  background: rgba(0, 0, 0, 0.08) !important;
-}
-
-/* 分类格子内部的选中态：微微泛出主色 */
-:root[data-custom-bg="on"] .cat.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.2) !important;
-  border: 1.5px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.6) !important;
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.4),
-    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
-}
-
-/* 记录列表右侧的金额和删除按钮对齐 */
-:root[data-custom-bg="on"] .record {
-  padding: 12px 14px !important;
-}
-
-/* 输入框获得焦点时的光晕调整 */
-:root[data-custom-bg="on"] .input:focus,
-:root[data-custom-bg="on"] .amount:focus-within,
-:root[data-custom-bg="on"] .modal__input:focus {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2) !important;
-}
-
 /* 确保“常用金额”容器（被设为 modal__input 的那个）高度自适应 */
 .modal__input[style*="display:flex"] {
-  height: auto !important;
-  align-items: flex-start !important;
+  height: auto;
+  align-items: flex-start;
 }
-
-
-
 
 /* === 修复选择分类按钮的垂直居中 === */
 #qtCatBtn {
-  height: 44px !important;
-  min-height: 44px !important;
-  display: flex !important;
-  align-items: center !important; /* 强制垂直居中 */
-  justify-content: space-between !important;
-  padding: 0 14px !important;
-  line-height: normal !important;
-  box-sizing: border-box !important;
+  height: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center; /* 强制垂直居中 */
+  justify-content: space-between;
+  padding: 0 14px;
+  line-height: normal;
+  box-sizing: border-box;
 }
 
 #qtCatBtn span {
@@ -5752,23 +4114,20 @@ html.light-theme-active .overview__label span {
   height: 100%;
 }
 
-
-
-
 /* === 终极升级：全站按钮与选中态的半透明彩色玻璃效果 === */
 
 /* ---------- 1. 主按钮（保存、提交等）变为带主色的半透玻璃 ---------- */
 .btn--primary,
 .modal__btn--primary {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
-  backdrop-filter: blur(12px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.5),
-    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.25) !important;
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.25);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------- 2. 普通按钮（取消、关闭、今日已打卡、普通按钮）变为通透白 ---------- */
@@ -5776,316 +4135,121 @@ html.light-theme-active .overview__label span {
 .modal__btn,
 .checkin-btn.is-checked,
 .quick-chip {
-  background: rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.05) !important;
-  color: var(--c-text) !important;
+    0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--c-text);
 }
 
 /* 今日已打卡文字稍微淡一点 */
 .checkin-btn.is-checked {
-  color: var(--c-text-sub) !important;
+  color: var(--c-text-sub);
 }
 
 /* ---------- 3. 签到按钮（未打卡） ---------- */
 .checkin-btn {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2) !important;
-  color: #fff !important;
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2);
+  color: #fff;
 }
 
 /* ---------- 4. 分段选择器滑块（支出/收入、按月/按年、图表Tab） ---------- */
 .seg::before,
 .chart-tabs::before {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.7) !important;
-  backdrop-filter: blur(8px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.7);
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
     0 2px 8px rgba(var(--c-primary-rgb, 110, 92, 150), 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 /* 确保滑块上的文字清晰 */
 .seg .seg__btn.is-active,
 .chart-tabs .chart-tab.is-active {
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------- 5. 顶栏的“支出/收入”切换按钮 ---------- */
 .header-mode-btn.is-active {
-  background: rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  color: var(--c-primary-dark) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--c-primary-dark);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* ---------- 6. 分类弹窗里的选中项 ---------- */
 .cat-modal__item.is-active {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15) !important;
-  border: 1px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.3) !important;
-  backdrop-filter: blur(4px) !important;
+  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.15);
+  border: 1px solid rgba(var(--c-primary-rgb, 110, 92, 150), 0.3);
+  backdrop-filter: blur(4px);
 }
-
-/* ---------- 7. 亚克力（透玻璃）模式适配 ---------- */
-/* 透玻璃模式下因为没有 backdrop-filter 模糊，稍微调高一点不透明度以防看不清 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .btn--primary,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn--primary,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .seg::before,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .chart-tabs::before {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85) !important;
-}
-
-:root[data-custom-bg="on"][data-glass-mode="clear"] .btn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn.is-checked,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .quick-chip {
-  background: rgba(255, 255, 255, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-
-
 
 /* === 修复：打卡按钮跟随主题变色 === */
 
 /* 覆盖掉上一版强制写死的白色背景，恢复为跟随主题的表面色 */
 .checkin-btn.is-checked {
-  background: color-mix(in srgb, var(--c-surface) 65%, transparent) !important;
-  backdrop-filter: blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 
+  background: color-mix(in srgb, var(--c-surface) 65%, transparent);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.3),
-    0 2px 6px rgba(0, 0, 0, 0.05) !important;
-  color: var(--c-text-sub) !important;
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  color: var(--c-text-sub);
 }
-
-/* 透玻璃模式下稍微实一点 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn.is-checked {
-  background: color-mix(in srgb, var(--c-surface) 85%, transparent) !important;
-  border-color: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-
-
 
 /* === 终极修复：打卡按钮（未打卡状态）高级玻璃质感 === */
 
 .checkin-btn {
   /* 使用 color-mix 完美自适应任何主题色，混合 75% 的不透明度 */
-  background: color-mix(in srgb, var(--c-primary) 75%, transparent) !important;
-  
+  background: color-mix(in srgb, var(--c-primary) 75%, transparent);
+
   /* 强模糊，透出底色 */
-  backdrop-filter: blur(16px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
-  
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+
   /* 剔除生硬的边框，换成半透明的白色切边 */
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
   /* 核心：模拟液态玻璃的立体高光与折射 */
-  box-shadow: 
+  box-shadow:
     inset 0 2px 3px rgba(255, 255, 255, 0.5),   /* 顶部强水光 */
     inset 0 -2px 5px rgba(0, 0, 0, 0.15),        /* 底部暗角厚度 */
     inset 2px 0 3px rgba(255, 255, 255, 0.1),    /* 左侧反光 */
-    0 4px 15px color-mix(in srgb, var(--c-primary) 35%, transparent) !important; /* 外部主色投影 */
-    
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    0 4px 15px color-mix(in srgb, var(--c-primary) 35%, transparent); /* 外部主色投影 */
+
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
-
-/* 透玻璃（亚克力）模式适配：无模糊，但保持高透和光泽 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
-  background: color-mix(in srgb, var(--c-primary) 85%, transparent) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-
-
-
-/* === 纠错：仅允许在自定义背景（壁纸）下应用玻璃特效 === */
-
-/* 当没有自定义背景（正常主题）时，强制恢复原本的实色质感 */
-
-/* 1. 恢复主按钮的实色渐变 */
-:root:not([data-custom-bg="on"]) .btn--primary,
-:root:not([data-custom-bg="on"]) .modal__btn--primary,
-:root:not([data-custom-bg="on"]) .checkin-btn {
-  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: 0 6px 18px rgba(60, 50, 80, 0.2) !important;
-  text-shadow: none !important;
-}
-
-/* 2. 恢复普通按钮 / 取消 / 关闭的实色 */
-:root:not([data-custom-bg="on"]) .btn:not(.btn--primary),
-:root:not([data-custom-bg="on"]) .modal__btn:not(.modal__btn--primary),
-:root:not([data-custom-bg="on"]) .quick-chip,
-:root:not([data-custom-bg="on"]) .checkin-btn.is-checked {
-  background: var(--c-surface) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid var(--c-border) !important;
-  box-shadow: var(--c-shadow-sm) !important;
-  color: var(--c-text) !important;
-}
-
-/* 3. 恢复分段选择器（按月/按年）滑块的实色 */
-:root:not([data-custom-bg="on"]) .seg::before,
-:root:not([data-custom-bg="on"]) .chart-tabs::before {
-  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(60, 50, 80, 0.2) !important;
-}
-
-/* 4. 恢复顶栏切换按钮 / 分类选中项的实色 */
-:root:not([data-custom-bg="on"]) .header-mode-btn.is-active {
-  background: #fff !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-:root:not([data-custom-bg="on"]) .cat-modal__item.is-active {
-  background: color-mix(in srgb, var(--c-primary) 12%, var(--c-card)) !important;
-  border: none !important;
-  backdrop-filter: none !important;
-}
-
-/* 5. 恢复所有输入框、卡片、分类格子、记录行的实色边框和背景 */
-:root:not([data-custom-bg="on"]) .input,
-:root:not([data-custom-bg="on"]) .amount,
-:root:not([data-custom-bg="on"]) .modal__input,
-:root:not([data-custom-bg="on"]) .stat-period,
-:root:not([data-custom-bg="on"]) .stat-cat-fake,
-:root:not([data-custom-bg="on"]) .cat,
-:root:not([data-custom-bg="on"]) .record,
-:root:not([data-custom-bg="on"]) .cat-manage__item,
-:root:not([data-custom-bg="on"]) .legend-item,
-:root:not([data-custom-bg="on"]) .stat-mini,
-:root:not([data-custom-bg="on"]) .theme-item {
-  background: var(--c-surface) !important;
-  border: 1.5px solid var(--c-border) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: none !important;
-  color: var(--c-text) !important;
-}
-
-
-
-
-/* === 最终优化：打卡按钮对齐“保存这一笔”的平整毛玻璃质感 === */
-
-/* 仅在自定义壁纸下生效 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-btn {
-  /* 使用主题色混合较高的透明度（透出背后颜色） */
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.45) !important;
-  
-  /* 强毛玻璃模糊 */
-  backdrop-filter: blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  
-  /* 极细的浅色切边 */
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  
-  /* 干净柔和的边缘高光，去掉厚重的果冻感 */
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    
-  color: #fff !important;
-  text-shadow: none !important; /* 去掉文字发光 */
-}
-
-/* 透玻璃（亚克力）模式下的平替质感 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.75) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-
-
-
-/* === 最终对齐：未打卡按钮与主按钮同款彩色透玻璃 === */
-
-/* 仅在自定义壁纸下生效 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-btn {
-  /* 提高主题色浓度（65%），透出彩色质感 */
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65) !important;
-  
-  /* 强毛玻璃模糊 */
-  backdrop-filter: blur(16px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
-  
-  /* 极细的白色切边 */
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  
-  /* 顶部微光 + 底部极淡投影 */
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.4),
-    0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    
-  color: #fff !important;
-}
-
-/* 透玻璃（亚克力）模式下的纯色半透保证 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-btn {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-}
-
-
-
 
 /* === 终极状态：打卡后透明镂空 === */
 
 /* 覆盖之前的所有实色，强制背景透明、无模糊、无阴影 */
 .checkin-btn.is-checked {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  color: var(--c-text-light) !important; /* 文字变淡，表示已完成 */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid transparent;
+  box-shadow: none;
+  color: var(--c-text-light); /* 文字变淡，表示已完成 */
   opacity: 0.8;
-}
-
-/* 如果是在自定义壁纸下，给它保留一圈极淡的白色虚边，提示它曾是一个按钮 */
-:root[data-custom-bg="on"] .checkin-btn.is-checked {
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 /* 移除按压反馈，因为已经不能再点击了 */
 .checkin-btn.is-checked:active {
-  transform: none !important;
+  transform: none;
 }
-
-
-
 
 /* === SVG 图标统一样式 === */
 .icon-svg {
@@ -6100,18 +4264,19 @@ html.light-theme-active .overview__label span {
   stroke-linejoin: round;
   margin-right: 4px;
 }
+
 .tab__icon .icon-svg {
   width: 24px;
   height: 24px;
   margin-right: 0;
 }
+
 .icon-close {
   width: 14px;
   height: 14px;
   stroke-width: 2.5;
   margin: 0;
 }
-
 
 /* === 弹窗 SVG 图标样式 === */
 .modal-icon-svg {
@@ -6124,91 +4289,59 @@ html.light-theme-active .overview__label span {
   stroke-linejoin: round;
 }
 
-
-
 /* === 重塑弹窗图标：去掉笨重底盘，改为轻盈的彩色线条 === */
 
 /* 1. 去除背景圆、阴影和边框 */
 .modal__icon {
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px !important;
-  height: 48px !important;
-  margin: 0 auto 16px !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
 }
 
 /* 2. 把 SVG 放大，线条变细腻 */
 .modal-icon-svg {
-  width: 42px !important;
-  height: 42px !important;
-  fill: none !important;
-  stroke: currentColor !important;
-  stroke-width: 1.8 !important; /* 更纤细的线条 */
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8; /* 更纤细的线条 */
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 /* 3. 赋予不同状态优雅的色彩（即使背景是透明的，也能一眼看出状态） */
-.modal__icon--info    { color: #6E7E92 !important; } /* 蓝灰 */
-.modal__icon--warn    { color: #B8823F !important; } /* 焦糖黄 */
-.modal__icon--danger  { color: #A85E52 !important; } /* 陶土红 */
-.modal__icon--success { color: #5C7A6A !important; } /* 森林绿 */
+.modal__icon--info    { color: #6E7E92; }
 
-/* 4. 如果你在自定义壁纸模式下，颜色稍微加深以保持对比度 */
-:root[data-custom-bg="on"] .modal__icon--info    { color: #4A6078 !important; }
-:root[data-custom-bg="on"] .modal__icon--warn    { color: #9A6B32 !important; }
-:root[data-custom-bg="on"] .modal__icon--danger  { color: #8F4B41 !important; }
-:root[data-custom-bg="on"] .modal__icon--success { color: #4A6653 !important; }
+ /* 蓝灰 */
+.modal__icon--warn    { color: #B8823F; }
 
+ /* 焦糖黄 */
+.modal__icon--danger  { color: #A85E52; }
 
-
-
-/* === 终极重塑：弹窗图标统一为低调灰色 === */
-
-/* 覆盖掉之前赋予的彩色，统一成当前主题的灰色 */
-.modal__icon--info,
-.modal__icon--warn,
-.modal__icon--danger,
-.modal__icon--success,
-:root[data-custom-bg="on"] .modal__icon--info,
-:root[data-custom-bg="on"] .modal__icon--warn,
-:root[data-custom-bg="on"] .modal__icon--danger,
-:root[data-custom-bg="on"] .modal__icon--success {
-  color: var(--c-text-sub) !important; /* 使用主题的次级文字色，通常是偏灰的 */
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* 确保在自定义深色壁纸下依然清晰，稍微用点带透明度的灰白 */
-:root[data-custom-bg="on"] .modal__icon {
-  color: rgba(0, 0, 0, 0.45) !important;
-}
-:root[data-custom-bg="on"][data-theme="night"] .modal__icon {
-  color: rgba(255, 255, 255, 0.45) !important;
-}
+ /* 陶土红 */
+.modal__icon--success { color: #5C7A6A; }
 
 /* 线条稍微再细一丢丢，显得更高级 */
 .modal-icon-svg {
-  width: 40px !important;
-  height: 40px !important;
-  stroke-width: 1.5 !important; 
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.5;
 }
-
-
-
 
 /* === 终极修复：消灭弹窗顶部多余空白 === */
 
 /* 当 JS 设置 display: none 时，允许 CSS 遵从并完全隐藏图标容器，消除 48px 的占位 */
 .modal__icon[style*="display: none"] {
-  display: none !important;
-  margin: 0 !important;
-  height: 0 !important;
-  padding: 0 !important;
+  display: none;
+  margin: 0;
+  height: 0;
+  padding: 0;
 }
 
 /* 顺便调一下没有图标时，标题的顶部间距，让整体更紧凑舒适 */
@@ -6216,70 +4349,38 @@ html.light-theme-active .overview__label span {
   margin-top: 8px;
 }
 
-
-
 /* 阻止长按时出现系统的选中文字或弹出菜单 */
 .cat, .quick-chip {
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  user-select: none !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* === 修复拖拽时的文字换行 === */
 .quick-chip {
-  white-space: nowrap !important;
+  white-space: nowrap;
 }
+
 .quick-chip span {
-  white-space: nowrap !important;
+  white-space: nowrap;
 }
-
-
 
 /* === 终极稳定版：Dock 栏向下滑动隐藏 === */
 
 /* 1. 基础动画设置 */
 .tabbar {
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: transform;
-}
-
-/* 2. 普通主题模式：居中 + 向下滑出 */
-html:not([data-custom-bg="on"]) body.keyboard-open .tabbar {
-  transform: translate(-50%, 100%) !important;
-  pointer-events: none !important;
-}
-
-/* 3. 自定义壁纸模式：原样（无 transform 偏移）+ 向下滑出 */
-html[data-custom-bg="on"] body.keyboard-open .tabbar {
-  transform: translateY(100%) !important;
-  pointer-events: none !important;
-}
-
-
-
-
-/* === 终极防误触：彻底切断 Label 的聚焦关联 === */
-
-/* 
- * 让所有的 label 标签变成纯粹的文本，不再拦截点击事件。
- * 这样点击“金额”、“备注”这些文字，鼠标/手指会直接穿透，
- * 浏览器也就不会触发 input 的自动聚焦了。
- */
-.field__label,
-.modal__label {
-  pointer-events: none !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
 }
 
 /* 顺便把输入框外围可能的透明 padding 收敛一下，让视觉和热区完全一致 */
 .amount {
-  padding: 6px 12px 6px 14px !important;
-}
-.amount__input {
-  padding: 4px 0 !important;
+  padding: 6px 12px 6px 14px;
 }
 
+.amount__input {
+  padding: 4px 0;
+}
 
 /* ========== 下拉签到（由 fix.py 注入） ========== */
 
@@ -6290,10 +4391,11 @@ html[data-custom-bg="on"] body.keyboard-open .tabbar {
   transition: max-height .35s var(--ease), margin .35s var(--ease),
               padding .35s var(--ease), opacity .3s var(--ease);
 }
+
 .checkin-card.is-hidden {
-  max-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
   opacity: 0;
   pointer-events: none;
 }
@@ -6313,33 +4415,22 @@ html[data-custom-bg="on"] body.keyboard-open .tabbar {
   white-space: nowrap;
   flex: none;
 }
+
 .checkin-pull__arrow {
   display: inline-block;
   animation: pullArrowBounce 1.2s ease-in-out infinite;
 }
+
 @keyframes pullArrowBounce {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(3px); }
-}
-
-/* 自定义壁纸下的玻璃适配 */
-:root[data-custom-bg="on"]:not([data-glass-mode="clear"]) .checkin-pull {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.65);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4),
-              0 4px 12px rgba(0, 0, 0, 0.08);
-}
-:root[data-custom-bg="on"][data-glass-mode="clear"] .checkin-pull {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
 }
 
 /* 下拉时主页跟随手指位移 */
 #page-home {
   transition: transform .35s cubic-bezier(.4, 0, .2, 1);
 }
+
 #page-home.is-pulling {
   transition: none;
 }
@@ -6369,18 +4460,22 @@ html[data-custom-bg="on"] body.keyboard-open .tabbar {
               color .2s var(--ease);
   white-space: nowrap;
 }
+
 .pull-hint.is-show {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
 .pull-hint.is-ready {
   color: #fff;
   background: var(--c-primary);
 }
+
 .pull-hint__arrow {
   display: inline-block;
   transition: transform .25s var(--ease);
 }
+
 .pull-hint.is-ready .pull-hint__arrow {
   transform: rotate(180deg);
 }
@@ -6388,9 +4483,8 @@ html[data-custom-bg="on"] body.keyboard-open .tabbar {
 /* ========== 彻底隐藏已签到卡片 ========== */
 
 .checkin-card.is-hidden {
-  display: none !important;
+  display: none;
 }
-
 
 /* ==========================================================
    强制修复主按钮文字颜色被覆盖的问题（加权重）
@@ -6400,112 +4494,35 @@ html[data-custom-bg="on"] body.keyboard-open .tabbar {
 .btn.btn--primary,
 .modal__btn.modal__btn--primary,
 .savings-btn-row .btn--primary {
-  color: #FFFFFF !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
-
-/* 浅色主题（比如沙色、含羞草黄等）的特殊适配，
-   防止白色文字看不清，自动使用深色文字 */
-html.light-theme-active .btn.btn--primary,
-html.light-theme-active .modal__btn.modal__btn--primary,
-html.light-theme-active .savings-btn-row .btn--primary {
-  color: var(--c-text) !important;
-  text-shadow: none !important;
-}
-
-/* 自定义壁纸下的玻璃主按钮文字依然保持白色 */
-:root[data-custom-bg="on"] .btn.btn--primary,
-:root[data-custom-bg="on"] .modal__btn.modal__btn--primary,
-:root[data-custom-bg="on"] .savings-btn-row .btn--primary {
-  color: #FFFFFF !important;
-}
-
-
-/* ==========================================================
-   浅色主题专属修复：增强对比度（文字改为深色）
-   ========================================================== */
-
-/* 1. 下拉抽取今日运势按钮 */
-html.light-theme-active .checkin-pull {
-  color: var(--c-text) !important;
-}
-
-/* 2. 底部导航栏激活状态（图标+文字） */
-html.light-theme-active .tab.is-active {
-  color: var(--c-text) !important;
-}
-html.light-theme-active .tab.is-active .tab__icon svg {
-  stroke: var(--c-text) !important;
-}
-
-/* 3. 分段选择器 / 图表 Tab 激活状态的文字 */
-html.light-theme-active .seg .seg__btn.is-active,
-html.light-theme-active .chart-tabs .chart-tab.is-active {
-  color: var(--c-text) !important;
-  font-weight: 700 !important;
-}
-
-/* 4. 日历选中的日期、月份、年份 */
-html.light-theme-active .calendar-day.is-selected,
-html.light-theme-active .calendar-month.is-selected,
-html.light-theme-active .calendar-year.is-selected {
-  color: var(--c-text) !important;
-}
-html.light-theme-active .calendar-day.is-selected::after {
-  background: var(--c-text) !important;
-}
-
-/* 5. 顶栏的「支出 / 收入」切换按钮（如果启用了的话） */
-html.light-theme-active .header-mode-btn.is-active {
-  color: var(--c-text) !important;
-}
-
-/* 6. 确保所有主按钮、确认弹窗按钮在浅色下都是深色字 */
-html.light-theme-active .btn.btn--primary,
-html.light-theme-active .modal__btn.modal__btn--primary,
-html.light-theme-active .checkin-btn,
-html.light-theme-active .savings-btn-row .btn--primary {
-  color: var(--c-text) !important;
-  text-shadow: none !important;
-}
-
-/* 7. 修复打卡运势弹窗上的字 */
-html.light-theme-active .checkin-popup__title,
-html.light-theme-active .checkin-popup__fortune,
-html.light-theme-active .checkin-popup__close {
-  color: var(--c-text) !important;
-}
-html.light-theme-active .checkin-popup__close {
-  background: var(--c-surface) !important;
-}
-
 
 /* ==========================================================
    共享元素过渡：消除原本的 CSS 缩放效果，交由 JS 控制
    ========================================================== */
 .modal-overlay .modal {
-  transform: none !important;
-  transition: opacity 0.2s var(--ease) !important;
+  transform: none;
+  transition: opacity 0.2s var(--ease);
 }
+
 .modal-overlay.is-show .modal {
-  transform: none !important;
+  transform: none;
 }
 
 /* 关闭动画期间禁止点击 */
 .modal-overlay.is-closing {
-  pointer-events: none !important;
+  pointer-events: none;
 }
-
 
 /* ==========================================================
    放权给 JS 接管弹窗动画
    ========================================================== */
 .modal-overlay .modal,
 .modal-overlay.is-show .modal {
-  transform: none !important;
-  transition: none !important;
+  transform: none;
+  transition: none;
 }
-
 
 /* ==========================================================
    终极修复：弹窗主按钮（保存/确定）文字看不见的问题
@@ -6514,489 +4531,35 @@ html.light-theme-active .checkin-popup__close {
 
 /* 1. 普通主题 */
 .modal__btn.modal__btn--primary {
-  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
-  color: #FFFFFF !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
-  border: none !important;
-  opacity: 1 !important;
-}
-
-/* 2. 浅色主题（如沙色、柔和桃），使用深色主色背景防瞎眼 */
-html.light-theme-active .modal__btn.modal__btn--primary {
-  background: var(--c-primary-dark) !important;
-  color: #FFFFFF !important;
-}
-
-/* 3. 自定义壁纸（玻璃模式） */
-:root[data-custom-bg="on"] .modal__btn.modal__btn--primary {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.85) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.4),
-    0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(12px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
-}
-
-/* 4. 亚克力模式下的玻璃按钮 */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn.modal__btn--primary {
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.95) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* 顺便把“取消”按钮的透明背景也固定一下，防止类似问题 */
-:root[data-custom-bg="on"] .modal__btn:not(.modal__btn--primary) {
-  background: rgba(255, 255, 255, 0.4) !important;
-  color: var(--c-text) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-}
-
-
-/* ==========================================================
-   终极修复：自定义壁纸下的主按钮（保存/添加等）背景颜色
-   ========================================================== */
-
-/* 1. 强制赋予带主色调的玻璃背景，并确保文字为纯白 */
-:root[data-custom-bg="on"] .btn.btn--primary,
-:root[data-custom-bg="on"] .modal__btn.modal__btn--primary,
-:root[data-custom-bg="on"] #submitBtn,
-:root[data-custom-bg="on"] #incomeSubmitBtn,
-:root[data-custom-bg="on"] #addCatBtn,
-:root[data-custom-bg="on"] .cat-manage__add .btn--primary {
-  /* 使用主色混合半透明，或者直接用主色，确保一定看得到颜色 */
-  background: var(--c-primary) !important;
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.8) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.4),
-    0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  backdrop-filter: blur(12px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
-}
-
-/* 2. 透玻璃（亚克力）模式下的平替（浓度更高，不模糊） */
-:root[data-custom-bg="on"][data-glass-mode="clear"] .btn.btn--primary,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .modal__btn.modal__btn--primary,
-:root[data-custom-bg="on"][data-glass-mode="clear"] #submitBtn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] #incomeSubmitBtn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] #addCatBtn,
-:root[data-custom-bg="on"][data-glass-mode="clear"] .cat-manage__add .btn--primary {
-  background: var(--c-primary) !important;
-  background: rgba(var(--c-primary-rgb, 110, 92, 150), 0.95) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: 
-    inset 0 2px 0 rgba(255, 255, 255, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-
-/* ==========================================================
-   动物岛风格重制 (Animal Island Style) - 仅限非自定义壁纸模式
-   ========================================================== */
-
-/* 1. 调整全局基础变量，让整体更圆润 */
-:root:not([data-custom-bg="on"]) {
-  --radius-sm: 16px;
-  --radius: 24px;
-  --radius-lg: 32px;
-}
-
-/* 2. 卡片：增大圆角，使用极其柔和的悬浮阴影 */
-:root:not([data-custom-bg="on"]) .card,
-:root:not([data-custom-bg="on"]) .checkin-card {
-  border-radius: var(--radius) !important;
-  border: none !important;
-  box-shadow: 0 6px 20px rgba(60, 50, 80, 0.06), 0 2px 6px rgba(60, 50, 80, 0.03) !important;
-  background: var(--c-card) !important;
-}
-
-/* 3. 按钮：全面药丸化 */
-:root:not([data-custom-bg="on"]) .btn,
-:root:not([data-custom-bg="on"]) .checkin-btn,
-:root:not([data-custom-bg="on"]) .checkin-pull,
-:root:not([data-custom-bg="on"]) .modal__btn {
-  border-radius: 50px !important;
-  font-weight: 700 !important;
-  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
-}
-
-/* 4. 主按钮：3D 像素堆叠阴影 */
-:root:not([data-custom-bg="on"]) .btn--primary,
-:root:not([data-custom-bg="on"]) .modal__btn--primary,
-:root:not([data-custom-bg="on"]) .checkin-btn,
-:root:not([data-custom-bg="on"]) .checkin-pull {
-  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light)) !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 0 4px 0 0 color-mix(in srgb, var(--c-primary-dark) 85%, #000) !important;
-}
-
-/* 主按钮按下时：下沉 */
-:root:not([data-custom-bg="on"]) .btn--primary:active,
-:root:not([data-custom-bg="on"]) .modal__btn--primary:active,
-:root:not([data-custom-bg="on"]) .checkin-btn:active,
-:root:not([data-custom-bg="on"]) .checkin-pull:active {
-  transform: translateY(4px) !important;
-  box-shadow: 0 0 0 0 transparent !important;
-}
-
-/* 5. 普通按钮：3D 阴影 */
-:root:not([data-custom-bg="on"]) .btn:not(.btn--primary),
-:root:not([data-custom-bg="on"]) .modal__btn:not(.modal__btn--primary) {
-  background: var(--c-surface) !important;
-  color: var(--c-text) !important;
-  border: none !important;
-  box-shadow: 0 3px 0 0 var(--c-border) !important;
-}
-
-:root:not([data-custom-bg="on"]) .btn:not(.btn--primary):active,
-:root:not([data-custom-bg="on"]) .modal__btn:not(.modal__btn--primary):active {
-  transform: translateY(3px) !important;
-  box-shadow: 0 0 0 0 transparent !important;
-}
-
-/* 6. 输入框 / 选择框：药丸形 */
-:root:not([data-custom-bg="on"]) .input,
-:root:not([data-custom-bg="on"]) .amount,
-:root:not([data-custom-bg="on"]) .stat-period,
-:root:not([data-custom-bg="on"]) .stat-cat-fake,
-:root:not([data-custom-bg="on"]) .modal__input {
-  border-radius: 50px !important;
-  border: 1.5px solid var(--c-border) !important;
-  background: var(--c-card) !important;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-/* 金额框由于内部有分隔线，微调内边距 */
-:root:not([data-custom-bg="on"]) .amount {
-  padding-left: 20px;
-  padding-right: 14px;
-}
-
-/* 7. 分类格子：大圆角 + 浮动选中态 */
-:root:not([data-custom-bg="on"]) .cat {
-  border-radius: 20px !important;
-  background: var(--c-surface) !important;
-  border: 2px solid transparent !important;
-  box-shadow: none !important;
-  transition: all 0.2s ease !important;
-}
-:root:not([data-custom-bg="on"]) .cat.is-active {
-  background: color-mix(in srgb, var(--cat-color) 12%, var(--c-card)) !important;
-  border: 2px solid var(--cat-color) !important;
-  transform: translateY(-2px) !important;
-}
-:root:not([data-custom-bg="on"]) .cat--add {
-  background: transparent !important;
-  border: 2px dashed var(--c-border) !important;
-}
-
-/* 8. 快捷胶囊 / 记录列表 */
-:root:not([data-custom-bg="on"]) .quick-chip {
-  border-radius: 50px !important;
-  border: none !important;
-  box-shadow: 0 2px 0 var(--c-border) !important;
-  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
-}
-:root:not([data-custom-bg="on"]) .quick-chip:active {
-  transform: translateY(2px) !important;
-  box-shadow: 0 0 0 transparent !important;
-}
-
-:root:not([data-custom-bg="on"]) .record {
-  border-radius: 20px !important;
-  border: none !important;
-  background: var(--c-surface) !important;
-}
-
-/* 9. 分段选择器 & 图表 Tab：药丸化滑块 */
-:root:not([data-custom-bg="on"]) .seg,
-:root:not([data-custom-bg="on"]) .chart-tabs {
-  border-radius: 50px !important;
-  background: var(--c-surface) !important;
-  padding: 4px !important;
-}
-:root:not([data-custom-bg="on"]) .seg::before,
-:root:not([data-custom-bg="on"]) .chart-tabs::before {
-  border-radius: 50px !important;
-  background: var(--c-primary) !important;
-  box-shadow: 0 2px 0 var(--c-primary-dark) !important;
-}
-:root:not([data-custom-bg="on"]) .seg__btn,
-:root:not([data-custom-bg="on"]) .chart-tab {
-  border-radius: 50px !important;
-  font-weight: 700 !important;
-}
-
-/* 10. 底部导航：悬浮圆角卡片 */
-:root:not([data-custom-bg="on"]) .tabbar {
-  border-top: none !important;
-  border-radius: 32px 32px 0 0 !important;
-  box-shadow: 0 -4px 20px rgba(60, 50, 80, 0.08) !important;
-  background: var(--c-card) !important;
-}
-
-/* 11. 弹窗 Modal & 日历：加大圆角 */
-:root:not([data-custom-bg="on"]) .modal,
-:root:not([data-custom-bg="on"]) .calendar-panel,
-:root:not([data-custom-bg="on"]) .cat-modal {
-  border-radius: 32px !important;
-  box-shadow: 0 20px 60px rgba(60, 50, 80, 0.15) !important;
-}
-
-/* 12. 顶部 Header */
-:root:not([data-custom-bg="on"]) .header {
-  border-radius: 0 0 32px 32px !important;
-  box-shadow: 0 4px 20px rgba(60, 50, 80, 0.1) !important;
-}
-
-
-/* ==========================================================
-   🌴 动物岛风格 完美整合版 (V3 - V14 精华)
-   ========================================================== */
-
-/* 1. 引入字体 & 波点自适应背景 (V3) */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap');
-
-html:not([data-custom-bg="on"]) body {
-  font-family: 'Nunito', 'Noto Sans SC', sans-serif !important;
-  background-color: var(--c-bg) !important;
-  background-image: radial-gradient(color-mix(in srgb, var(--c-border) 50%, transparent) 1.5px, transparent 1.5px) !important;
-  background-size: 16px 16px !important;
-  color: var(--c-text) !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.02em !important;
-}
-
-/* 2. 卡片 & 丝带标题 (V3) */
-html:not([data-custom-bg="on"]) .card,
-html:not([data-custom-bg="on"]) .checkin-card {
-  background: var(--c-card) !important;
-  border-radius: 28px !important;
-  border: none !important;
-  box-shadow: 0 6px 0 0 color-mix(in srgb, var(--c-border) 40%, transparent) !important;
-}
-
-html:not([data-custom-bg="on"]) .card__title {
-  background: transparent !important;
-  padding: 0 !important;
-  margin-bottom: 16px !important;
-  color: var(--c-text) !important;
-}
-
-html:not([data-custom-bg="on"]) .card__title > span:first-child {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  background: var(--c-primary) !important;
-  color: #fff !important;
-  font-weight: 900 !important;
-  padding: 8px 24px 8px 18px !important;
-  margin-left: -10px !important;
-  clip-path: polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%) !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
-  font-size: 16px !important;
-}
-
-html:not([data-custom-bg="on"]) .card__title > span:nth-child(2) {
-  color: var(--c-text-sub) !important;
-  opacity: 1 !important;
-  font-weight: 600 !important;
-  background: var(--c-surface) !important;
-  padding: 4px 12px !important;
-  border-radius: 999px !important;
-  font-size: 11px !important;
-}
-
-/* 3. 按钮：Q弹 3D 游戏按键 (V6 强化) */
-html:not([data-custom-bg="on"]) .btn,
-html:not([data-custom-bg="on"]) .modal__btn,
-html:not([data-custom-bg="on"]) .checkin-btn {
-  border-radius: 999px !important;
-  font-weight: 800 !important;
-  transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-
-html:not([data-custom-bg="on"]) .btn--primary,
-html:not([data-custom-bg="on"]) .checkin-btn {
-  background: var(--c-primary) !important;
-  color: #fff !important;
-  box-shadow: 0 5px 0 0 var(--c-primary-dark) !important;
-}
-
-html:not([data-custom-bg="on"]) .btn--primary:active,
-html:not([data-custom-bg="on"]) .checkin-btn:active {
-  transform: translateY(5px) !important;
-  box-shadow: 0 0 0 0 transparent !important;
-}
-
-html:not([data-custom-bg="on"]) .btn:not(.btn--primary),
-html:not([data-custom-bg="on"]) .modal__btn:not(.modal__btn--primary) {
-  background: var(--c-surface) !important;
-  color: var(--c-text) !important;
-  box-shadow: 0 3px 0 0 var(--c-border) !important;
-}
-html:not([data-custom-bg="on"]) .btn:not(.btn--primary):active {
-  transform: translateY(3px) !important;
-  box-shadow: 0 0 0 0 transparent !important;
-}
-
-/* 4. 输入框与日期修复 (V4) */
-html:not([data-custom-bg="on"]) .input,
-html:not([data-custom-bg="on"]) .amount,
-html:not([data-custom-bg="on"]) .stat-period,
-html:not([data-custom-bg="on"]) .stat-cat-fake {
-  background: var(--c-card) !important;
-  border-radius: 50px !important;
-  border: 1.5px solid var(--c-border) !important;
-  color: var(--c-text) !important;
-  font-weight: 700 !important;
-}
-
-html:not([data-custom-bg="on"]) .input--date {
-  padding: 10px 40px 10px 16px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  font-size: 14px !important;
-}
-html:not([data-custom-bg="on"]) .input--date::after {
-  right: 16px !important;
-  top: 50% !important;
-  margin-top: 0 !important;
-  transform: translateY(-50%) !important;
-  width: 14px !important;
-  height: 14px !important;
-}
-
-/* 5. 分类格子 (V3) */
-html:not([data-custom-bg="on"]) .cat {
-  background: var(--c-surface) !important;
-  border-radius: 20px !important;
-  border: 2px solid transparent !important;
-  box-shadow: 0 3px 0 0 var(--c-border) !important;
-  font-weight: 700 !important;
-}
-html:not([data-custom-bg="on"]) .cat.is-active {
-  background: var(--c-card) !important;
-  border: 2px solid var(--cat-color) !important;
-  box-shadow: 0 4px 0 0 var(--cat-color) !important;
-  transform: translateY(-2px) !important;
-}
-
-/* 6. 弹窗大圆角 (V5) & Pop 消失特效 (V14) */
-html:not([data-custom-bg="on"]) .modal,
-.cat-modal,
-.calendar-panel,
-.checkin-popup__content {
-  border-radius: 36px !important;
-  background: var(--c-card) !important;
-  box-shadow: 0 8px 0 0 color-mix(in srgb, var(--c-border) 50%, transparent), 
-              0 20px 40px rgba(0,0,0,0.1) !important;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease !important;
-  transform-origin: center center !important;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-primary-light));
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  border: none;
+  opacity: 1;
 }
 
 .modal-overlay:not(.is-show) .modal,
 .cat-modal-overlay:not(.is-show) .cat-modal,
 .checkin-popup:not(.is-show) .checkin-popup__content {
-  animation: popOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+  animation: popOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
 @keyframes popOut {
   0% { transform: scale(1); opacity: 1; }
   30% { transform: scale(1.05); opacity: 0.8; }
   100% { transform: scale(0); opacity: 0; }
 }
 
-/* 7. 日历适配 (V7) */
-html:not([data-custom-bg="on"]) .calendar-panel {
-  border-radius: 32px !important;
-  padding: 20px 16px !important;
-}
-html:not([data-custom-bg="on"]) .calendar-day {
-  aspect-ratio: 1 !important;
-  border-radius: 50% !important;
-  font-weight: 800 !important;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-html:not([data-custom-bg="on"]) .calendar-day.is-selected {
-  background: var(--c-primary) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 0 0 var(--c-primary-dark) !important;
-  transform: translateY(-2px) scale(1.1) !important;
-}
-
-/* 8. 统计图表微调 (V8) */
-html:not([data-custom-bg="on"]) .bar__track {
-  height: 12px !important;
-  border-radius: 999px !important;
-  background: var(--c-surface) !important;
-  border: 2px solid var(--c-border) !important;
-}
-html:not([data-custom-bg="on"]) .bar__fill {
-  border-radius: 999px !important;
-  box-shadow: inset 0 2px 2px rgba(255,255,255,0.4) !important;
-}
-html:not([data-custom-bg="on"]) .budget-bar {
-  height: 12px !important;
-  border-radius: 999px !important;
-  background: var(--c-surface) !important;
-  border: 2px solid var(--c-border) !important;
-}
-html:not([data-custom-bg="on"]) .budget-bar__fill {
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, var(--c-primary-light), var(--c-primary)) !important;
-}
-
-/* 9. Toast 提示框 (V8) */
-html:not([data-custom-bg="on"]) .toast {
-  background: var(--c-primary) !important;
-  color: #fff !important;
-  border-radius: 999px !important;
-  font-weight: 800 !important;
-  padding: 12px 24px !important;
-  box-shadow: 0 4px 0 0 var(--c-primary-dark), 0 8px 20px rgba(0,0,0,0.15) !important;
-}
-
-/* 10. Dock 栏样式（键盘弹起时仍需允许淡出） */
-html:not([data-custom-bg="on"]) .tabbar {
-  background: var(--c-card) !important;
-  border-top: none !important;
-  border-radius: 28px 28px 0 0 !important;
-  box-shadow: 0 -4px 0 0 color-mix(in srgb, var(--c-border) 40%, transparent) !important;
-  transform: translateX(-50%) !important;
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
-}
 .tabbar::before, .tabbar::after {
-  display: none !important;
-  content: none !important;
+  display: none;
+  content: none;
 }
-html:not([data-custom-bg="on"]) .tab {
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease !important;
-}
-html:not([data-custom-bg="on"]) .tab:active {
-  transform: scale(0.85) !important;
-}
-html:not([data-custom-bg="on"]) .tab.is-active .tab__icon {
-  animation: tabJellyPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-  color: var(--c-primary) !important;
-}
+
 @keyframes tabJellyPop {
   0% { transform: scale(0.8); }
   50% { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
-html:not([data-custom-bg="on"]) .tab.is-active {
-  color: var(--c-primary) !important;
-  font-weight: 800 !important;
-}
-
 
 /* === drag-sort touch optimization === */
 .cat-grid,

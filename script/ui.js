@@ -284,6 +284,7 @@ const UI = {
       return '<div class="cat' + wide + active + '"'
            + ' data-cat="' + c.id + '"'
            + ' style="--cat-color:' + c.color + '">'
+           +   '<span class="cat__planet" aria-hidden="true"></span>'
            +   '<span class="cat__name">' + UI.escapeHtml(c.name) + '</span>'
            +   delBtn
            + '</div>';
